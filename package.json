@@ -11,5 +11,8 @@
     "url": "https://gitlab.k8s.cloud.statcan.ca/bailey.damour/vector-lib.git"
   },
   "author": "Bailey D'Amour",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^16.2.3"
+  }
 }
