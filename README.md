@@ -4,7 +4,7 @@ A JavaScript library for vector arithmetic.
 
 # Usage
 
-To perform arithmetic on a vector:  
+To perform arithmetic on a set of vectors:  
 ```
 let vectors = {
     'v1': [
