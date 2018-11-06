@@ -1,4 +1,4 @@
-VectorExpressionEvaluator = function() {
+VectorLib = function() {
     operators = {
         '+': function(a, b) { return a + b; },
         '-': function(a, b) { return a - b; },
@@ -349,7 +349,7 @@ VectorExpressionEvaluator = function() {
     };
 }
 
-
+module.exports = VectorLib;
 
 let vectors = {
     'v1': [
@@ -407,7 +407,7 @@ let testcases = [
 ];
 
 let runTest = function(testcase) {
-    let parser = new VectorExpressionEvaluator();
+    let parser = new VectorLib();
     let result = parser.evaluate(testcase.expression, vectors);
     
     console.log(testcase.expression);

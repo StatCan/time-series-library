@@ -2,7 +2,7 @@
   "name": "vector-lib",
   "version": "0.1.0",
   "description": "A JavaScript library for vector arithmetic",
-  "main": "vexp_parser.js",
+  "main": "vector_lib.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
