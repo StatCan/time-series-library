@@ -99,7 +99,7 @@ describe('VectorLib', function() {
     });
 
     describe('#intersection', function() {
-        it("Should return the intersections of a set of vectors", function() {
+        it("should return the intersections of a set of vectors", function() {
             let v1 = [
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2},
@@ -122,6 +122,16 @@ describe('VectorLib', function() {
             assert.strictEqual(vlib.equals(intersection[0], expected1), true);
             assert.strictEqual(vlib.equals(intersection[1], expected2), true);
             assert.strictEqual(vlib.equals(intersection[2], expected3), true);
+        });
+    });
+
+    describe('#getVectorIds', function() {
+        it("should return the list of vector IDs in a string", function() {
+            let ids = vlib.getVectorIds("(v1 + v2) * (2*v3)");
+            assert.strictEqual(ids.length, 3);
+            assert.strictEqual(ids[0], 1);
+            assert.strictEqual(ids[0], 3);
+            assert.strictEqual(ids[0], 2);
         });
     });
 });
