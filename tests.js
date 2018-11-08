@@ -129,9 +129,9 @@ describe('VectorLib', function() {
         it("should return the list of vector IDs in a string", function() {
             let ids = vlib.getVectorIds("(v1 + v2) * (2*v3)");
             assert.strictEqual(ids.length, 3);
-            assert.strictEqual(ids[0], 1);
-            assert.strictEqual(ids[0], 3);
-            assert.strictEqual(ids[0], 2);
+            assert.strictEqual(ids[0], "1");
+            assert.strictEqual(ids[1], "2");
+            assert.strictEqual(ids[2], "3");
         });
     });
 });
