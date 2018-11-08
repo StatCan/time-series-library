@@ -83,7 +83,7 @@ VectorLib = function() {
         let nextId = "";
         for (let c = 0; c < expression.length; c++) {
             if (expression[c] == 'v' && !isNaN(expression[c + 1])) {
-                nextId = "";
+                nextId = "v";
             }
             else if (nextId != "" && !isNaN(expression[c])) {
                 nextId += expression[c];
