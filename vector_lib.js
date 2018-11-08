@@ -32,6 +32,51 @@ VectorLib = function() {
     }
     
     
+    this.intersection = function(vectors) {
+        let flatVectors = {};
+        
+        for (let v = 0; v < vectors.length; v++) {
+            let vector = vectors[v];
+            
+            for (let p = 0; p < vector.length; p++) {
+                let refper = vector[p].refper;
+                if (!(refper in flatVectors)) {
+                    flatVectors[refper] = [];
+                }
+                flatVectors[refper].push(vector[p]);
+            }
+        }
+        
+        // Get max vector for iterating
+        let intersection = [];
+        
+        let maxV = 0;
+        let maxL = vectors[0].length;
+        for (let v = 0; v < vectors.length; v++) {
+            if (vectors[v].length > maxL) {
+                maxV = v;
+                maxL = vectors[v].length;
+            }
+            
+            intersection.push([]);
+        }
+        maxV = vectors[maxV];
+        
+        for (let p = 0; p < maxV.length; p++) {
+            let point = maxV[p];
+            if (!(point.refper in flatVectors)) continue;
+            if (flatVectors[point.refper].length == vectors.length) {
+                let flatPoint = flatVectors[point.refper];
+                for (let f = 0; f < flatPoint.length; f++) {
+                    intersection[f].push(flatPoint[f]);
+                }
+            }
+        }		
+        
+        return intersection;
+    }
+    
+    
     this.getVectorIds = function(expression) {
         expression = expression.replace(/ /g, '');
         let ids = [];	
@@ -111,7 +156,9 @@ VectorLib = function() {
                 }
             
                 return operate(
-                        this.right.result(), this.left.result(), this.operation);
+                        this.right.result(), 
+                        this.left.result(), 
+                        this.operation);
             } 
         }
         
@@ -166,11 +213,7 @@ VectorLib = function() {
             };
             
             // Merge keys added by the user.
-            for (key in vector[p]) {
-                if (key != 'refper' && key != 'value') {
-                    newPoint[key] = vector[p][key];
-                }
-            }
+            safeMerge(newPoint, vector[p]);
             
             result.push(newPoint);
         }
@@ -204,11 +247,7 @@ VectorLib = function() {
             };
             
             // Merge keys added by the user.
-            for (key in vectorA[p]) {
-                if (key != 'refper' && key != 'value') {
-                    newPoint[key] = vectorA[p][key];
-                }
-            }
+            safeMerge(newPoint, vectorA[p]);
             
             result.push(newPoint);
         }
@@ -271,8 +310,8 @@ VectorLib = function() {
             if (vexp[pos] == 'v' || vexp[pos] == 'V') {
                 next = readVector(vexp, pos);
             }
-            else if (!isNaN(vexp[pos]) || 
-                    (vexp[pos] == '-' && isNaN(vexp[pos - 1]) && !isNaN(vexp[pos + 1]))) {
+            else if (!isNaN(vexp[pos]) 
+                    || (vexp[pos] == '-' && isNaN(vexp[pos - 1]) && !isNaN(vexp[pos + 1]))) {
                 next = readScalar(vexp, pos);
             }
             else if (vexp[pos] in operators) {
@@ -282,7 +321,8 @@ VectorLib = function() {
                 next = readBracket(vexp, pos);
             }
             else {
-                throw new Error("Unrecognized symbol at position " + pos + ".");
+                throw new Error(
+                        "Unrecognized symbol at position " + pos + ".");
             }
             
             split.push(next.symbol);
@@ -347,6 +387,16 @@ VectorLib = function() {
 
         return stack.length == 0;
     };
+    
+    
+    // Merge but don't overwrite existing keys.
+    safeMerge = function(target, source) {
+        for (key in source) {
+            if (!(key in target)) {
+                target[key] = source[key];
+            }
+        }
+    }
 }
 
 module.exports = VectorLib;
