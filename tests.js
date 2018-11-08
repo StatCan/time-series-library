@@ -1,11 +1,46 @@
 let assert = require('assert');
+
 let VectorLib = require('./vector_lib.js');
+let vlib = new VectorLib();
 
 describe('VectorLib', function() {
+    describe('#equals', function() {
+        it("should return true if two vectors are equal", function() {
+            let v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            let v2 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            assert.strictEqual(vlib.equals(v1, v2), true);
+        });
+
+        it("should return false if two vectors are not equal", function() {
+            let v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 1}
+            ];
+            let v2 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            assert.strictEqual(vlib.equals(v1, v2), false);
+
+            v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 1}
+            ];
+            v2 = [
+                {'refper': "2018-01-01", 'value': 1}
+            ]; 
+            assert.strictEqual(vlib.equals(v1, v2), false);
+        });
+    });
+
     describe('#evaluate', function() {
         it("should handle vector arithmetic", function() {
-            let vlib = new VectorLib();
-
             let vectors = {
                 'v1': [
                     {'refper': "2018-01-01", 'value': 1},
