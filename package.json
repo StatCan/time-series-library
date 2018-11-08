@@ -4,7 +4,7 @@
   "description": "A JavaScript library for vector arithmetic",
   "main": "vector_lib.js",
   "scripts": {
-    "test": "node tests.js"
+    "test": "./node_modules/.bin/mocha tests.js"
   },
   "repository": {
     "type": "git",
