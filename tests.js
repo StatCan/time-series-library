@@ -39,6 +39,42 @@ describe('VectorLib', function() {
         });
     });
 
+    describe('#interoperable', function() {
+        it("should return true if two vectors are interoperable", function() {
+            let v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            let v2 = [
+                {'refper': "2018-01-01", 'value': 3},
+                {'refper': "2018-02-01", 'value': 4}
+            ];
+            assert.strictEqual(vlib.interoperable(v1, v2), true);
+        });
+
+        it("should return false if two vectors are not interoperable", 
+                function() {
+            let v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            let v2 = [
+                {'refper': "2018-01-01", 'value': 3},
+                {'refper': "2018-03-01", 'value': 4}
+            ];
+            assert.strictEqual(vlib.interoperable(v1, v2), false);
+
+            v1 = [
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ];
+            v2 = [
+                {'refper': "2018-01-01", 'value': 3}
+            ]; 
+            assert.strictEqual(vlib.interoperable(v1, v2), false);
+        });
+    });
+
     describe('#evaluate', function() {
         let vectors = {
             'v1': [

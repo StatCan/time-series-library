@@ -22,21 +22,22 @@ Using a web browser:
 
 # Usage
 
-1. [evaluate()](#evaluate)
-2. [equals()](#equals)
-3. [intersection()](#intersection)
+[evaluate()](#evaluate)  
+[equals()](#equals)  
+[interoperable()](#interoperable)  
+[intersection()](#intersection)
 
 <a name="evaluate"></a>
 ## evaluate(expression, vectors)
 
 Performs arithmetic on a set of vectors. 
 
-All input vectors must be interopable with each other, meaning each vector 
+All input vectors must be interoperable with each other, meaning each vector 
 must have the same length and all vectors must be composed of datapoints with 
 the same reference periods. 
 
-The function **intersection()** is useful for ensuring that a set of vectors are 
-interopable before evaluating them.
+The function **intersection()** can be used to convert a set of 
+non-interoperable vectors into a set of interoperable vectors.
 
 Example:
 ```javascript
@@ -88,6 +89,35 @@ let v2 = [
 ];
 
 let result = vlib.equals(v1, v2);
+```
+
+Result:
+```javascript
+true
+```
+
+<a name="interoperable"></a>
+## interoperable(vectorA, vectorB)
+
+Checks if two vectors are interoperable.
+
+Two vectors `a` and `b` are interoperable if the number of datapoints in `a` 
+is equal to the number of datapoints in `b`, and for each datapoint with 
+reference period `Ra` in `a`, there exists a datapoint in `b` whose 
+reference period is equal to `Ra`.
+
+Example:
+```javascript
+let v1 = [
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
+];
+let v2 = [
+    {'refper': "2018-01-01", 'value': 3},
+    {'refper': "2018-02-01", 'value': 4}
+];
+
+let result = vlib.interoperable(v1, v2);
 ```
 
 Result:

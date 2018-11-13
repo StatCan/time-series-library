@@ -30,8 +30,23 @@ VectorLib = function() {
         
         return true;
     }
-    
-    
+
+
+    this.interoperable = function(vectorA, vectorB) {
+        if (vectorA.length != vectorB.length) {
+            return false;
+        }
+        
+        for (let p = 0; p < vectorA.length; p++) {
+            if (vectorA[p].refper != vectorB[p].refper) {
+                return false;
+            }
+        }
+        
+        return true;  
+    };
+
+
     this.intersection = function(vectors) {
         if (Array.isArray(vectors)) {
             return arrayIntersection(vectors);
