@@ -22,6 +22,11 @@ Using a web browser:
 
 # Usage
 
+1. [evaluate()](#evaluate)
+2. [equals()](#equals)
+3. [intersection()](#intersection)
+
+<a name="evaluate"></a>
 ## evaluate(expression, vectors)
 
 Performs arithmetic on a set of vectors. 
@@ -61,6 +66,7 @@ Result:
 ]
 ```
 
+<a name="equals"></a>
 ## equals(vectorA, vectorB)
 
 Checks if two vectors are equal.
@@ -89,6 +95,7 @@ Result:
 true
 ```
 
+<a name="intersection"></a>
 ## intersection(vectors)
 
 Returns the intersection of all vectors in a set. That is, for each vector `v` 
