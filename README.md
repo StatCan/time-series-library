@@ -16,12 +16,23 @@ Using a web browser:
 
 <script>
     let vlib = new VectorLib();
-<script>
+</script>
 ```
 
 # Usage
 
-To perform arithmetic on a set of vectors:  
+## evaluate(expression, vectors)
+
+Performs arithmetic on a set of vectors. 
+
+All input vectors must be interopable with each other, meaning each vector 
+must have the same length and all vectors must be composed of datapoints with 
+the same reference period. 
+
+The function **evaluate()** is useful for ensuring that a set of vectors are 
+interopable before evaluating them.
+
+Example:
 ```javascript
 let vectors = {
     'v1': [
@@ -39,10 +50,28 @@ let vectors = {
 };
 
 let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
-// Returns new vector.
 ```
 
-To check if two vectors are equal:
+Result:
+```json
+[
+    {'refper': "2018-01-01", 'value': 16},
+    {'refper': "2018-02-01", 'value': 24}
+]
+```
+
+---
+
+## equals(vectorA, vectorB)
+
+Checks if two vectors are equal.
+
+Two vectors `a` and `b` are equal if the number of datapoints in `a` is equal 
+to the number of datapoints in `b`, and for each datapoint with reference 
+period `Ra` and value `Va` in `a`, there exists a datapoint in `b` whose 
+reference period is equal to `Ra` and value is equal to `Va` 
+
+Example:
 ```javascript
 let v1 = [
     {'refper': "2018-01-01", 'value': 1},
@@ -53,25 +82,61 @@ let v2 = [
     {'refper': "2018-02-01", 'value': 2}
 ];
 
-let result = vlib.equals(v1, v2); // Returns true.
+let result = vlib.equals(v1, v2);
 ```
 
-To get the intersection set of a set of vectors:
+Result:
+```javascript
+true
+```
+
+---
+
+## intersection(vectors)
+
+Returns the intersection of all vectors in a set. That is, for each vector `v` 
+in the input set, `v` is transformed to `v` intersected with every other vector 
+in the input set.
+
+The intersection of two vectors `a` and `b` is defined as the vectors `a'` and 
+`b'` such that `a'` and `b'` are composed only of datapoints with reference periods defined in both `a` and `b`.
+
+Example:
 ```javascript
 let v1 = [
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2},
-    {'refper': "2018-03-01", 'value': 3}
+    {'refper': "2018-03-01", 'value': 3},
+    {'refper': "2018-04-01", 'value': 4}
 ];
 let v2 = [
-    {'refper': "2018-01-01", 'value': 3},
-    {'refper': "2018-02-01", 'value': 4}
+    {'refper': "2018-01-01", 'value': 5},
+    {'refper': "2018-02-01", 'value': 6},
+    {'refper': "2018-03-01", 'value': 7}
 ];
 let v3 = [
-    {'refper': "2018-01-01", 'value': 2}
+    {'refper': "2018-01-01", 'value': 8},
+    {'refper': "2018-02-01", 'value': 9}
 ];
 
 let result = vlib.intersection([v1, v2, v3]);
-// Returns list of vectors with reference period intersection applied.
+```
+
+Result:
+```json
+[
+    [
+        {'refper': "2018-01-01", 'value': 1},
+        {'refper': "2018-02-01", 'value': 2}
+    ],
+    [
+        {'refper': "2018-01-01", 'value': 5},
+        {'refper': "2018-02-01", 'value': 6},
+    ],
+    [
+        {'refper': "2018-01-01", 'value': 8},
+        {'refper': "2018-02-01", 'value': 9}
+    ]
+]
 ```
 
