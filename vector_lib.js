@@ -33,6 +33,29 @@ VectorLib = function() {
     
     
     this.intersection = function(vectors) {
+        if (Array.isArray(vectors)) {
+            return arrayIntersection(vectors);
+        } 
+        else {
+            // Handle dictionary of ID -> Vector.
+            let ids = [];
+            let vectorArray = [];
+            for (vectorId in vectors) {
+                ids.push(vectorId);
+                vectorArray.push(vectors[vectorId]);
+            }
+
+            let intersect = arrayIntersection(vectorArray);
+            let result = {};
+            for (let v = 0; v < intersect.length; v++) {
+                result[ids[v]] = intersect[v];
+            }
+
+            return result;
+        }
+    }
+
+    function arrayIntersection(vectors) {
         let flatVectors = {};
         
         for (let v = 0; v < vectors.length; v++) {
@@ -75,7 +98,6 @@ VectorLib = function() {
         
         return intersection;
     }
-    
     
     this.getVectorIds = function(expression) {
         expression = expression.replace(/ /g, '');

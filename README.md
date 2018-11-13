@@ -1,6 +1,6 @@
 # vector-lib
 
-A JavaScript library for vector arithmetic on Statistics Canada time series 
+A JavaScript library for arithmetic on Statistics Canada time series 
 vector data.
 
 # Installation
@@ -99,6 +99,10 @@ The intersection of two vectors `a` and `b` is defined as the vectors `a'` and
 `b'` such that `a'` and `b'` are composed only of datapoints with reference 
 periods defined in both `a` and `b`.
 
+Note that this function will also accept a dictionary mapping vector IDs to 
+vectors as input. The return type will be a dictionary instead of an array in 
+this case.
+
 Example:
 ```javascript
 let v1 = [
@@ -117,6 +121,7 @@ let v3 = [
     {'refper': "2018-02-01", 'value': 9}
 ];
 
+// Can also be called as vlib.intersection({'v1': v1, 'v2': v2, 'v3': v3}).
 let result = vlib.intersection([v1, v2, v3]);
 ```
 
