@@ -53,14 +53,12 @@ let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
 ```
 
 Result:
-```json
+```javascript
 [
     {'refper': "2018-01-01", 'value': 16},
     {'refper': "2018-02-01", 'value': 24}
 ]
 ```
-
----
 
 ## equals(vectorA, vectorB)
 
@@ -89,8 +87,6 @@ Result:
 ```javascript
 true
 ```
-
----
 
 ## intersection(vectors)
 
@@ -123,7 +119,7 @@ let result = vlib.intersection([v1, v2, v3]);
 ```
 
 Result:
-```json
+```javascript
 [
     [
         {'refper': "2018-01-01", 'value': 1},
