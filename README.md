@@ -2,6 +2,23 @@
 
 A JavaScript library for vector arithmetic.
 
+# Installation
+
+Using Node.js:
+```
+let VectorLib = require('./vector_lib.js');
+let vlib = new VectorLib();
+```
+
+Using a web browser:
+```
+<script src="./vector_lib.js"></script>
+
+<script>
+    let vlib = new VectorLib();
+<script>
+```
+
 # Usage
 
 To perform arithmetic on a set of vectors:  
@@ -21,7 +38,7 @@ let vectors = {
     ]
 };
 
-let result = VectorLib.evaluate("(v1 + 2*v2) * v3", vectors);
+let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
 // Returns new vector.
 ```
 
@@ -36,7 +53,7 @@ let v2 = [
     {'refper': "2018-02-01", 'value': 2}
 ];
 
-let result = VectorLib.equals(v1, v2); // Returns true.
+let result = vlib.equals(v1, v2); // Returns true.
 ```
 
 To get the intersection set of a set of vectors:
@@ -54,7 +71,7 @@ let v3 = [
     {'refper': "2018-01-01", 'value': 2}
 ];
 
-let result = VectorLib.intersection([v1, v2, v3]);
+let result = vlib.intersection([v1, v2, v3]);
 // Returns list of vectors with reference period intersection applied.
 ```
 
