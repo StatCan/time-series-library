@@ -1,6 +1,7 @@
 # vector-lib
 
-A JavaScript library for vector arithmetic.
+A JavaScript library for vector arithmetic on Statistics Canada time series 
+vector data.
 
 # Installation
 
@@ -27,9 +28,9 @@ Performs arithmetic on a set of vectors.
 
 All input vectors must be interopable with each other, meaning each vector 
 must have the same length and all vectors must be composed of datapoints with 
-the same reference period. 
+the same reference periods. 
 
-The function **evaluate()** is useful for ensuring that a set of vectors are 
+The function **intersection()** is useful for ensuring that a set of vectors are 
 interopable before evaluating them.
 
 Example:
@@ -95,7 +96,8 @@ in the input set, `v` is transformed to `v` intersected with every other vector
 in the input set.
 
 The intersection of two vectors `a` and `b` is defined as the vectors `a'` and 
-`b'` such that `a'` and `b'` are composed only of datapoints with reference periods defined in both `a` and `b`.
+`b'` such that `a'` and `b'` are composed only of datapoints with reference 
+periods defined in both `a` and `b`.
 
 Example:
 ```javascript
