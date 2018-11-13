@@ -5,13 +5,13 @@ A JavaScript library for vector arithmetic.
 # Installation
 
 Using Node.js:
-```
+```javascript
 let VectorLib = require('./vector_lib.js');
 let vlib = new VectorLib();
 ```
 
 Using a web browser:
-```
+```html
 <script src="./vector_lib.js"></script>
 
 <script>
@@ -22,7 +22,7 @@ Using a web browser:
 # Usage
 
 To perform arithmetic on a set of vectors:  
-```
+```javascript
 let vectors = {
     'v1': [
         {'refper': "2018-01-01", 'value': 1},
@@ -43,7 +43,7 @@ let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
 ```
 
 To check if two vectors are equal:
-```
+```javascript
 let v1 = [
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
@@ -57,7 +57,7 @@ let result = vlib.equals(v1, v2); // Returns true.
 ```
 
 To get the intersection set of a set of vectors:
-```
+```javascript
 let v1 = [
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2},
