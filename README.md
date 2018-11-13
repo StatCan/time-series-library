@@ -1,4 +1,4 @@
-# vector-lib
+# vector-lib ![](https://gitlab.k8s.cloud.statcan.ca/bailey.damour/vector-lib/badges/master/build.svg)
 
 A JavaScript library for arithmetic on Statistics Canada time series 
 vector data.
