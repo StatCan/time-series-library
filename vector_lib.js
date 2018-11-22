@@ -170,6 +170,21 @@ VectorLib = function() {
         return result;
     };
 
+    periodOperate = function(vector, operation) {
+        let result = [];
+        
+        for (let p = 0; p < vector.length; p++) {
+            let point = {
+                'refper': vector[p].refper,
+                'value': operation(vector[p].value)
+            };
+            safeMerge(point, vector[p]);
+            result.push(point);
+        }
+
+        return result;
+    };
+
     this.round = function(vector, decimals) {
         for (let p = 0; p < vector.length; p++) {
             let value = vector[p]['value'];
