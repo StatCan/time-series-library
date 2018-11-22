@@ -1,3 +1,12 @@
+if (typeof window === 'undefined') {
+    // Running in Node.js.
+
+}
+else {
+    // Running in browser.
+    var module = { }; // Prevent browser exception when exporting as module.
+}
+
 VectorLib = function() {
     operators = {
         '+': function(a, b) { return a + b; },
