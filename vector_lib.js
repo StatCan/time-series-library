@@ -41,6 +41,20 @@ VectorLib = function() {
     }
 
 
+    this.copy = function(vector) {
+        let copyVector = [];
+        for (let p = 0; p < vector.length; p++) {
+            let copyPoint = {
+                'refper': vector[p]['refper'],
+                'value': vector[p]['value']
+            };
+            safeMerge(copyPoint, vector[p]);
+            copyVector.push(copyPoint);
+        }
+        return copyVector;
+    }
+
+
     this.interoperable = function(vectorA, vectorB) {
         if (vectorA.length != vectorB.length) {
             return false;
@@ -122,7 +136,53 @@ VectorLib = function() {
         
         return intersection;
     }
-    
+
+
+    this.periodToPeriodPercentageChange = function(vector) {
+
+    };
+
+    this.periodToPeriodDifference = function(vector) {
+
+    };
+
+    this.samePeriodPreviousYearPercentageChange = function(vector) {
+
+    };
+
+    this.round = function(vector, decimals) {
+        for (let p = 0; p < vector.length; p++) {
+            let value = vector[p]['value'];
+            vector[p]['value'] = scalarRound(value, decimals);
+        }
+        return vector;
+    };
+
+    this.roundBankers = function(vector, decimals) {
+        for (let p = 0; p < vector.length; p++) {
+            let value = vector[p]['value'];
+            vector[p]['value'] = scalarRoundBankers(value, decimals);
+        }
+        return vector;
+    }
+
+    function scalarRound(value, decimals) {
+        decimals = decimals || 0;
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    }
+
+    function scalarRoundBankers(value, decimals) {
+        decimals = decimals || 0;
+        let m = Math.pow(10, decimals);
+        let n = +(decimals ? value * m : value).toFixed(8);
+        let i = Math.floor(n);
+        let f = n - i;
+        let e = 1e-8;
+        let r = (f > 0.5 - e && f < 0.5 + e) ? 
+                ((i % 2 == 0) ? i : i + 1) : Math.round(n);
+        return decimals ? r / m : r;
+    }
+ 
     this.getVectorIds = function(expression) {
         expression = expression.replace(/ /g, '');
         let ids = [];	

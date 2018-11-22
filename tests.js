@@ -134,6 +134,8 @@ describe('VectorLib', function() {
             {'refper': "2018-03-01", 'value': 0}
         ];       
         itVexp(vexp, expected);
+
+        vexp = ""
     });
 
     describe('#intersection', function() {
@@ -169,6 +171,51 @@ describe('VectorLib', function() {
             assert.strictEqual(vlib.equals(intersection.v1, expected1), true);
             assert.strictEqual(vlib.equals(intersection.v2, expected2), true);
             assert.strictEqual(vlib.equals(intersection.v3, expected3), true);
+        });
+    });
+
+    describe('#copy', function() {
+        it("should create a copy of a vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-01-02', 'value': 2}
+            ];
+    
+            let result = vlib.copy(vector);
+            assert.strictEqual(result[0].refper, '2018-01-01');
+            assert.strictEqual(result[1].refper, '2018-01-02');
+            assert.strictEqual(result[0].value, 1);
+            assert.strictEqual(result[1].value, 2);
+        });
+    });
+
+    describe('#round', function() {
+        it("should round values in a vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 1.555},
+                {'refper': '2018-01-02', 'value': 1.554}
+            ];
+    
+            let result = vlib.round(vlib.copy(vector), 2);
+            assert.strictEqual(result[0].value, 1.56);
+            assert.strictEqual(result[1].value, 1.55);
+    
+            result = vlib.round(vlib.copy(vector));
+            assert.strictEqual(result[0].value, 2);
+            assert.strictEqual(result[1].value, 2);
+        });
+    });
+
+    describe('#roundBannkers', function() {
+        it("should Banker's round values in a vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 1.5},
+                {'refper': '2018-01-02', 'value': 2.5}
+            ];
+    
+            let result = vlib.roundBankers(vlib.copy(vector));
+            assert.strictEqual(result[0].value, 2);
+            assert.strictEqual(result[1].value, 2);
         });
     });
 
