@@ -193,14 +193,10 @@ VectorLib = function() {
 
     function scalarRoundBankers(value, decimals) {
         decimals = decimals || 0;
-        let m = Math.pow(10, decimals);
-        let n = +(decimals ? value * m : value).toFixed(8);
-        let i = Math.floor(n);
-        let f = n - i;
-        let e = 1e-8;
-        let r = (f > 0.5 - e && f < 0.5 + e) ? 
-                ((i % 2 == 0) ? i : i + 1) : Math.round(n);
-        return decimals ? r / m : r;
+        let x = value * Math.pow(10, decimals);
+        let r = Math.round(x);
+        let br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r-1) : r;
+        return br / Math.pow(10, decimals);
     }
  
     this.getVectorIds = function(expression) {
