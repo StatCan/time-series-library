@@ -24,8 +24,13 @@ Using a web browser:
 
 [evaluate()](#evaluate)  
 [equals()](#equals)  
+[copy()](#copy)  
 [interoperable()](#interoperable)  
-[intersection()](#intersection)
+[intersection()](#intersection)  
+[periodToPeriodPercentageChange()](#periodToPeriodPercentageChange)  
+[periodToPeriodDifference()](#periodToPeriodDifference)  
+[round()](#round)  
+[roundBankers()](#roundBankers)  
 
 <a name="evaluate"></a>
 ## evaluate(expression, vectors)
@@ -94,6 +99,29 @@ let result = vlib.equals(v1, v2);
 Result:
 ```javascript
 true
+```
+
+<a name="copy"></a>
+## copy(vector)
+
+Creates a copy of a vector.
+
+Example:
+```javascript
+let vector = [
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
+];
+
+let result = vlib.copy(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
+]
 ```
 
 <a name="interoperable"></a>
@@ -177,6 +205,109 @@ Result:
         {'refper': "2018-01-01", 'value': 8},
         {'refper': "2018-02-01", 'value': 9}
     ]
+]
+```
+
+<a name="periodToPeriodPercentageChange"></a>
+## periodToPeriodPercentageChange(vector)
+
+Returns a period-to-period percentage change vector of the input vector.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-01-01', 'value': 2},
+    {'refper': '2018-02-01', 'value': 6},
+    {'refper': '2018-03-01', 'value': 3}
+];
+
+let result = vlib.periodToPeriodPercentageChange(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': null},
+    {'refper': "2018-02-01", 'value': 200.0},
+    {'refper': "2018-03-01", 'value': -50.0}
+]
+```
+
+<a name="periodToPeriodPercentageChange"></a>
+## periodToPeriodPercentageChange(vector)
+
+Returns a period-to-period difference vector of the input vector.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-01-01', 'value': 2},
+    {'refper': '2018-02-01', 'value': 6},
+    {'refper': '2018-03-01', 'value': 3}
+];
+
+let result = vlib.periodToPeriodDifference(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': null},
+    {'refper': "2018-02-01", 'value': 4},
+    {'refper': "2018-03-01", 'value': -3}
+]
+```
+
+<a name="round"></a>
+## round(vector, decimals)
+
+Rounds all values in the input vector to a specified number of decimal places. 
+If `decimals` is not specified than the default value of `0` will be used.  
+
+**Note:** This operation is perfomed in-place.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-01-01', 'value': 1.555},
+    {'refper': '2018-02-01', 'value': 1.554}
+];
+
+let result = vlib.round(vector, 2);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': 1.56},
+    {'refper': "2018-02-01", 'value': 1.55}
+]
+```
+
+<a name="roundBankers"></a>
+## roundBankers(vector, decimals)
+
+Rounds all values in the input vector to a specified number of decimal places 
+using the Banker's rounding algorithm. If `decimals` is not specified than 
+the default value of `0` will be used.  
+
+**Note:** This operation is perfomed in-place.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-01-01', 'value': 1.5},
+    {'refper': '2018-02-01', 'value': 2.5}
+];
+
+let result = vlib.round(vector, 0);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': 2},
+    {'refper': "2018-02-01", 'value': 2}
 ]
 ```
 
