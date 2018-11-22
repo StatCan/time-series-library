@@ -189,6 +189,36 @@ describe('VectorLib', function() {
         });
     });
 
+    describe('#periodToPeriodPercentageChange', function() {
+        it("should compute the percentage change vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 2},
+                {'refper': '2018-01-02', 'value': 6},
+                {'refper': '2018-01-03', 'value': 3},
+            ];
+
+            let result = vlib.periodToPeriodPercentageChange(vector);
+            assert.strictEqual(result[0].value, null);
+            assert.strictEqual(result[1].value, 200.0);
+            assert.strictEqual(result[2].value, -50.0);
+        });
+    });
+
+    describe('#periodToPeriodDifference', function() {
+        it("should compute the difference vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 2},
+                {'refper': '2018-01-02', 'value': 6},
+                {'refper': '2018-01-03', 'value': 4},
+            ];
+
+            let result = vlib.periodToPeriodDifference(vector);
+            assert.strictEqual(result[0].value, null);
+            assert.strictEqual(result[1].value, 4);
+            assert.strictEqual(result[2].value, -2);
+        });
+    });
+
     describe('#round', function() {
         it("should round values in a vector", function() {
             let vector = [

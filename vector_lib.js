@@ -139,15 +139,35 @@ VectorLib = function() {
 
 
     this.periodToPeriodPercentageChange = function(vector) {
-
+        return periodDeltaOperate(
+                vector, (curr, last) => ((curr - last) / Math.abs(last)) * 100);
     };
 
     this.periodToPeriodDifference = function(vector) {
-
+        return periodDeltaOperate(vector, (curr, last) => curr - last);
     };
 
     this.samePeriodPreviousYearPercentageChange = function(vector) {
+        return undefined;
+    };
 
+    periodDeltaOperate = function(vector, operation) {
+        // TODO: Better name for this and expose to API.
+        let result = [];
+
+        for (let p = 0; p < vector.length; p++) {
+            let value = null;
+            if (vector[p-1] != undefined) {
+                let lastVal = vector[p - 1].value;
+                let currVal =  vector[p].value;
+                value = operation(currVal, lastVal);
+            }
+            let point = {'refper': vector[p].refper, 'value': value};
+            safeMerge(point, vector[p]);
+            result.push(point)
+        }
+
+        return result;
     };
 
     this.round = function(vector, decimals) {
