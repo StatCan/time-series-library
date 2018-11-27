@@ -258,4 +258,18 @@ describe('VectorLib', function() {
             assert.strictEqual(ids[2], "3");
         });
     });
+
+    describe('#filter', function() {
+        it("should return a filtered vector based on a predicate", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+            ];
+            result = vlib.filter(vector, p => p.value % 2 == 0);
+            assert.strictEqual(result[0].value, 0);
+            assert.strictEqual(result[1].value, 2);
+            assert.strictEqual(result.length, 2);
+        });
+    });
 });

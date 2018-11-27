@@ -137,7 +137,6 @@ VectorLib = function() {
         return intersection;
     }
 
-
     this.periodToPeriodPercentageChange = function(vector) {
         return periodDeltaTransformation(
                 vector, (curr, last) => ((curr - last) / Math.abs(last)) * 100);
@@ -185,6 +184,14 @@ VectorLib = function() {
 
         return result;
     };
+
+    this.filter = function(vector, predicate) {
+        let result = [];
+        for (let p = 0; p < vector.length; p++) {
+            if (predicate(vector[p])) result.push(vector[p]);
+        } 
+        return result;
+    }
 
     this.round = function(vector, decimals) {
         for (let p = 0; p < vector.length; p++) {

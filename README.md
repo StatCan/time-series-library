@@ -311,3 +311,28 @@ Result:
 ]
 ```
 
+<a name="filter"></a>
+## filter(vector, predicate)
+
+Returns a filtered vector based on a predicate function. The function 
+`predicate` should be a function that operates on a vector point and returns a `boolean`.   
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-01-01', 'value': 0},
+    {'refper': '2018-01-02', 'value': 1},
+    {'refper': '2018-01-03', 'value': 2},
+];
+
+result = vlib.filter(vector, p => p.value % 2 == 0);
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-01-01', 'value': 0},
+    {'refper': '2018-01-03', 'value': 2}
+]
+```
+
