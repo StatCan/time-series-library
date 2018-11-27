@@ -288,8 +288,8 @@ Result:
 ## roundBankers(vector, decimals)
 
 Rounds all values in the input vector to a specified number of decimal places 
-using the Banker's rounding algorithm. If `decimals` is not specified than 
-the default value of `0` will be used.  
+using the [Banker's rounding algorithm](http://wiki.c2.com/?BankersRounding). 
+If `decimals` is not specified then the default value of `0` will be used.  
 
 **Note:** This operation is perfomed in-place.
 

@@ -378,7 +378,7 @@ VectorLib = function() {
             
             // Reference period of both vectors points must match.
             if (refperA != refperB) {
-                throw new Error("Vectors are not interopable.");
+                throw new Error("Vectors are not interoperable.");
             }
             
             let newPoint =  {
