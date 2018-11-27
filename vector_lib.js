@@ -139,19 +139,20 @@ VectorLib = function() {
 
 
     this.periodToPeriodPercentageChange = function(vector) {
-        return periodDeltaOperate(
+        return periodDeltaTransformation(
                 vector, (curr, last) => ((curr - last) / Math.abs(last)) * 100);
     };
 
     this.periodToPeriodDifference = function(vector) {
-        return periodDeltaOperate(vector, (curr, last) => curr - last);
+        return periodDeltaTransformation(
+                vector, (curr, last) => curr - last);
     };
 
     this.samePeriodPreviousYearPercentageChange = function(vector) {
         return undefined;
     };
 
-    periodDeltaOperate = function(vector, operation) {
+    periodDeltaTransformation = function(vector, operation) {
         // TODO: Better name for this and expose to API.
         let result = [];
 
@@ -170,7 +171,7 @@ VectorLib = function() {
         return result;
     };
 
-    periodOperate = function(vector, operation) {
+    periodTransformation = function(vector, operation) {
         let result = [];
         
         for (let p = 0; p < vector.length; p++) {
