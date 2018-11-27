@@ -31,6 +31,7 @@ Using a web browser:
 [periodToPeriodDifference()](#periodToPeriodDifference)  
 [round()](#round)  
 [roundBankers()](#roundBankers)  
+[filter()](#filter)
 
 <a name="evaluate"></a>
 ## evaluate(expression, vectors)
