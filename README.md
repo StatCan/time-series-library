@@ -234,8 +234,8 @@ Result:
 ]
 ```
 
-<a name="periodToPeriodPercentageChange"></a>
-## periodToPeriodPercentageChange(vector)
+<a name="periodToPeriodDifference"></a>
+## periodToPeriodDifference(vector)
 
 Returns a period-to-period difference vector of the input vector.
 
