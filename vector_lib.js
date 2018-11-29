@@ -545,6 +545,27 @@ VectorLib = function() {
             }
         }
     }
+
+    formatDate = function(date) {
+        if (typeof date === 'string') return stringToDate(date);
+        return date;
+    }
+
+    stringToDate = function(datestring) {
+        let split = datestring.split('-');
+        return realDate(
+                split[0], unpad(split[1], "0"), Number(unpad(split[2], "0")));
+    }
+    
+    datestring = function(date) {
+        return date.getUTCFullYear() + "-"
+                + date.getUTCMonth().toString().padStart(2, "0") + "-"
+                + date.getUTCDay().toString().padStart(2, "0");
+    }   
+    
+    realDate = function(year, month, day) {
+        return new Date(Date.UTC(year, month-1, day));
+    }
 }
 
 module.exports = VectorLib;
