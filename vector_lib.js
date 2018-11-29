@@ -69,6 +69,17 @@ VectorLib = function() {
         return true;  
     };
 
+    this.formatDateObject = function(vector) {
+        for (let p = 0; p < vector.length; p++) {
+            vector[p].refper = formatDateObject(vector[p].refper);
+        }
+    };
+
+    this.formatDateString = function(vector) {
+        for (let p = 0; p < vector.length; p++) {
+            vector[p].refper = formatDateString(vector[p].refper);
+        }
+    };
 
     this.intersection = function(vectors) {
         if (Array.isArray(vectors)) {
@@ -546,9 +557,14 @@ VectorLib = function() {
         }
     }
 
-    formatDate = function(date) {
+    formatDateObject = function(date) {
         if (typeof date === 'string') return stringToDate(date);
         return date;
+    }
+
+    formatDateString = function(date) {
+        if (typeof date === 'string') return date;
+        return datestring(date);
     }
 
     stringToDate = function(datestring) {
@@ -559,13 +575,26 @@ VectorLib = function() {
     
     datestring = function(date) {
         return date.getUTCFullYear() + "-"
-                + date.getUTCMonth().toString().padStart(2, "0") + "-"
-                + date.getUTCDay().toString().padStart(2, "0");
+                + (date.getUTCMonth() + 1).toString().padStart(2, "0") + "-"
+                + date.getUTCDate().toString().padStart(2, "0");
     }   
     
     realDate = function(year, month, day) {
-        return new Date(Date.UTC(year, month-1, day));
+        return new Date(Date.UTC(year, month - 1, day));
     }
+
+    this.realDate = function(year, month, day) {
+        return realDate(year, month, day);
+    }
+
+    function unpad(str, chr) {
+        let start = 0;
+        for (let c = 0; c < str.length; c++) {
+            if (str[c] != chr) break;
+            start++;
+        }
+        return str.substring(start);
+    }  
 }
 
 module.exports = VectorLib;

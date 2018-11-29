@@ -272,4 +272,35 @@ describe('VectorLib', function() {
             assert.strictEqual(result.length, 2);
         });
     });
+
+    describe('#formatDateObject', function() {
+        it("should format all dates in a vector as objects", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-12-31', 'value': 0}
+            ];
+            vlib.formatDateObject(vector);
+
+            assert.strictEqual(vector[0].refper.getUTCFullYear(), 2018);
+            assert.strictEqual(vector[0].refper.getUTCMonth(), 0);
+            assert.strictEqual(vector[0].refper.getUTCDate(), 1);
+
+            assert.strictEqual(vector[1].refper.getUTCFullYear(), 2018);
+            assert.strictEqual(vector[1].refper.getUTCMonth(), 11);
+            assert.strictEqual(vector[1].refper.getUTCDate(), 31);
+        });
+    });
+
+    describe('#formatDateString', function() {
+        it("should format all dates in a vector as strings", function() {
+            let vector = [
+                {'refper': vlib.realDate(2018, 1, 1), 'value': 0},
+                {'refper': vlib.realDate(2018, 12, 31), 'value': 0}
+            ];
+            vlib.formatDateString(vector);
+
+            assert.strictEqual(vector[0].refper, '2018-01-01');
+            assert.strictEqual(vector[1].refper, '2018-12-31');
+        });
+    });
 });
