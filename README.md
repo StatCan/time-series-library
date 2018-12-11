@@ -25,6 +25,7 @@ Using a web browser:
 [evaluate()](#evaluate)  
 [equals()](#equals)  
 [copy()](#copy)  
+[range()](#range)  
 [interoperable()](#interoperable)  
 [intersection()](#intersection)  
 [periodToPeriodPercentageChange()](#periodToPeriodPercentageChange)  
@@ -122,6 +123,31 @@ Result:
 [
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
+]
+```
+
+<a name="range"></a>
+## range(vector, startDate, endDate)
+
+Returns the vector constrained within a specified range.
+
+Example:
+```javascript
+    let vector = [
+        {'refper': '2018-01-01', 'value': 0},
+        {'refper': '2018-02-01', 'value': 1},
+        {'refper': '2018-03-01', 'value': 2},
+        {'refper': '2018-04-01', 'value': 3}
+    ];
+
+let result = vlib.range(vector, '2018-02-01', '2018-03-01');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-02-01", 'value': 1},
+    {'refper': "2018-03-01", 'value': 2}
 ]
 ```
 
