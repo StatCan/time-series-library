@@ -55,6 +55,18 @@ VectorLib = function() {
     }
 
 
+    this.range = function(vector, startDate, endDate) {
+        startDate = formatDateObject(startDate);
+        endDate = formatDateObject(endDate);
+
+        let rangeFilter = function(point) {
+            return formatDateObject(point.refper) >= startDate
+                    && formatDateObject(point.refper) <= endDate
+        };
+        return filter(vector, rangeFilter);
+    }
+
+
     this.interoperable = function(vectorA, vectorB) {
         if (vectorA.length != vectorB.length) {
             return false;
@@ -197,9 +209,13 @@ VectorLib = function() {
     };
 
     this.filter = function(vector, predicate) {
+        return filter(vector, predicate);
+    }
+
+    function filter(vector, predicate) {
         let result = [];
-        for (let p = 0; p < vector.length; p++) {
-            if (predicate(vector[p])) result.push(vector[p]);
+        for (point of vector) {
+            if (predicate(point)) result.push(point);
         } 
         return result;
     }

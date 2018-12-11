@@ -273,6 +273,21 @@ describe('VectorLib', function() {
         });
     });
 
+    describe('#range', function() {
+        it("should return the given date range of a vector", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+                {'refper': '2018-01-04', 'value': 3}
+            ];
+            result = vlib.range(vector, '2018-01-02', '2018-01-03');
+            assert.strictEqual(result.length, 2);
+            assert.strictEqual(result[0].value, 1);
+            assert.strictEqual(result[1].value, 2);
+        });
+    });
+
     describe('#formatDateObject', function() {
         it("should format all dates in a vector as objects", function() {
             let vector = [
