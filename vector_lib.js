@@ -43,12 +43,9 @@ VectorLib = function() {
 
     this.copy = function(vector) {
         let copyVector = [];
-        for (let p = 0; p < vector.length; p++) {
-            let copyPoint = {
-                'refper': vector[p]['refper'],
-                'value': vector[p]['value']
-            };
-            safeMerge(copyPoint, vector[p]);
+        for (let point of vector) {
+            let copyPoint = {'refper': point.refper, 'value': point.value};
+            safeMerge(copyPoint, point);
             copyVector.push(copyPoint);
         }
         return copyVector;
@@ -68,16 +65,10 @@ VectorLib = function() {
 
 
     this.interoperable = function(vectorA, vectorB) {
-        if (vectorA.length != vectorB.length) {
-            return false;
-        }
-        
+        if (vectorA.length != vectorB.length) return false;
         for (let p = 0; p < vectorA.length; p++) {
-            if (vectorA[p].refper != vectorB[p].refper) {
-                return false;
-            }
-        }
-        
+            if (vectorA[p].refper != vectorB[p].refper) return false;
+        }   
         return true;  
     };
 
@@ -85,12 +76,14 @@ VectorLib = function() {
         for (let p = 0; p < vector.length; p++) {
             vector[p].refper = formatDateObject(vector[p].refper);
         }
+        return vector;
     };
 
     this.formatDateString = function(vector) {
         for (let p = 0; p < vector.length; p++) {
             vector[p].refper = formatDateString(vector[p].refper);
         }
+        return vector;
     };
 
     this.intersection = function(vectors) {
@@ -101,7 +94,7 @@ VectorLib = function() {
             // Handle dictionary of ID -> Vector.
             let ids = [];
             let vectorArray = [];
-            for (vectorId in vectors) {
+            for (let vectorId in vectors) {
                 ids.push(vectorId);
                 vectorArray.push(vectors[vectorId]);
             }
@@ -162,7 +155,7 @@ VectorLib = function() {
 
     this.periodToPeriodPercentageChange = function(vector) {
         return periodDeltaTransformation(
-                vector, (curr, last) => ((curr - last) / Math.abs(last)) * 100);
+                vector, (curr, last) => ((curr-last) / Math.abs(last)) * 100);
     };
 
     this.periodToPeriodDifference = function(vector) {
@@ -194,17 +187,15 @@ VectorLib = function() {
     };
 
     periodTransformation = function(vector, operation) {
-        let result = [];
-        
-        for (let p = 0; p < vector.length; p++) {
-            let point = {
-                'refper': vector[p].refper,
-                'value': operation(vector[p].value)
+        let result = [];   
+        for (let point of vector) {
+            let newPoint = {
+                'refper': point.refper,
+                'value': operation(point.value)
             };
-            safeMerge(point, vector[p]);
-            result.push(point);
+            safeMerge(newPoint, point);
+            result.push(newPoint);
         }
-
         return result;
     };
 
@@ -214,7 +205,7 @@ VectorLib = function() {
 
     function filter(vector, predicate) {
         let result = [];
-        for (point of vector) {
+        for (let point of vector) {
             if (predicate(point)) result.push(point);
         } 
         return result;
