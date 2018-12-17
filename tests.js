@@ -273,6 +273,19 @@ describe('VectorLib', function() {
         });
     });
 
+    describe('#periodTransformation', function() {
+        it("should return transformed vector based on a function", function() {
+            let vector = [
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-01-02', 'value': 2},
+            ];
+            result = vlib.periodTransformation(vector, value => value * 2);
+            assert.strictEqual(result[0].value, 2);
+            assert.strictEqual(result[1].value, 4);
+            assert.strictEqual(result.length, 2);
+        });
+    });
+
     describe('#range', function() {
         it("should return the given date range of a vector", function() {
             let vector = [

@@ -198,6 +198,7 @@ VectorLib = function() {
         }
         return result;
     };
+    this.periodTransformation = periodTransformation;
 
     function filter(vector, predicate) {
         let result = [];
