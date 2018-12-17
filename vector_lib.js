@@ -199,10 +199,6 @@ VectorLib = function() {
         return result;
     };
 
-    this.filter = function(vector, predicate) {
-        return filter(vector, predicate);
-    }
-
     function filter(vector, predicate) {
         let result = [];
         for (let point of vector) {
@@ -210,6 +206,7 @@ VectorLib = function() {
         } 
         return result;
     }
+    this.filter = filter;
 
     this.round = function(vector, decimals) {
         for (let p = 0; p < vector.length; p++) {
@@ -589,10 +586,7 @@ VectorLib = function() {
     realDate = function(year, month, day) {
         return new Date(Date.UTC(year, month - 1, day));
     }
-
-    this.realDate = function(year, month, day) {
-        return realDate(year, month, day);
-    }
+    this.realDate = realDate;
 
     function unpad(str, chr) {
         let start = 0;
