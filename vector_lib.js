@@ -387,6 +387,11 @@ VectorLib = function() {
 
 
     vectorOperate = function(vectorA, vectorB, operation) {
+        // Intersect vectors before operating.
+        let intersect = vlib.intersection([vectorA, vectorB]);
+        vectorA = intersect[0];
+        vectorB = intersect[1];
+
         // Check if vector lengths match.
         if (vectorA.length != vectorB.length) {
             throw new Error("Vector lengths do not match.");
