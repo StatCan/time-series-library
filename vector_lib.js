@@ -154,9 +154,6 @@ VectorLib = function() {
     }
 
     function annualize(vector) {
-        vector = filter(vector, function(point) {
-             return formatDateObject(point.refper).getUTCMonth() == 11
-        });
         if (vector.length == 0) return vector;
         
         let result = [];
@@ -171,7 +168,10 @@ VectorLib = function() {
             currYear = nextYear;
         }
         result.push(vector[vector.length - 1]);
-        return result;
+        return filter(result, point => {
+            let month = formatDateObject(result[0].refper).getUTCMonth();
+            return formatDateObject(point.refper).getUTCMonth() == month;
+        });
     }
     this.annualize = annualize;
 
