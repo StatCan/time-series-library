@@ -388,7 +388,7 @@ VectorLib = function() {
 
     vectorOperate = function(vectorA, vectorB, operation) {
         // Intersect vectors before operating.
-        let intersect = vlib.intersection([vectorA, vectorB]);
+        let intersect = new VectorLib().intersection([vectorA, vectorB]);
         vectorA = intersect[0];
         vectorB = intersect[1];
 
