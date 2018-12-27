@@ -4,7 +4,7 @@
 ### Added
 - periodTransformation() function.
 - samePeriodPreviousYearPercentageChange() function.
-- samePeriodPreviousYearDifference function()
+- samePeriodPreviousYearDifference function().
 - annualize() function.
 
 ### Changed 
