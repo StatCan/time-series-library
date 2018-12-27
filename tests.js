@@ -420,4 +420,20 @@ describe('VectorLib', function() {
             assert.strictEqual(result[2].refper, '2020-12-01');
         });
     });
+
+    describe('#latestN', function() {
+        it("should return the latest N reference periods", function() {
+            let vector = [
+                {'refper': '2018-01-01', value: 1},
+                {'refper': '2018-02-01', value: 2},
+                {'refper': '2018-03-01', value: 3},
+                {'refper': '2018-04-01', value: 4}
+            ];
+            result = vlib.latestN(vector, 2);
+
+            assert.strictEqual(result.length, 2);
+            assert.strictEqual(result[0].value, 3);
+            assert.strictEqual(result[1].value, 4);
+        });
+    });
 });

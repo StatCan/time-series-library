@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - Unreleased
+###
+- latestN() function.
+
 ## [1.3.0] - 2018-12-27
 ### Added
 - periodTransformation() function.

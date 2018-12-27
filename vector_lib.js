@@ -63,6 +63,14 @@ VectorLib = function() {
         return filter(vector, rangeFilter);
     }
 
+    this.latestN = function(vector, n) {
+        if (n > vector.length) throw new Error("N > length of vector.");
+        let result = [];
+        for (let p = vector.length - n; p < vector.length; p++) {
+            result.push(vector[p]);
+        }
+        return result;
+    };
 
     this.interoperable = function(vectorA, vectorB) {
         if (vectorA.length != vectorB.length) return false;
