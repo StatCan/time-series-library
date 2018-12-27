@@ -3,6 +3,9 @@
 ## [1.3.0] - Unreleased
 ### Added
 - periodTransformation() function.
+- samePeriodPreviousYearPercentageChange() function.
+- samePeriodPreviousYearDifference function()
+- annualize() function.
 
 ### Changed 
 - Intersection of vectors is now applied before any vector operation.
