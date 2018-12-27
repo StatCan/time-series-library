@@ -331,4 +331,43 @@ describe('VectorLib', function() {
             assert.strictEqual(vector[1].refper, '2018-12-31');
         });
     });
+
+    describe('#annualize', function() {
+        it("should return an annualized vector", function() {
+            let vector = [
+                {'refper': '2018-03-01', value: 0},
+                {'refper': '2018-06-01', value: 0},
+                {'refper': '2018-09-01', value: 0},
+                {'refper': '2018-12-01', value: 0},
+                {'refper': '2019-03-01', value: 0}
+            ];
+            let result = vlib.annualize(vector);
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].refper, '2018-12-01');
+
+            vector = [
+                {'refper': '2018-06-01', value: 0},
+                {'refper': '2018-12-01', value: 0},
+                {'refper': '2019-06-01', value: 0},
+                {'refper': '2019-12-01', value: 0},
+                {'refper': '2019-12-02', value: 0},
+                {'refper': '2020-06-01', value: 0},
+                {'refper': '2020-12-01', value: 0},
+                {'refper': '2020-12-02', value: 0}
+            ];
+            result = vlib.annualize(vector);
+            assert.strictEqual(result.length, 3);
+            assert.strictEqual(result[0].refper, '2018-12-01');
+            assert.strictEqual(result[1].refper,'2019-12-02');
+            assert.strictEqual(result[2].refper, '2020-12-02');
+
+            vector = [
+                {'refper': '2018-06-01', value: 0},
+                {'refper': '2018-12-01', value: 0}
+            ];
+            result = vlib.annualize(vector);
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].refper, '2018-12-01');
+        });
+    });
 });

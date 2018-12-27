@@ -153,6 +153,27 @@ VectorLib = function() {
         return intersection;
     }
 
+    this.annualize = function(vector) {
+        vector = filter(vector, function(point) {
+             return formatDateObject(point.refper).getUTCMonth() == 11
+        });
+        if (vector.length == 0) return vector;
+        
+        let result = [];
+        let currPoint = vector[0];
+        let currYear = formatDateObject(vector[0].refper).getUTCFullYear();
+        for (let p = 0; p < vector.length - 1; p++) {
+            let nextYear = formatDateObject(vector[p].refper).getUTCFullYear();
+            if (nextYear != currYear) {
+                result.push(currPoint);
+            }
+            currPoint = vector[p];
+            currYear = nextYear;
+        }
+        result.push(vector[vector.length - 1]);
+        return result;
+    };
+
     this.periodToPeriodPercentageChange = function(vector) {
         return periodDeltaTransformation(
                 vector, (curr, last) => ((curr-last) / Math.abs(last)) * 100);
