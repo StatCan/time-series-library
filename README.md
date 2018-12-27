@@ -28,8 +28,12 @@ Using a web browser:
 [range()](#range)  
 [interoperable()](#interoperable)  
 [intersection()](#intersection)  
+[annualize()](#annualize)  
+[periodTransformation()](#periodTransformation)  
 [periodToPeriodPercentageChange()](#periodToPeriodPercentageChange)  
 [periodToPeriodDifference()](#periodToPeriodDifference)  
+[samePeriodPreviousYearPercentageChange()](#samePeriodPreviousYearPercentageChange)  
+[samePeriodPreviousYearDifference()](#samePeriodPreviousYearDifference)  
 [round()](#round)  
 [roundBankers()](#roundBankers)  
 [filter()](#filter)
@@ -235,6 +239,57 @@ Result:
 ]
 ```
 
+<a name="annualize"></a>
+## annualize(vector)
+
+Annualizes a vector, returning a vector with the last datapoints for each year.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-06-01', 'value': 0},
+    {'refper': '2018-12-01', 'value': 1},
+    {'refper': '2019-06-01', 'value': 2},
+    {'refper': '2019-12-01', 'value': 3},
+    {'refper': '2020-06-01', 'value': 4},
+    {'refper': '2020-12-01', 'value': 5}
+];
+
+let result = vlib.annualize(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-12-01', 'value': 1},
+    {'refper': '2019-12-01', 'value': 3},
+    {'refper': '2020-12-01', 'value': 5}
+]
+```
+
+<a name="periodTransformation"></a>
+## periodTransformation(vector, function)
+
+Applies a transformation function to the value of each datapoint in a vector. 
+**function** is a function that has a `Number` parameter and returns a `Number`.
+
+Example:
+```javascript
+ let vector = [
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-01-02', 'value': 2},
+];
+let result = vlib.periodTransformation(vector, value => value * 2);
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-12-01', 'value': 2},
+    {'refper': '2019-12-01', 'value': 4}
+]
+```
+
 <a name="periodToPeriodPercentageChange"></a>
 ## periodToPeriodPercentageChange(vector)
 
@@ -274,6 +329,64 @@ let vector = [
 ];
 
 let result = vlib.periodToPeriodDifference(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': null},
+    {'refper': "2018-02-01", 'value': 4},
+    {'refper': "2018-03-01", 'value': -3}
+]
+```
+
+<a name="samePeriodPreviousYearPercentageChange"></a>
+## samePeriodPreviousYearPercentageChange(vector)
+
+Annualizes and returns a period-to-period percent change vector of the input 
+vector.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-06-01', 'value': 0},
+    {'refper': '2018-12-01', 'value': 2},
+    {'refper': '2019-06-01', 'value': 0},
+    {'refper': '2019-12-01', 'value': 6},
+    {'refper': '2020-06-01', 'value': 0},
+    {'refper': '2020-12-01', 'value': 3}
+];
+
+let result = vlib.samePeriodPreviousYearPercentageChange(vector);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-12-01", 'value': null},
+    {'refper': "2019-12-01", 'value': 200.0},
+    {'refper': "2020-12-01", 'value': -50.0}
+]
+```
+
+<a name="samePeriodPreviousYearDifference"></a>
+## samePeriodPreviousYearDifference(vector)
+
+Annualizes and returns a period-to-period difference vector of the input 
+vector.
+
+Example:
+```javascript
+let vector = [
+    {'refper': '2018-06-01', 'value': 0},
+    {'refper': '2018-12-01', 'value': 2},
+    {'refper': '2019-06-01', 'value': 0},
+    {'refper': '2019-12-01', 'value': 6},
+    {'refper': '2020-06-01', 'value': 0},
+    {'refper': '2020-12-01', 'value': 4}
+];
+
+let result = vlib.samePeriodPreviousYearDifference(vector);
 ```
 
 Result:
