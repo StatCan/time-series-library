@@ -219,6 +219,42 @@ describe('VectorLib', function() {
         });
     });
 
+    describe('#samePeriodPreviousYearPercentageChange', function() {
+        it("should compute the annualized percent change vector", function() {
+            let vector = [
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 2},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 6},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': 3}
+            ];
+
+            let result = vlib.samePeriodPreviousYearPercentageChange(vector);
+            assert.strictEqual(result[0].value, null);
+            assert.strictEqual(result[1].value, 200.0);
+            assert.strictEqual(result[2].value, -50.0);
+        });
+    });
+
+    describe('#samePeriodPreviousYearDifference', function() {
+        it("should compute the annualized difference vector", function() {
+            let vector = [
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 2},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 6},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': 4}
+            ];
+
+            let result = vlib.samePeriodPreviousYearDifference(vector);
+            assert.strictEqual(result[0].value, null);
+            assert.strictEqual(result[1].value, 4);
+            assert.strictEqual(result[2].value, -2);
+        });
+    });
+
     describe('#round', function() {
         it("should round values in a vector", function() {
             let vector = [
@@ -368,6 +404,20 @@ describe('VectorLib', function() {
             result = vlib.annualize(vector);
             assert.strictEqual(result.length, 1);
             assert.strictEqual(result[0].refper, '2018-12-01');
+
+            vector = [
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 2},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 6},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': 4}
+            ];
+            result = vlib.annualize(vector);
+            assert.strictEqual(result.length, 3);
+            assert.strictEqual(result[0].refper, '2018-12-01');
+            assert.strictEqual(result[1].refper, '2019-12-01');
+            assert.strictEqual(result[2].refper, '2020-12-01');
         });
     });
 });

@@ -153,7 +153,7 @@ VectorLib = function() {
         return intersection;
     }
 
-    this.annualize = function(vector) {
+    function annualize(vector) {
         vector = filter(vector, function(point) {
              return formatDateObject(point.refper).getUTCMonth() == 11
         });
@@ -162,7 +162,7 @@ VectorLib = function() {
         let result = [];
         let currPoint = vector[0];
         let currYear = formatDateObject(vector[0].refper).getUTCFullYear();
-        for (let p = 0; p < vector.length - 1; p++) {
+        for (let p = 1; p < vector.length; p++) {
             let nextYear = formatDateObject(vector[p].refper).getUTCFullYear();
             if (nextYear != currYear) {
                 result.push(currPoint);
@@ -172,20 +172,27 @@ VectorLib = function() {
         }
         result.push(vector[vector.length - 1]);
         return result;
-    };
+    }
+    this.annualize = annualize;
 
-    this.periodToPeriodPercentageChange = function(vector) {
+    function periodToPeriodPercentageChange(vector) {
         return periodDeltaTransformation(
-                vector, (curr, last) => ((curr-last) / Math.abs(last)) * 100);
-    };
+            vector, (curr, last) => ((curr-last) / Math.abs(last)) * 100);
+    }
+    this.periodToPeriodPercentageChange = periodToPeriodPercentageChange;
 
-    this.periodToPeriodDifference = function(vector) {
+    function periodToPeriodDifference(vector) {
         return periodDeltaTransformation(
-                vector, (curr, last) => curr - last);
-    };
+            vector, (curr, last) => curr - last);
+    }
+    this.periodToPeriodDifference = periodToPeriodDifference;
 
     this.samePeriodPreviousYearPercentageChange = function(vector) {
-        return undefined;
+        return periodToPeriodPercentageChange(annualize(vector));
+    };
+
+    this.samePeriodPreviousYearDifference = function(vector) {
+        return periodToPeriodDifference(annualize(vector));
     };
 
     periodDeltaTransformation = function(vector, operation) {
