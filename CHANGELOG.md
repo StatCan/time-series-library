@@ -1,8 +1,11 @@
 # Changelog
 
 ## [1.4.0] - Unreleased
-###
+### Added
 - latestN() function.
+
+### Changed
+- round() and roundBankers() no longer operate in place.
 
 ## [1.3.0] - 2018-12-27
 ### Added
