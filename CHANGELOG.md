@@ -5,7 +5,8 @@
 - latestN() function.
 
 ### Changed
-- round() and roundBankers() no longer operate in place.
+- round() and roundBankers() now return a new vector and no longer operate in 
+place.
 
 ## [1.3.0] - 2018-12-27
 ### Added
