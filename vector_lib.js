@@ -246,19 +246,29 @@ VectorLib = function() {
     this.filter = filter;
 
     this.round = function(vector, decimals) {
-        for (let p = 0; p < vector.length; p++) {
-            let value = vector[p]['value'];
-            vector[p]['value'] = scalarRound(value, decimals);
+        let result = [];
+        for (let point of vector) {
+            let newPoint = {
+                'refper': point.refper,
+                'value': scalarRound(point.value, decimals)
+            };
+            safeMerge(newPoint, point);
+            result.push(newPoint);
         }
-        return vector;
+        return result;
     };
 
     this.roundBankers = function(vector, decimals) {
-        for (let p = 0; p < vector.length; p++) {
-            let value = vector[p]['value'];
-            vector[p]['value'] = scalarRoundBankers(value, decimals);
+        let result = [];
+        for (let point of vector) {
+            let newPoint = {
+                'refper': point.refper,
+                'value': scalarRoundBankers(point.value, decimals)
+            };
+            safeMerge(newPoint, point);
+            result.push(newPoint);
         }
-        return vector;
+        return result;
     }
 
     function scalarRound(value, decimals) {
