@@ -43,7 +43,8 @@ VectorLib = function() {
 
     this.copy = function(vector) {
         let copyVector = [];
-        for (let point of vector) {
+        for (let p = 0; p < vector.length; p++) {
+            let point = vector[p];
             let copyPoint = {'refper': point.refper, 'value': point.value};
             safeMerge(copyPoint, point);
             copyVector.push(copyPoint);
@@ -176,7 +177,7 @@ VectorLib = function() {
             currYear = nextYear;
         }
         result.push(vector[vector.length - 1]);
-        return filter(result, point => {
+        return filter(result, function(point) {
             let month = formatDateObject(result[0].refper).getUTCMonth();
             return formatDateObject(point.refper).getUTCMonth() == month;
         });
@@ -184,14 +185,16 @@ VectorLib = function() {
     this.annualize = annualize;
 
     function periodToPeriodPercentageChange(vector) {
-        return periodDeltaTransformation(
-            vector, (curr, last) => ((curr-last) / Math.abs(last)) * 100);
+        return periodDeltaTransformation(vector, function(curr, last) {
+            return (curr-last) / Math.abs(last) * 100;
+        });
     }
     this.periodToPeriodPercentageChange = periodToPeriodPercentageChange;
 
     function periodToPeriodDifference(vector) {
-        return periodDeltaTransformation(
-            vector, (curr, last) => curr - last);
+        return periodDeltaTransformation(vector, function(curr, last) {
+            return curr - last;
+        });
     }
     this.periodToPeriodDifference = periodToPeriodDifference;
 
@@ -224,7 +227,8 @@ VectorLib = function() {
 
     periodTransformation = function(vector, operation) {
         let result = [];   
-        for (let point of vector) {
+        for (let p = 0; p < vector.length; p++) {
+            let point = vector[p];
             let newPoint = {
                 'refper': point.refper,
                 'value': operation(point.value)
@@ -238,7 +242,8 @@ VectorLib = function() {
 
     function filter(vector, predicate) {
         let result = [];
-        for (let point of vector) {
+        for (let p = 0; p < vector.length; p++) {
+            let point = vector[p];
             if (predicate(point)) result.push(point);
         } 
         return result;
@@ -247,7 +252,8 @@ VectorLib = function() {
 
     this.round = function(vector, decimals) {
         let result = [];
-        for (let point of vector) {
+        for (let p = 0; p < vector.length; p++) {
+            let point = vector[p];
             let newPoint = {
                 'refper': point.refper,
                 'value': scalarRound(point.value, decimals)
@@ -260,7 +266,8 @@ VectorLib = function() {
 
     this.roundBankers = function(vector, decimals) {
         let result = [];
-        for (let point of vector) {
+        for (let p = 0; p < vector.length; p++) {
+            let point = vector[p];
             let newPoint = {
                 'refper': point.refper,
                 'value': scalarRoundBankers(point.value, decimals)
