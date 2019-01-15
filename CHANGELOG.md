@@ -3,6 +3,7 @@
 ## [1.4.0] - Unreleased
 ### Added
 - latestN() function.
+- Support for Internet Explorer 11.
 
 ### Changed
 - round() and roundBankers() now return a new vector and no longer operate in 
