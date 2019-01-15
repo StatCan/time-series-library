@@ -7,6 +7,30 @@ else {
     var module = { }; // Prevent browser exception when exporting as module.
 }
 
+// Polyfills
+if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength,padString) {
+        targetLength = targetLength>>0; 
+        padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        if (this.length > targetLength) {
+            return String(this);
+        }
+        else {
+            targetLength = targetLength-this.length;
+            if (targetLength > padString.length) {
+                padString += padString.repeat(targetLength/padString.length); 
+            }
+            return padString.slice(0,targetLength) + String(this);
+        }
+    };
+}
+
+if (!Array.isArray) {
+    Array.isArray = function(arg) {
+        return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+}
+
 VectorLib = function() {
     operators = {
         '+': function(a, b) { return a + b; },
