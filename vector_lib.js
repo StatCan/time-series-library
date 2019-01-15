@@ -324,7 +324,7 @@ VectorLib = function() {
         for (let s = 0; s < post.length; s++) {
             let symbol = post[s];
             
-            if (typeof symbol === 'string' && symbol.startsWith('v')) {
+            if (typeof symbol === 'string' && symbol[0] == 'v') {
                 stack.push(new ExpressionNode(vectors[symbol]));			
             }
             else if (!isNaN(symbol)) {
@@ -489,7 +489,7 @@ VectorLib = function() {
             if (!isNaN(symbol)) {
                 post.push(symbol);
             }
-            else if (symbol.startsWith('v')) {
+            else if (symbol[0] == 'v') {
                 post.push(symbol);
             }
             else if (symbol == '(') {		
