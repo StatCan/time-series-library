@@ -92,6 +92,15 @@ Vector = function(data) {
         return result;
     }
 
+    this.range = function(startDate, endDate) {
+        startDate = formatDateObject(startDate);
+        endDate = formatDateObject(endDate);
+        let rangeFilter = function(point) {
+            return point.refper >= startDate && point.refper <= endDate;
+        };
+        return this.filter(rangeFilter);
+    }
+
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
         for (let p = 0; p < this.length; p++) {
@@ -102,7 +111,7 @@ Vector = function(data) {
 
     this.intersection = function(other) {
         let result = new Vector();
-        
+
         let pThis = 0;
         let pOther = 0;
         while (pThis < this.length) {
@@ -159,17 +168,6 @@ VectorLib = function() {
         '+': 1,
         '-': 1,
     };
-    
-    this.range = function(vector, startDate, endDate) {
-        startDate = formatDateObject(startDate);
-        endDate = formatDateObject(endDate);
-
-        let rangeFilter = function(point) {
-            return formatDateObject(point.refper) >= startDate
-                    && formatDateObject(point.refper) <= endDate
-        };
-        return filter(vector, rangeFilter);
-    }
 
     this.formatDateObject = function(vector) {
         for (let p = 0; p < vector.length; p++) {
