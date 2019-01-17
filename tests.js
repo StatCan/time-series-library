@@ -109,45 +109,126 @@ describe('Vector', function() {
             assert.strictEqual(result.length, 2);
         });
     });
-});
 
-describe('VectorLib', function() {   
+    describe('#range', function() {
+        it("should return the given date range of a vector", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+                {'refper': '2018-01-04', 'value': 3}
+            ]);
+            result = vector.range('2018-01-02', '2018-01-03');
+            assert.strictEqual(result.length, 2);
+            assert.strictEqual(result.value(0), 1);
+            assert.strictEqual(result.value(1), 2);
+        });
+    });
+
     describe('#interoperable', function() {
         it("should return true if two vectors are interoperable", function() {
-            let v1 = [
+            let v1 = new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2}
-            ];
-            let v2 = [
+            ]);
+            let v2 = new Vector([
                 {'refper': "2018-01-01", 'value': 3},
                 {'refper': "2018-02-01", 'value': 4}
-            ];
-            assert.strictEqual(vlib.interoperable(v1, v2), true);
+            ]);
+            assert.strictEqual(v1.interoperable(v2), true);
         });
 
         it("should return false if two vectors are not interoperable", 
                 function() {
-            let v1 = [
+            let v1 = new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2}
-            ];
-            let v2 = [
+            ]);
+            let v2 = new Vector([
                 {'refper': "2018-01-01", 'value': 3},
                 {'refper': "2018-03-01", 'value': 4}
-            ];
-            assert.strictEqual(vlib.interoperable(v1, v2), false);
+            ]);
+            assert.strictEqual(v1.interoperable(v2), false);
 
-            v1 = [
+            v1 = new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2}
-            ];
-            v2 = [
+            ]);
+            v2 = new Vector([
                 {'refper': "2018-01-01", 'value': 3}
-            ]; 
-            assert.strictEqual(vlib.interoperable(v1, v2), false);
+            ]); 
+            assert.strictEqual(v1.interoperable(v2), false);
         });
     });
 
+    describe('#intersection', function() {
+        let v1 = new Vector([
+            {'refper': "2018-01-01", 'value': 1},
+            {'refper': "2018-02-01", 'value': 2},
+            {'refper': "2018-03-01", 'value': 3},
+            {'refper': "2018-04-01", 'value': 4},
+            {'refper': "2018-05-01", 'value': 5},
+            {'refper': "2018-06-01", 'value': 6}
+        ]);
+        let v2 = new Vector([
+            {'refper': "2018-01-01", 'value': 11},
+            {'refper': "2018-02-01", 'value': 12}
+        ]);
+        let v3 = new Vector([
+            {'refper': "2018-05-01", 'value': 15},
+            {'refper': "2018-06-01", 'value': 16}
+        ]);
+        let v4 = new Vector([
+            {'refper': "2018-03-01", 'value': 13},
+            {'refper': "2018-04-01", 'value': 14}
+        ]);
+        let v5 = new Vector([
+            {'refper': "2018-01-01", 'value': 11}
+        ]);
+        let v6 = new Vector([
+            {'refper': "2018-06-01", 'value': 16}
+        ]);
+        let v7 = new Vector();
+
+
+        let v1Intv2 = new Vector([
+            {'refper': "2018-01-01", 'value': 1},
+            {'refper': "2018-02-01", 'value': 2}
+        ]);
+        let v1Intv3 = new Vector([
+            {'refper': "2018-05-01", 'value': 5},
+            {'refper': "2018-06-01", 'value': 6}
+        ]);
+        let v1Intv4 = new Vector([
+            {'refper': "2018-03-01", 'value': 3},
+            {'refper': "2018-04-01", 'value': 4}
+        ]);
+        let v1Intv5 = new Vector([
+            {'refper': "2018-01-01", 'value': 1}
+        ]);
+        let v1Intv6 = new Vector([
+            {'refper': "2018-06-01", 'value': 6}
+        ]);
+        let v1Intv7 = new Vector([]);
+
+        it("should intersect this vector with another", function() {
+            assert.strictEqual(v1.intersection(v2).equals(v1Intv2), true);
+            assert.strictEqual(v1.intersection(v3).equals(v1Intv3), true);
+            assert.strictEqual(v1.intersection(v4).equals(v1Intv4), true);
+            assert.strictEqual(v1.intersection(v5).equals(v1Intv5), true);
+            assert.strictEqual(v1.intersection(v6).equals(v1Intv6), true);
+            assert.strictEqual(v1.intersection(v7).equals(v1Intv7), true);
+            assert.strictEqual(v2.intersection(v1).equals(v2), true);
+            assert.strictEqual(v3.intersection(v1).equals(v3), true);
+            assert.strictEqual(v4.intersection(v1).equals(v4), true);
+            assert.strictEqual(v5.intersection(v1).equals(v5), true);
+            assert.strictEqual(v6.intersection(v1).equals(v6), true);
+            assert.strictEqual(v7.intersection(v1).equals(v7), true);
+        });
+    });
+});
+
+describe('VectorLib', function() {   
     describe('#evaluate', function() {
         let vectors = {
             'v1': [
@@ -364,21 +445,6 @@ describe('VectorLib', function() {
             assert.strictEqual(result[0].value, 2);
             assert.strictEqual(result[1].value, 4);
             assert.strictEqual(result.length, 2);
-        });
-    });
-
-    describe('#range', function() {
-        it("should return the given date range of a vector", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 0},
-                {'refper': '2018-01-02', 'value': 1},
-                {'refper': '2018-01-03', 'value': 2},
-                {'refper': '2018-01-04', 'value': 3}
-            ];
-            result = vlib.range(vector, '2018-01-02', '2018-01-03');
-            assert.strictEqual(result.length, 2);
-            assert.strictEqual(result[0].value, 1);
-            assert.strictEqual(result[1].value, 2);
         });
     });
 

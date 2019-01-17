@@ -105,7 +105,9 @@ Vector = function(data) {
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
         for (let p = 0; p < this.length; p++) {
-            if (this.refper(p) != other.refper(p)) return false;
+            if (this.refper(p).getTime() != other.refper(p).getTime()) {
+                return false;
+            }
         }   
         return true;  
     }
@@ -118,9 +120,10 @@ Vector = function(data) {
         while (pThis < this.length) {
             while (pOther < other.length) {
                 let thisRefper = this.refper(pThis);
-                let otherRefper = this.refper(pOther);
-                if (thisRefper == otherRefper) {
+                let otherRefper = other.refper(pOther);
+                if (thisRefper.getTime() == otherRefper.getTime()) {
                     result.push(this.get(pThis));
+                    pOther++;
                 }
                 else if (thisRefper > otherRefper) {
                     pOther++;
