@@ -32,7 +32,7 @@ if (!Array.isArray) {
 }
 
 Vector = function(data) {
-    this.data = data || [];
+    this.data = data === undefined ? [] : formatData(data);
     this.length = data === undefined ? 0 : data.length;
 
     this.get = function(index) {
@@ -107,6 +107,16 @@ Vector = function(data) {
             result.push(this.get(p));
         }
         return result;
+    }
+
+    function formatData(data) {
+        for (let p = 0; p < data.length; p++) {
+            formatPoint(data[p]);
+        }
+    }
+
+    function formatPoint(datapoint) {
+        datapoint.refper = formatDateObject(datapoint.refper);
     }
 }
 

@@ -6,7 +6,6 @@
 - get() function.
 - value() function.
 - refper() function.
-- length() function.
 - Support for Internet Explorer 11.
 
 ### Changed
