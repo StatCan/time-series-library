@@ -32,6 +32,7 @@ if (!Array.isArray) {
 }
 
 Vector = function(data) {
+    this.vectorType = true;
     this.data = data === undefined ? [] : formatData(data);
     this.length = data === undefined ? 0 : data.length;
 
@@ -430,7 +431,7 @@ VectorLib = function() {
         this.left = null;
         this.right = null;
         
-        if (Array.isArray(value) || !isNaN(value)) {
+        if (value.vectorType || !isNaN(value)) {
             this.value = value;
         }
         else {
@@ -466,7 +467,7 @@ VectorLib = function() {
         }
 
         this.isVector = function() {
-            return this.operation == null && Array.isArray(this.value);
+            return this.operation == null && this.value.vectorType;
         }
         
         this.isScalar = function() {
@@ -481,13 +482,13 @@ VectorLib = function() {
      * operation: Function to apply to vector values. 
     **/
     operate = function(valueA, valueB, operation) {
-        if (Array.isArray(valueA) && Array.isArray(valueB)) {
+        if (valueA.vectorType && valueB.vectorType) {
             return vectorOperate(valueA, valueB, operation);
         }
-        if (Array.isArray(valueA) && !isNaN(valueB)) {
+        if (valueA.vectorType && !isNaN(valueB)) {
             return vectorScalarOperate(valueA, valueB, operation);
         }	
-        if (!isNaN(valueA) && Array.isArray(valueB)) {
+        if (!isNaN(valueA) && valueB.vectorType) {
             return vectorScalarOperate(valueB, valueA, operation);
         }
         if (!isNaN(valueA) && !isNaN(valueB)) {
@@ -499,55 +500,38 @@ VectorLib = function() {
 
 
     vectorScalarOperate = function(vector, scalar, operation) {
-        let result = [];
-        
+        let result = new Vector();     
         for (let p = 0; p < vector.length; p++) {
             let newPoint = {
-                'refper': vector[p].refper,
-                'value': operation(vector[p].value, scalar)
-            };
-            
+                'refper': vector.refper(p),
+                'value': operation(vector.value(p), scalar)
+            };  
             // Merge keys added by the user.
-            safeMerge(newPoint, vector[p]);
-            
+            safeMerge(newPoint, vector.get(p));     
             result.push(newPoint);
-        }
-        
+        }       
         return result;
     };
 
 
     vectorOperate = function(vectorA, vectorB, operation) {
         // Intersect vectors before operating.
-        let intersect = new VectorLib().intersection([vectorA, vectorB]);
-        vectorA = intersect[0];
-        vectorB = intersect[1];
+        vectorA = vectorA.intersection(vectorB);
+        vectorB = vectorB.intersection(vectorA);
 
-        // Check if vector lengths match.
-        if (vectorA.length != vectorB.length) {
-            throw new Error("Vector lengths do not match.");
-        }
-    
-        let result = [];
+        let result = new Vector();
         
         for (let p = 0; p < vectorA.length; p++) {
-            let refperA = vectorA[p].refper;
-            let refperB = vectorB[p].refper;
-            if (refperA instanceof Date) refperA = refperA.getTime();
-            if (refperB instanceof Date) refperB = refperB.getTime();
-            
-            // Reference period of both vectors points must match.
-            if (refperA != refperB) {
-                throw new Error("Vectors are not interoperable.");
-            }
-            
+            let refperA = vectorA.refper(p);
+            let refperB = vectorB.refper(p);
+
             let newPoint =  {
-                'refper': vectorA[p].refper, 
-                'value': operation(vectorA[p].value, vectorB[p].value)
+                'refper': vectorA.refper(p), 
+                'value': operation(vectorA.value(p), vectorB.value(p))
             };
             
             // Merge keys added by the user.
-            safeMerge(newPoint, vectorA[p]);
+            safeMerge(newPoint, vectorA.get(p));
             
             result.push(newPoint);
         }

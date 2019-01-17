@@ -428,102 +428,65 @@ describe('Vector', function() {
 describe('VectorLib', function() {   
     describe('#evaluate', function() {
         let vectors = {
-            'v1': [
+            'v1': new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2}
-            ],
-            'v2': [
+            ]),
+            'v2': new Vector([
                 {'refper': "2018-01-01", 'value': 3},
                 {'refper': "2018-02-01", 'value': 4}
-            ],
-            'v3': [
+            ]),
+            'v3': new Vector([
                 {'refper': "2018-01-01", 'value': 2},
                 {'refper': "2018-02-01", 'value': 2}
-            ],
-            'v4': [
+            ]),
+            'v4': new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2},
                 {'refper': "2018-03-01", 'value': 3}
-            ],
-            'v5': [
+            ]),
+            'v5': new Vector([
                 {'refper': "2018-01-01", 'value': 4},
                 {'refper': "2018-02-01", 'value': 5},
                 {'refper': "2018-03-01", 'value': 6}
-            ],
-            'v6': [
+            ]),
+            'v6': new Vector([
                 {'refper': "2018-01-01", 'value': 7},
                 {'refper': "2018-02-01", 'value': 8},
                 {'refper': "2018-03-01", 'value': 9}
-            ]
+            ])
         };
 
         let itVexp = function(vexp, expected) {
             it (vexp + " should equal " + JSON.stringify(expected), function() {
                 let result = vlib.evaluate(vexp, vectors);
-                assert.strictEqual(vlib.equals(result, expected), true);
+                assert.strictEqual(result.equals(expected), true);
             });
         };
 
-        let expected = [
+        let expected = new Vector([
             {'refper': "2018-01-01", 'value': 16},
             {'refper': "2018-02-01", 'value': 24}
-        ];
+        ]);
         let vexp = "(v1 + v2) * (2*v3)";
         itVexp(vexp, expected);
 
         vexp = "(v1 - v2) * (2*v3)";
-        expected = [
+        expected = new Vector([
             {'refper': "2018-01-01", 'value': -8},
             {'refper': "2018-02-01", 'value': -8}
-        ];
+        ]);
         itVexp(vexp, expected);
 
         vexp = "v6 - v5 - v4";
-        expected = [
+        expected = new Vector([
             {'refper': "2018-01-01", 'value': 2},
             {'refper': "2018-02-01", 'value': 1},
             {'refper': "2018-03-01", 'value': 0}
-        ];       
+        ]);       
         itVexp(vexp, expected);
 
         vexp = ""
-    });
-
-    describe('#intersection', function() {
-        // TODO: Test on empty vectors.
-        let v1 = [
-            {'refper': "2018-01-01", 'value': 1},
-            {'refper': "2018-02-01", 'value': 2},
-            {'refper': "2018-03-01", 'value': 3}
-        ];
-        let v2 = [
-            {'refper': "2018-01-01", 'value': 3},
-            {'refper': "2018-02-01", 'value': 4}
-        ];
-        let v3 = [
-            {'refper': "2018-01-01", 'value': 2}
-        ];
-
-        let expected1 = [{'refper': "2018-01-01", 'value': 1}];
-        let expected2 = [{'refper': "2018-01-01", 'value': 3}];
-        let expected3 = [{'refper': "2018-01-01", 'value': 2}];
-
-        it("should return the intersections of a set of vectors", function() {
-            let intersection = vlib.intersection([v1, v2, v3]);
-
-            assert.strictEqual(vlib.equals(intersection[0], expected1), true);
-            assert.strictEqual(vlib.equals(intersection[1], expected2), true);
-            assert.strictEqual(vlib.equals(intersection[2], expected3), true);
-        });
-
-        it("should handle dictionaries of ID->vector", function() {
-            let dict = {'v1': v1, 'v2': v2, 'v3': v3};
-            let intersection = vlib.intersection(dict);
-
-            assert.strictEqual(vlib.equals(intersection.v1, expected1), true);
-            assert.strictEqual(vlib.equals(intersection.v2, expected2), true);
-            assert.strictEqual(vlib.equals(intersection.v3, expected3), true);
-        });
     });
 
     describe('#getVectorIds', function() {
@@ -533,19 +496,6 @@ describe('VectorLib', function() {
             assert.strictEqual(ids[0], "1");
             assert.strictEqual(ids[1], "2");
             assert.strictEqual(ids[2], "3");
-        });
-    });
-
-    describe('#periodTransformation', function() {
-        it("should return transformed vector based on a function", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-01-02', 'value': 2},
-            ];
-            result = vlib.periodTransformation(vector, value => value * 2);
-            assert.strictEqual(result[0].value, 2);
-            assert.strictEqual(result[1].value, 4);
-            assert.strictEqual(result.length, 2);
         });
     });
 
