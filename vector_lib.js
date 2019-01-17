@@ -31,6 +31,44 @@ if (!Array.isArray) {
     };
 }
 
+Vector = function(data) {
+    this.data = data || [];
+
+    this.get = function(index) {
+        return this.data[index];
+    };
+
+    this.value = function(index) {
+        return this.data[index].value;
+    };
+
+    this.refper = function(index) {
+        return this.data[index].refper;
+    };
+
+    this.length = function() {
+        return this.data.length;
+    }
+
+    this.equals = function(other, index) {
+        let pointEquals = function(a, b) {
+            return a.refper == b.refper && a.value == b.value;
+        }
+
+        if (index !== undefined) {
+            return pointEquals(this.get(index), other.get(index));
+        }
+
+        if (this.length() != other.length()) {
+            return false;
+        } 
+        for (let p = 0; p < this.length(); p++) {
+            if (!pointEquals(this.get(p), other.get(p))) return false;
+        }      
+        return true;
+    };
+}
+
 VectorLib = function() {
     operators = {
         '+': function(a, b) { return a + b; },
