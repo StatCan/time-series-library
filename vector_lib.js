@@ -137,8 +137,40 @@ Vector = function(data) {
     this.latestN = function(n) {
         if (n > this.length) throw new Error("N > length of vector.");
         let result = new Vector();
-        for (let p = vector.length - n; p < this.length; p++) {
+        for (let p = this.length - n; p < this.length; p++) {
             result.push(this.get(p));
+        }
+        return result;
+    }
+
+    this.periodDeltaTransformation = function(operation) {
+        let result = new Vector();
+
+        for (let p = 0; p < this.length; p++) {
+            let value = null;
+            if (this.get(p-1) != undefined) {
+                let lastVal = this.value(p - 1);
+                let currVal =  this.value(p);
+                value = operation(currVal, lastVal);
+            }
+            let point = {'refper': this.refper(p), 'value': value};
+            safeMerge(point, this.get(p));
+            result.push(point)
+        }
+
+        return result;
+    }
+
+    this.periodTransformation = function(operation) {
+        let result = new Vector();   
+        for (let p = 0; p < this.length; p++) {
+            let point = this.get(p);
+            let newPoint = {
+                'refper': point.refper,
+                'value': operation(point.value)
+            };
+            safeMerge(newPoint, point);
+            result.push(newPoint);
         }
         return result;
     }
@@ -291,40 +323,6 @@ VectorLib = function() {
     this.samePeriodPreviousYearDifference = function(vector) {
         return periodToPeriodDifference(annualize(vector));
     };
-
-    periodDeltaTransformation = function(vector, operation) {
-        // TODO: Better name for this and expose to API.
-        let result = [];
-
-        for (let p = 0; p < vector.length; p++) {
-            let value = null;
-            if (vector[p-1] != undefined) {
-                let lastVal = vector[p - 1].value;
-                let currVal =  vector[p].value;
-                value = operation(currVal, lastVal);
-            }
-            let point = {'refper': vector[p].refper, 'value': value};
-            safeMerge(point, vector[p]);
-            result.push(point)
-        }
-
-        return result;
-    };
-
-    periodTransformation = function(vector, operation) {
-        let result = [];   
-        for (let p = 0; p < vector.length; p++) {
-            let point = vector[p];
-            let newPoint = {
-                'refper': point.refper,
-                'value': operation(point.value)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
-    };
-    this.periodTransformation = periodTransformation;
 
     this.round = function(vector, decimals) {
         let result = [];
