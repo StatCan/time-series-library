@@ -393,6 +393,36 @@ describe('Vector', function() {
             assert.strictEqual(result.refperStr(2), '2020-12-01');
         });
     });
+
+    describe('#round', function() {
+        it("should round values in a vector", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1.555},
+                {'refper': '2018-01-02', 'value': 1.554}
+            ]);
+    
+            let result = vector.round(2);
+            assert.strictEqual(result.value(0), 1.56);
+            assert.strictEqual(result.value(1), 1.55);
+    
+            result = vector.round();
+            assert.strictEqual(result.value(0), 2);
+            assert.strictEqual(result.value(1), 2);
+        });
+    });
+
+    describe('#roundBannkers', function() {
+        it("should Banker's round values in a vector", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1.5},
+                {'refper': '2018-01-02', 'value': 2.5}
+            ]);
+    
+            let result = vector.roundBankers();
+            assert.strictEqual(result.value(0), 2);
+            assert.strictEqual(result.value(1), 2);
+        });
+    });
 });
 
 describe('VectorLib', function() {   
@@ -493,36 +523,6 @@ describe('VectorLib', function() {
             assert.strictEqual(vlib.equals(intersection.v1, expected1), true);
             assert.strictEqual(vlib.equals(intersection.v2, expected2), true);
             assert.strictEqual(vlib.equals(intersection.v3, expected3), true);
-        });
-    });
-
-    describe('#round', function() {
-        it("should round values in a vector", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 1.555},
-                {'refper': '2018-01-02', 'value': 1.554}
-            ];
-    
-            let result = vlib.round(vlib.copy(vector), 2);
-            assert.strictEqual(result[0].value, 1.56);
-            assert.strictEqual(result[1].value, 1.55);
-    
-            result = vlib.round(vlib.copy(vector));
-            assert.strictEqual(result[0].value, 2);
-            assert.strictEqual(result[1].value, 2);
-        });
-    });
-
-    describe('#roundBannkers', function() {
-        it("should Banker's round values in a vector", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 1.5},
-                {'refper': '2018-01-02', 'value': 2.5}
-            ];
-    
-            let result = vlib.roundBankers(vlib.copy(vector));
-            assert.strictEqual(result[0].value, 2);
-            assert.strictEqual(result[1].value, 2);
         });
     });
 

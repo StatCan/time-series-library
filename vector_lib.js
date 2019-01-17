@@ -219,6 +219,47 @@ Vector = function(data) {
         });
     }
 
+    this.round = function(decimals) {
+        let result = new Vector();
+        for (let p = 0; p < this.length; p++) {
+            let point = this.get(p);
+            let newPoint = {
+                'refper': point.refper,
+                'value': scalarRound(point.value, decimals)
+            };
+            safeMerge(newPoint, point);
+            result.push(newPoint);
+        }
+        return result;
+    };
+
+    this.roundBankers = function(decimals) {
+        let result = new Vector();
+        for (let p = 0; p < this.length; p++) {
+            let point = this.get(p);
+            let newPoint = {
+                'refper': point.refper,
+                'value': scalarRoundBankers(point.value, decimals)
+            };
+            safeMerge(newPoint, point);
+            result.push(newPoint);
+        }
+        return result;
+    }
+
+    function scalarRound(value, decimals) {
+        decimals = decimals || 0;
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    }
+
+    function scalarRoundBankers(value, decimals) {
+        decimals = decimals || 0;
+        let x = value * Math.pow(10, decimals);
+        let r = Math.round(x);
+        let br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r-1) : r;
+        return br / Math.pow(10, decimals);
+    }
+
     function formatData(data) {
         for (let p = 0; p < data.length; p++) {
             formatPoint(data[p]);
@@ -326,47 +367,6 @@ VectorLib = function() {
         }		
         
         return intersection;
-    }
-
-    this.round = function(vector, decimals) {
-        let result = [];
-        for (let p = 0; p < vector.length; p++) {
-            let point = vector[p];
-            let newPoint = {
-                'refper': point.refper,
-                'value': scalarRound(point.value, decimals)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
-    };
-
-    this.roundBankers = function(vector, decimals) {
-        let result = [];
-        for (let p = 0; p < vector.length; p++) {
-            let point = vector[p];
-            let newPoint = {
-                'refper': point.refper,
-                'value': scalarRoundBankers(point.value, decimals)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
-    }
-
-    function scalarRound(value, decimals) {
-        decimals = decimals || 0;
-        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-    }
-
-    function scalarRoundBankers(value, decimals) {
-        decimals = decimals || 0;
-        let x = value * Math.pow(10, decimals);
-        let r = Math.round(x);
-        let br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r-1) : r;
-        return br / Math.pow(10, decimals);
     }
  
     this.getVectorIds = function(expression) {
