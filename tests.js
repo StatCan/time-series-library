@@ -3,42 +3,115 @@ let assert = require('assert');
 let VectorLib = require('./vector_lib.js');
 let vlib = new VectorLib();
 
-describe('VectorLib', function() {
-    describe('#equals', function() {
-        it("should return true if two vectors are equal", function() {
-            let v1 = [
+describe('Vector', function() {
+    describe('#get', function() {
+        it("should return the datapoint at a given index", function() {
+            let v = new Vector([
                 {'refper': "2018-01-01", 'value': 1},
                 {'refper': "2018-02-01", 'value': 2}
-            ];
-            let v2 = [
-                {'refper': "2018-01-01", 'value': 1},
-                {'refper': "2018-02-01", 'value': 2}
-            ];
-            assert.strictEqual(vlib.equals(v1, v2), true);
-        });
-
-        it("should return false if two vectors are not equal", function() {
-            let v1 = [
-                {'refper': "2018-01-01", 'value': 1},
-                {'refper': "2018-02-01", 'value': 1}
-            ];
-            let v2 = [
-                {'refper': "2018-01-01", 'value': 1},
-                {'refper': "2018-02-01", 'value': 2}
-            ];
-            assert.strictEqual(vlib.equals(v1, v2), false);
-
-            v1 = [
-                {'refper': "2018-01-01", 'value': 1},
-                {'refper': "2018-02-01", 'value': 1}
-            ];
-            v2 = [
-                {'refper': "2018-01-01", 'value': 1}
-            ]; 
-            assert.strictEqual(vlib.equals(v1, v2), false);
+            ]);
+            assert.strictEqual(v.get(1).value, 2);
         });
     });
 
+    describe('#refper', function() {
+        it("should return the reference period at a given index", function() {
+            let v = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);
+            assert.strictEqual(v.refperStr(1), "2018-02-01");
+        });
+    });
+
+    describe('#value', function() {
+        it("should return the value at a given index", function() {
+            let v = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);
+            assert.strictEqual(v.value(1), 2);
+        });
+    });
+
+    describe('#push', function() {
+        it("should append a datapoint to a vector", function() {
+            let v = new Vector([
+                {'refper': "2018-01-01", 'value': 1}
+            ]);
+            v.push({'refper': "2018-02-01", 'value': 2});
+            assert.strictEqual(v.value(1), 2);
+            assert.strictEqual(v.length, 2);
+        });
+    });
+
+    describe('#equals', function() {
+        it("should return true if two vectors are equal", function() {
+            let v1 = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);
+            let v2 = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);
+            assert.strictEqual(v1.equals(v2), true);
+        });
+
+        it("should return false if two vectors are not equal", function() {
+            let v1 = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 1}
+            ]);
+            let v2 = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);
+            assert.strictEqual(v1.equals(v2), false);
+
+            v1 = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 1}
+            ]);
+            v2 = new Vector([
+                {'refper': "2018-01-01", 'value': 1}
+            ]); 
+            assert.strictEqual(v1.equals(v2), false);
+        });
+    });
+
+    describe('#copy', function() {
+        it("should create a copy of a vector", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1, 'extra': 0},
+                {'refper': '2018-01-02', 'value': 2}
+            ]);
+    
+            let result = vector.copy(vector);
+            assert.strictEqual(result.refperStr(0), '2018-01-01');
+            assert.strictEqual(result.refperStr(1), '2018-01-02');
+            assert.strictEqual(result.value(0), 1);
+            assert.strictEqual(result.value(1), 2);
+            assert.strictEqual(result.get(0).extra, 0);
+        });
+    });
+
+    describe('#filter', function() {
+        it("should return a filtered vector based on a predicate", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+            ]);
+            result = vector.filter(p => p.value % 2 == 0);
+            assert.strictEqual(result.value(0), 0);
+            assert.strictEqual(result.value(1), 2);
+            assert.strictEqual(result.length, 2);
+        });
+    });
+});
+
+describe('VectorLib', function() {   
     describe('#interoperable', function() {
         it("should return true if two vectors are interoperable", function() {
             let v1 = [
@@ -175,21 +248,6 @@ describe('VectorLib', function() {
         });
     });
 
-    describe('#copy', function() {
-        it("should create a copy of a vector", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-01-02', 'value': 2}
-            ];
-    
-            let result = vlib.copy(vector);
-            assert.strictEqual(result[0].refper, '2018-01-01');
-            assert.strictEqual(result[1].refper, '2018-01-02');
-            assert.strictEqual(result[0].value, 1);
-            assert.strictEqual(result[1].value, 2);
-        });
-    });
-
     describe('#periodToPeriodPercentageChange', function() {
         it("should compute the percentage change vector", function() {
             let vector = [
@@ -293,20 +351,6 @@ describe('VectorLib', function() {
             assert.strictEqual(ids[0], "1");
             assert.strictEqual(ids[1], "2");
             assert.strictEqual(ids[2], "3");
-        });
-    });
-
-    describe('#filter', function() {
-        it("should return a filtered vector based on a predicate", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 0},
-                {'refper': '2018-01-02', 'value': 1},
-                {'refper': '2018-01-03', 'value': 2},
-            ];
-            result = vlib.filter(vector, p => p.value % 2 == 0);
-            assert.strictEqual(result[0].value, 0);
-            assert.strictEqual(result[1].value, 2);
-            assert.strictEqual(result.length, 2);
         });
     });
 

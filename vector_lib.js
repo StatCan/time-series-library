@@ -39,16 +39,16 @@ Vector = function(data) {
         return this.data[index];
     }
 
-    this.value = function(index) {
-        return this.data[index].value;
-    }
-
     this.refper = function(index) {
         return this.data[index].refper;
     }
 
-    this.length = function() {
-        return this.data.length;
+    this.refperStr = function(index) {
+        return datestring(this.refper(index));
+    }
+
+    this.value = function(index) {
+        return this.data[index].value;
     }
 
     this.push = function(datapoint) {
@@ -58,7 +58,8 @@ Vector = function(data) {
 
     this.equals = function(other, index) {
         let pointEquals = function(a, b) {
-            return a.refper == b.refper && a.value == b.value;
+            return a.refper.getTime() == b.refper.getTime() 
+                    && a.value == b.value;
         }
 
         if (index !== undefined) {
@@ -219,10 +220,12 @@ Vector = function(data) {
         for (let p = 0; p < data.length; p++) {
             formatPoint(data[p]);
         }
+        return data;
     }
 
     function formatPoint(datapoint) {
         datapoint.refper = formatDateObject(datapoint.refper);
+        return datapoint;
     }
 }
 
