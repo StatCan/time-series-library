@@ -175,6 +175,26 @@ Vector = function(data) {
         return result;
     }
 
+    this.periodToPeriodPercentageChange = function() {
+        return this.periodDeltaTransformation(function(curr, last) {
+            return (curr-last) / Math.abs(last) * 100;
+        });
+    }
+
+    this.periodToPeriodDifference = function() {
+        return this.periodDeltaTransformation(function(curr, last) {
+            return curr - last;
+        });
+    }
+
+    this.samePeriodPreviousYearPercentageChange = function() {
+        return this.periodToPeriodPercentageChange(this.annualize());
+    };
+
+    this.samePeriodPreviousYearDifference = function() {
+        return this.periodToPeriodDifference(this.annualize());
+    };
+
     this.annualize = function() {
         if (this.length == 0) return this;
         
@@ -301,28 +321,6 @@ VectorLib = function() {
         
         return intersection;
     }
-
-    function periodToPeriodPercentageChange(vector) {
-        return periodDeltaTransformation(vector, function(curr, last) {
-            return (curr-last) / Math.abs(last) * 100;
-        });
-    }
-    this.periodToPeriodPercentageChange = periodToPeriodPercentageChange;
-
-    function periodToPeriodDifference(vector) {
-        return periodDeltaTransformation(vector, function(curr, last) {
-            return curr - last;
-        });
-    }
-    this.periodToPeriodDifference = periodToPeriodDifference;
-
-    this.samePeriodPreviousYearPercentageChange = function(vector) {
-        return periodToPeriodPercentageChange(annualize(vector));
-    };
-
-    this.samePeriodPreviousYearDifference = function(vector) {
-        return periodToPeriodDifference(annualize(vector));
-    };
 
     this.round = function(vector, decimals) {
         let result = [];
