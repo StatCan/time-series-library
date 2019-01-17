@@ -33,6 +33,7 @@ if (!Array.isArray) {
 
 Vector = function(data) {
     this.data = data || [];
+    this.length = data === undefined ? 0 : data.length;
 
     this.get = function(index) {
         return this.data[index];
@@ -50,6 +51,11 @@ Vector = function(data) {
         return this.data.length;
     }
 
+    this.push = function(datapoint) {
+        this.data.push(datapoint);
+        this.length++;
+    }
+
     this.equals = function(other, index) {
         let pointEquals = function(a, b) {
             return a.refper == b.refper && a.value == b.value;
@@ -59,18 +65,18 @@ Vector = function(data) {
             return pointEquals(this.get(index), other.get(index));
         }
 
-        if (this.length() != other.length()) {
+        if (this.length != other.length) {
             return false;
         } 
-        for (let p = 0; p < this.length(); p++) {
+        for (let p = 0; p < this.length; p++) {
             if (!pointEquals(this.get(p), other.get(p))) return false;
         }      
         return true;
     }
 
     this.copy = function() {
-        let copy = [];
-        for (let p = 0; p < this.length(); p++) {
+        let copy = new Vector();
+        for (let p = 0; p < this.length; p++) {
             let copyPoint = {'refper': this.refper(p), 'value': this.value(p)};
             safeMerge(copyPoint, this.get(p));
             copy.push(copyPoint);
@@ -79,25 +85,25 @@ Vector = function(data) {
     }
 
     this.filter = function(predicate) {
-        let result = [];
-        for (let p = 0; p < this.length(); p++) {
+        let result = new Vector();
+        for (let p = 0; p < this.length; p++) {
             if (predicate(this.get(p))) result.push(this.get(p));
         } 
         return result;
     }
 
     this.interoperable = function(other) {
-        if (this.length() != other.length()) return false;
-        for (let p = 0; p < this.length(); p++) {
+        if (this.length != other.length) return false;
+        for (let p = 0; p < this.length; p++) {
             if (this.refper(p) != other.refper(p)) return false;
         }   
         return true;  
     }
 
     this.latestN = function(n) {
-        if (n > this.length()) throw new Error("N > length of vector.");
-        let result = [];
-        for (let p = vector.length - n; p < this.length(); p++) {
+        if (n > this.length) throw new Error("N > length of vector.");
+        let result = new Vector();
+        for (let p = vector.length - n; p < this.length; p++) {
             result.push(this.get(p));
         }
         return result;
