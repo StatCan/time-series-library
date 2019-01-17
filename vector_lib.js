@@ -36,15 +36,15 @@ Vector = function(data) {
 
     this.get = function(index) {
         return this.data[index];
-    };
+    }
 
     this.value = function(index) {
         return this.data[index].value;
-    };
+    }
 
     this.refper = function(index) {
         return this.data[index].refper;
-    };
+    }
 
     this.length = function() {
         return this.data.length;
@@ -66,7 +66,17 @@ Vector = function(data) {
             if (!pointEquals(this.get(p), other.get(p))) return false;
         }      
         return true;
-    };
+    }
+
+    this.copy = function() {
+        let copy = [];
+        for (let p = 0; p < this.length(); p++) {
+            let copyPoint = {'refper': this.refper(p), 'value': this.value(p)};
+            safeMerge(copyPoint, this.get(p));
+            copy.push(copyPoint);
+        }
+        return copy;
+    }
 }
 
 VectorLib = function() {
@@ -84,37 +94,6 @@ VectorLib = function() {
         '-': 1,
     };
     
-    
-    this.equals = function(vectorA, vectorB) {
-        if (vectorA.length != vectorB.length) {
-            return false;
-        }
-        
-        for (let p = 0; p < vectorA.length; p++) {
-            if (vectorA[p].refper != vectorB[p].refper) {
-                return false;
-            }
-            if (vectorA[p].value != vectorB[p].value) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-
-    this.copy = function(vector) {
-        let copyVector = [];
-        for (let p = 0; p < vector.length; p++) {
-            let point = vector[p];
-            let copyPoint = {'refper': point.refper, 'value': point.value};
-            safeMerge(copyPoint, point);
-            copyVector.push(copyPoint);
-        }
-        return copyVector;
-    }
-
-
     this.range = function(vector, startDate, endDate) {
         startDate = formatDateObject(startDate);
         endDate = formatDateObject(endDate);
