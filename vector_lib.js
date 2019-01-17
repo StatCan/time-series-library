@@ -143,6 +143,26 @@ Vector = function(data) {
         return result;
     }
 
+    this.annualize = function() {
+        if (this.length == 0) return this;
+        
+        let result = new Vector();
+        let currPoint = this.get(0);
+        let currYear = this.refper(0).getUTCFullYear();
+        for (let p = 1; p < vector.length; p++) {
+            let nextYear = this.refper(p).getUTCFullYear();
+            if (nextYear != currYear) {
+                result.push(currPoint);
+            }
+            currPoint = this.get(p);
+            currYear = nextYear;
+        }
+        result.push(this.get(vector.length - 1));
+        return this.filter(function(point) {
+            return point.refper.getUTCMonth() == result.refper(0).getUTCMonth();
+        });
+    }
+
     function formatData(data) {
         for (let p = 0; p < data.length; p++) {
             formatPoint(data[p]);
@@ -249,28 +269,6 @@ VectorLib = function() {
         
         return intersection;
     }
-
-    function annualize(vector) {
-        if (vector.length == 0) return vector;
-        
-        let result = [];
-        let currPoint = vector[0];
-        let currYear = formatDateObject(vector[0].refper).getUTCFullYear();
-        for (let p = 1; p < vector.length; p++) {
-            let nextYear = formatDateObject(vector[p].refper).getUTCFullYear();
-            if (nextYear != currYear) {
-                result.push(currPoint);
-            }
-            currPoint = vector[p];
-            currYear = nextYear;
-        }
-        result.push(vector[vector.length - 1]);
-        return filter(result, function(point) {
-            let month = formatDateObject(result[0].refper).getUTCMonth();
-            return formatDateObject(point.refper).getUTCMonth() == month;
-        });
-    }
-    this.annualize = annualize;
 
     function periodToPeriodPercentageChange(vector) {
         return periodDeltaTransformation(vector, function(curr, last) {
