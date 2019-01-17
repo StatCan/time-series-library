@@ -52,7 +52,7 @@ Vector = function(data) {
     }
 
     this.push = function(datapoint) {
-        this.data.push(datapoint);
+        this.data.push(formatPoint(datapoint));
         this.length++;
     }
 
@@ -192,11 +192,11 @@ Vector = function(data) {
     }
 
     this.samePeriodPreviousYearPercentageChange = function() {
-        return this.periodToPeriodPercentageChange(this.annualize());
+        return this.annualize().periodToPeriodPercentageChange();
     };
 
     this.samePeriodPreviousYearDifference = function() {
-        return this.periodToPeriodDifference(this.annualize());
+        return this.annualize().periodToPeriodDifference();
     };
 
     this.annualize = function() {
@@ -205,7 +205,7 @@ Vector = function(data) {
         let result = new Vector();
         let currPoint = this.get(0);
         let currYear = this.refper(0).getUTCFullYear();
-        for (let p = 1; p < vector.length; p++) {
+        for (let p = 1; p < this.length; p++) {
             let nextYear = this.refper(p).getUTCFullYear();
             if (nextYear != currYear) {
                 result.push(currPoint);
@@ -213,8 +213,8 @@ Vector = function(data) {
             currPoint = this.get(p);
             currYear = nextYear;
         }
-        result.push(this.get(vector.length - 1));
-        return this.filter(function(point) {
+        result.push(this.get(this.length - 1));
+        return result.filter(function(point) {
             return point.refper.getUTCMonth() == result.refper(0).getUTCMonth();
         });
     }
