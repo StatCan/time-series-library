@@ -77,6 +77,31 @@ Vector = function(data) {
         }
         return copy;
     }
+
+    this.filter = function(predicate) {
+        let result = [];
+        for (let p = 0; p < this.length(); p++) {
+            if (predicate(this.get(p))) result.push(this.get(p));
+        } 
+        return result;
+    }
+
+    this.interoperable = function(other) {
+        if (this.length() != other.length()) return false;
+        for (let p = 0; p < this.length(); p++) {
+            if (this.refper(p) != other.refper(p)) return false;
+        }   
+        return true;  
+    }
+
+    this.latestN = function(n) {
+        if (n > this.length()) throw new Error("N > length of vector.");
+        let result = [];
+        for (let p = vector.length - n; p < this.length(); p++) {
+            result.push(this.get(p));
+        }
+        return result;
+    }
 }
 
 VectorLib = function() {
@@ -104,23 +129,6 @@ VectorLib = function() {
         };
         return filter(vector, rangeFilter);
     }
-
-    this.latestN = function(vector, n) {
-        if (n > vector.length) throw new Error("N > length of vector.");
-        let result = [];
-        for (let p = vector.length - n; p < vector.length; p++) {
-            result.push(vector[p]);
-        }
-        return result;
-    };
-
-    this.interoperable = function(vectorA, vectorB) {
-        if (vectorA.length != vectorB.length) return false;
-        for (let p = 0; p < vectorA.length; p++) {
-            if (vectorA[p].refper != vectorB[p].refper) return false;
-        }   
-        return true;  
-    };
 
     this.formatDateObject = function(vector) {
         for (let p = 0; p < vector.length; p++) {
@@ -280,16 +288,6 @@ VectorLib = function() {
         return result;
     };
     this.periodTransformation = periodTransformation;
-
-    function filter(vector, predicate) {
-        let result = [];
-        for (let p = 0; p < vector.length; p++) {
-            let point = vector[p];
-            if (predicate(point)) result.push(point);
-        } 
-        return result;
-    }
-    this.filter = filter;
 
     this.round = function(vector, decimals) {
         let result = [];

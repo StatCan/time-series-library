@@ -12,6 +12,7 @@
 ### Changed
 - round() and roundBankers() now return a new vector and no longer operate in 
 place.
+- Vectors will now always use date objects internally instead of date strings.
 
 ## [1.3.0] - 2018-12-27
 ### Added
