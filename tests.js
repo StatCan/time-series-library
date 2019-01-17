@@ -139,6 +139,7 @@ describe('VectorLib', function() {
     });
 
     describe('#intersection', function() {
+        // TODO: Test on empty vectors.
         let v1 = [
             {'refper': "2018-01-01", 'value': 1},
             {'refper': "2018-02-01", 'value': 2},

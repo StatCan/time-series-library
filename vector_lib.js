@@ -100,6 +100,31 @@ Vector = function(data) {
         return true;  
     }
 
+    this.intersection = function(other) {
+        let result = new Vector();
+        
+        let pThis = 0;
+        let pOther = 0;
+        while (pThis < this.length) {
+            while (pOther < other.length) {
+                let thisRefper = this.refper(pThis);
+                let otherRefper = this.refper(pOther);
+                if (thisRefper == otherRefper) {
+                    result.push(this.get(pThis));
+                }
+                else if (thisRefper > otherRefper) {
+                    pOther++;
+                }
+                else {
+                    break;
+                }
+            }
+            pThis++;
+        }
+
+        return result;
+    }
+
     this.latestN = function(n) {
         if (n > this.length) throw new Error("N > length of vector.");
         let result = new Vector();
