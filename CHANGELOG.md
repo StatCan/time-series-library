@@ -15,6 +15,10 @@
 place.
 - Vectors will now always use date objects internally instead of date strings.
 
+### Removed
+- Bulk intersection function from VectorLib. This has been replaced by the 
+intersection function of Vector.
+
 ## [1.3.0] - 2018-12-27
 ### Added
 - periodTransformation() function.
