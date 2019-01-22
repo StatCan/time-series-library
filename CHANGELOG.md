@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2019-01-22
 ### Added
 - Added Vector class. Most functions are now functions of this class.
 - latestN() function.
@@ -10,6 +10,7 @@
 - Support for Internet Explorer 11.
 
 ### Changed
+- VectorLib was seperated into Vector and VectorLib.
 - round() and roundBankers() now return a new vector and no longer operate in 
 place.
 - Vectors will now always use date objects internally instead of date strings.
