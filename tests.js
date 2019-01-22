@@ -125,6 +125,22 @@ describe('Vector', function() {
         });
     });
 
+    describe('#latestN', function() {
+        it("should return the latest N reference periods", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', value: 1},
+                {'refper': '2018-02-01', value: 2},
+                {'refper': '2018-03-01', value: 3},
+                {'refper': '2018-04-01', value: 4}
+            ]);
+            result = vector.latestN(2);
+
+            assert.strictEqual(result.length, 2);
+            assert.strictEqual(result.value(0), 3);
+            assert.strictEqual(result.value(1), 4);
+        });
+    });
+
     describe('#interoperable', function() {
         it("should return true if two vectors are interoperable", function() {
             let v1 = new Vector([
@@ -224,22 +240,6 @@ describe('Vector', function() {
             assert.strictEqual(v5.intersection(v1).equals(v5), true);
             assert.strictEqual(v6.intersection(v1).equals(v6), true);
             assert.strictEqual(v7.intersection(v1).equals(v7), true);
-        });
-    });
-  
-    describe('#latestN', function() {
-        it("should return the latest N reference periods", function() {
-            let vector = new Vector([
-                {'refper': '2018-01-01', value: 1},
-                {'refper': '2018-02-01', value: 2},
-                {'refper': '2018-03-01', value: 3},
-                {'refper': '2018-04-01', value: 4}
-            ]);
-            result = vector.latestN(2);
-
-            assert.strictEqual(result.length, 2);
-            assert.strictEqual(result.value(0), 3);
-            assert.strictEqual(result.value(1), 4);
         });
     });
   

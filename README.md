@@ -8,6 +8,7 @@ vector data.
 Using Node.js:
 ```javascript
 let VectorLib = require('./vector_lib.js');
+let vector = new Vector();
 let vlib = new VectorLib();
 ```
 
@@ -16,90 +17,188 @@ Using a web browser:
 <script src="./vector_lib.js"></script>
 
 <script>
+    let vector = new Vector();
     let vlib = new VectorLib();
 </script>
 ```
 
 # Usage
 
-[evaluate()](#evaluate)  
-[equals()](#equals)  
-[copy()](#copy)  
-[range()](#range)  
-[interoperable()](#interoperable)  
-[intersection()](#intersection)  
-[annualize()](#annualize)  
-[periodTransformation()](#periodTransformation)  
-[periodToPeriodPercentageChange()](#periodToPeriodPercentageChange)  
-[periodToPeriodDifference()](#periodToPeriodDifference)  
-[samePeriodPreviousYearPercentageChange()](#samePeriodPreviousYearPercentageChange)  
-[samePeriodPreviousYearDifference()](#samePeriodPreviousYearDifference)  
-[round()](#round)  
-[roundBankers()](#roundBankers)  
-[filter()](#filter)
+**Vector:**  
+[get()](#Vector.get)  
+[refper(), refperStr()](#Vector.refper)  
+[value()](#Vector.value)  
+[length](#Vector.length)  
+[push()](#Vector.push)  
+[equals()](#Vector.equals)  
+[copy()](#Vector.copy)  
+[filter()](#Vector.filter)  
+[range()](#Vector.range)  
+[latestN()](#Vector.latestN)  
+[interoperable()](#Vector.interoperable)  
+[intersection()](#Vector.intersection)  
+[periodTransformation()](#Vector.periodTransformation)  
+[periodToPeriodPercentageChange()](#Vector.periodToPeriodPercentageChange)  
+[periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
+[samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
+[samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
+[annualize()](#Vector.annualize)  
+[round()](#Vector.round)  
+[roundBankers()](#Vector.roundBankers)  
 
-<a name="evaluate"></a>
-## evaluate(expression, vectors)
+**VectorLib:**  
+[evaluate()](#VectorLib.evaluate)  
 
-Performs arithmetic on a set of vectors. 
+## Vector
 
-All input vectors must be interoperable with each other, meaning each vector 
-must have the same length and all vectors must be composed of datapoints with 
-the same reference periods. 
+To create a new vector:
+```javascript
+let vector = new Vector();
+```
 
-The function **intersection()** can be used to convert a set of 
-non-interoperable vectors into a set of interoperable vectors.
+Vectors can also be initialized with data:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2},
+    {'refper': "2018-03-01", 'value': 3}
+]);
+```
+
+The value of **refper** may be a **yyyy-mm-dd** formatted date string or a 
+**Date** object. When using a date object, the UTC time will always be used.
+
+<a name="Vector.get"></a>
+### get(index)
+
+Returns he datapoint of a vector at a specific index.
 
 Example:
 ```javascript
-let vectors = {
-    'v1': [
-        {'refper': "2018-01-01", 'value': 1},
-        {'refper': "2018-02-01", 'value': 2}
-    ],
-    'v2': [
-        {'refper': "2018-01-01", 'value': 3},
-        {'refper': "2018-02-01", 'value': 4}
-    ],
-    'v3': [
-        {'refper': "2018-01-01", 'value': 2},
-        {'refper': "2018-02-01", 'value': 2}
-    ]
-};
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2},
+    {'refper': "2018-02-01", 'value': 3}
+]);
 
-let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
+let result = vector.get(1);
+```
+
+Result:
+```javascript
+{'refper': "2018-02-01", 'value': 2}
+```
+
+<a name="Vector.refper"></a>
+### refper(index), refperStr(index)
+
+Gets the refeperence period of a datapoint at a specific index. 
+
+The function **refper** return a data object and the function **refperStr** 
+returns a yyyy-mm-dd formatted date string. When getting a date object, UTC 
+time is always used.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2},
+    {'refper': "2018-02-01", 'value': 3}
+]);
+
+let result = vector.refperStr(1);
+```
+
+Result:
+```javascript
+"2018-02-01"
+```
+
+<a name="Vector.value"></a>
+### value(index)
+
+Return the value of a datapoint at a specific index.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2},
+    {'refper': "2018-02-01", 'value': 3}
+]);
+
+let result = vector.value(1);
+```
+
+Result:
+```javascript
+2
+```
+
+<a name="Vector.length"></a>
+### length
+
+Gets the length of a vector.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
+]);
+
+let result = vector.length;
+```
+
+Result:
+```javascript
+2
+```
+
+<a name="Vector.push"></a>
+### push(datapoint)
+
+Appends a datapoint to a vector.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1}
+]);
+
+vector.push({'refper': "2018-02-01", 'value': 2});
 ```
 
 Result:
 ```javascript
 [
-    {'refper': "2018-01-01", 'value': 16},
-    {'refper': "2018-02-01", 'value': 24}
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
 ]
 ```
 
-<a name="equals"></a>
-## equals(vectorA, vectorB)
+<a name="Vector.equals"></a>
+### equals(other)
 
 Checks if two vectors are equal.
 
-Two vectors `a` and `b` are equal if the number of datapoints in `a` is equal 
-to the number of datapoints in `b`, and for each datapoint with reference 
-period `Ra` and value `Va` in `a`, there exists a datapoint in `b` whose 
-reference period is equal to `Ra` and value is equal to `Va` 
+Two vectors **a** and **b** are equal if the number of datapoints in **a** is 
+equal to the number of datapoints in **b**, and for each datapoint with 
+reference period **Ra** and value **Va** in **a**, there exists a datapoint in 
+**b** whose reference period is equal to **Ra** and value is equal to **Va**. 
 
 Example:
 ```javascript
-let v1 = [
+let v1 = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
-];
-let v2 = [
+]);
+let v2 = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
-];
+]);
 
-let result = vlib.equals(v1, v2);
+let result = v1.equals(v2);
 ```
 
 Result:
@@ -107,19 +206,19 @@ Result:
 true
 ```
 
-<a name="copy"></a>
-## copy(vector)
+<a name="Vector.copy"></a>
+### copy()
 
-Creates a copy of a vector.
+Returns a new **Vector** object that is a copy of the calling **Vector**.
 
 Example:
 ```javascript
-let vector = [
+let vector = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
-];
+]);
 
-let result = vlib.copy(vector);
+let result = vector.copy();
 ```
 
 Result:
@@ -130,21 +229,48 @@ Result:
 ]
 ```
 
-<a name="range"></a>
-## range(vector, startDate, endDate)
+<a name="Vector.filter"></a>
+### filter(predicate)
 
-Returns the vector constrained within a specified range.
+Returns a filtered vector based on a predicate function. The function 
+`predicate` should be a function that operates on a datapoint and returns 
+a **boolean**.   
 
 Example:
 ```javascript
-    let vector = [
-        {'refper': '2018-01-01', 'value': 0},
-        {'refper': '2018-02-01', 'value': 1},
-        {'refper': '2018-03-01', 'value': 2},
-        {'refper': '2018-04-01', 'value': 3}
-    ];
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-01-02", 'value': 1},
+    {'refper': "2018-01-03", 'value': 2},
+]);
 
-let result = vlib.range(vector, '2018-02-01', '2018-03-01');
+let result = vector.filter(p => p.value % 2 == 0);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-01-03", 'value': 2}
+]
+```
+
+<a name="Vector.range"></a>
+### range(startDate, endDate)
+
+Returns the vector constrained within a specified range. The parameters 
+**startDate** and **endDate** may be either date strings or date objects.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-02-01", 'value': 1},
+    {'refper': "2018-03-01", 'value': 2},
+    {'refper': "2018-04-01", 'value': 3}
+]);
+
+let result = vlib.range("2018-02-01", "2018-03-01");
 ```
 
 Result:
@@ -155,28 +281,54 @@ Result:
 ]
 ```
 
-<a name="interoperable"></a>
-## interoperable(vectorA, vectorB)
+<a name="Vector.range"></a>
+### latestN
 
-Checks if two vectors are interoperable.
-
-Two vectors `a` and `b` are interoperable if the number of datapoints in `a` 
-is equal to the number of datapoints in `b`, and for each datapoint with 
-reference period `Ra` in `a`, there exists a datapoint in `b` whose 
-reference period is equal to `Ra`.
+Returns a new vector containing only the last n reference periods of the 
+calling vector.
 
 Example:
 ```javascript
-let v1 = [
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-02-01", 'value': 1},
+    {'refper': "2018-03-01", 'value': 2},
+    {'refper': "2018-04-01", 'value': 3}
+]);
+
+let result = vlib.latestN(2);
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-03-01", 'value': 2},
+    {'refper': "2018-04-01", 'value': 3}
+]
+```
+
+<a name="Vector.interoperable"></a>
+### interoperable(other)
+
+Checks if two vectors are interoperable.
+
+Two vectors **a** and **b** are interoperable if the number of datapoints in 
+**a** is equal to the number of datapoints in **b**, and for each datapoint with 
+reference period **Ra** in **a**, there exists a datapoint in **b** whose 
+reference period is equal to **Ra**.
+
+Example:
+```javascript
+let v1 = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
-];
-let v2 = [
+]);
+let v2 = new Vector([
     {'refper': "2018-01-01", 'value': 3},
     {'refper': "2018-02-01", 'value': 4}
-];
+]);
 
-let result = vlib.interoperable(v1, v2);
+let result = v1.interoperable(v2);
 ```
 
 Result:
@@ -184,20 +336,14 @@ Result:
 true
 ```
 
-<a name="intersection"></a>
-## intersection(vectors)
+<a name="Vector.intersection"></a>
+### intersection(other)
 
-Returns the intersection of all vectors in a set. That is, for each vector `v` 
-in the input set, `v` is transformed to `v` intersected with every other vector 
-in the input set.
+Returns the result of the intersction of the calling vector with another. 
 
-The intersection of two vectors `a` and `b` is defined as the vectors `a'` and 
-`b'` such that `a'` and `b'` are composed only of datapoints with reference 
-periods defined in both `a` and `b`.
-
-Note that this function will also accept a dictionary mapping vector IDs to 
-vectors as input. The return type will be a dictionary instead of an array in 
-this case.
+The result of vectors **a** intersected with **b** is defined as the vector 
+**a'** and such that **a'** is composed only of datapoints with reference 
+periods defined in both **a** and **b**.
 
 Example:
 ```javascript
@@ -209,101 +355,100 @@ let v1 = [
 ];
 let v2 = [
     {'refper': "2018-01-01", 'value': 5},
-    {'refper': "2018-02-01", 'value': 6},
-    {'refper': "2018-03-01", 'value': 7}
-];
-let v3 = [
-    {'refper': "2018-01-01", 'value': 8},
-    {'refper': "2018-02-01", 'value': 9}
+    {'refper': "2018-03-01", 'value': 6}
 ];
 
-// Can also be called as vlib.intersection({'v1': v1, 'v2': v2, 'v3': v3}).
-let result = vlib.intersection([v1, v2, v3]);
+let result = v1.intersection(v2);
 ```
 
 Result:
 ```javascript
 [
-    [
-        {'refper': "2018-01-01", 'value': 1},
-        {'refper': "2018-02-01", 'value': 2}
-    ],
-    [
-        {'refper': "2018-01-01", 'value': 5},
-        {'refper': "2018-02-01", 'value': 6},
-    ],
-    [
-        {'refper': "2018-01-01", 'value': 8},
-        {'refper': "2018-02-01", 'value': 9}
-    ]
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-03-01", 'value': 3}
 ]
 ```
 
-<a name="annualize"></a>
-## annualize(vector)
+<a name="Vector.periodDeltaTransformation"></a>
+### periodDeltaTransformation(transformation)
 
-Annualizes a vector, returning a vector with the last datapoints for each year.
+Returns a new vector that is the result of a period to period transformation on 
+the calling vector. The parameter **transformation** should be a function 
+with two **Number** inputs representing the value of the current period and 
+previous period and should return the transformed value.
+
+The first datapoint of the transformed vector will have a value of `null` since 
+there is no previoud period to compare to.
 
 Example:
 ```javascript
-let vector = [
-    {'refper': '2018-06-01', 'value': 0},
-    {'refper': '2018-12-01', 'value': 1},
-    {'refper': '2019-06-01', 'value': 2},
-    {'refper': '2019-12-01', 'value': 3},
-    {'refper': '2020-06-01', 'value': 4},
-    {'refper': '2020-12-01', 'value': 5}
-];
+let vector = new Vector([
+    {'refper': "2018-01-01", value: 1},
+    {'refper': "2018-02-01", value: 2},
+    {'refper': "2018-03-01", value: 3},
+]);
 
-let result = vlib.annualize(vector);
+let result = vector.periodDeltaTransformation(function(curr, last)  {
+    return curr + last;
+});  
 ```
 
 Result:
 ```javascript
 [
-    {'refper': '2018-12-01', 'value': 1},
-    {'refper': '2019-12-01', 'value': 3},
-    {'refper': '2020-12-01', 'value': 5}
+    {'refper': "2018-01-01", value: null},
+    {'refper': "2018-02-01", value: 3},
+    {'refper': "2018-03-01", value: 5}
 ]
 ```
 
-<a name="periodTransformation"></a>
-## periodTransformation(vector, function)
+<a name="Vector.periodTransformation"></a>
+### periodTransformation(transformation)
 
-Applies a transformation function to the value of each datapoint in a vector. 
-**function** is a function that has a `Number` parameter and returns a `Number`.
+Returns a new vector that is the result of period transformation on 
+the calling vector. The parameter **transformation** should be a function 
+with a **Number** input representing the value of the current period and should 
+return the transformed value.
+
+The first datapoint of the transformed vector will have a value of `null` since 
+there is no previous period to compare to.
 
 Example:
 ```javascript
- let vector = [
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-01-02', 'value': 2},
-];
-let result = vlib.periodTransformation(vector, value => value * 2);
+let vector = new Vector([
+    {'refper': "2018-01-01", value: 1},
+    {'refper': "2018-02-01", value: 2},
+    {'refper': "2018-03-01", value: 3}
+]);
+
+let result = vector.periodTransformation(function(value)  {
+    return value * 2;
+});  
 ```
 
 Result:
 ```javascript
 [
-    {'refper': '2018-12-01', 'value': 2},
-    {'refper': '2019-12-01', 'value': 4}
+    {'refper': "2018-01-01", value: 2},
+    {'refper': "2018-02-01", value: 4},
+    {'refper': "2018-03-01", value: 6}
 ]
 ```
 
-<a name="periodToPeriodPercentageChange"></a>
-## periodToPeriodPercentageChange(vector)
+<a name="Vector.periodToPeriodPercentageChange"></a>
+## periodToPeriodPercentageChange()
 
-Returns a period-to-period percentage change vector of the input vector.
+Returns a period-to-period percentage change vector of the calling vector.
 
 Example:
 ```javascript
-let vector = [
+let vector = new Vector([
     {'refper': '2018-01-01', 'value': 2},
     {'refper': '2018-02-01', 'value': 6},
     {'refper': '2018-03-01', 'value': 3}
-];
+]);
 
-let result = vlib.periodToPeriodPercentageChange(vector);
+let result = vector.periodToPeriodPercentageChange();
 ```
 
 Result:
@@ -315,20 +460,20 @@ Result:
 ]
 ```
 
-<a name="periodToPeriodDifference"></a>
-## periodToPeriodDifference(vector)
+<a name="Vector.periodToPeriodDifference"></a>
+### periodToPeriodDifference()
 
-Returns a period-to-period difference vector of the input vector.
+Returns a period-to-period difference vector of the calling vector.
 
 Example:
 ```javascript
-let vector = [
+let vector = new Vector([
     {'refper': '2018-01-01', 'value': 2},
     {'refper': '2018-02-01', 'value': 6},
     {'refper': '2018-03-01', 'value': 3}
-];
+]);
 
-let result = vlib.periodToPeriodDifference(vector);
+let result = vector.periodToPeriodDifference();
 ```
 
 Result:
@@ -340,24 +485,24 @@ Result:
 ]
 ```
 
-<a name="samePeriodPreviousYearPercentageChange"></a>
-## samePeriodPreviousYearPercentageChange(vector)
+<a name="Vector.samePeriodPreviousYearPercentageChange"></a>
+### samePeriodPreviousYearPercentageChange()
 
-Annualizes and returns a period-to-period percent change vector of the input 
+Annualizes and returns a period-to-period percent change vector of the calling 
 vector.
 
 Example:
 ```javascript
-let vector = [
-    {'refper': '2018-06-01', 'value': 0},
-    {'refper': '2018-12-01', 'value': 2},
-    {'refper': '2019-06-01', 'value': 0},
-    {'refper': '2019-12-01', 'value': 6},
-    {'refper': '2020-06-01', 'value': 0},
-    {'refper': '2020-12-01', 'value': 3}
-];
+let vector = new Vector([
+    {'refper': "2018-06-01", 'value': 0},
+    {'refper': "2018-12-01", 'value': 2},
+    {'refper': "2019-06-01", 'value': 0},
+    {'refper': "2019-12-01", 'value': 6},
+    {'refper': "2020-06-01", 'value': 0},
+    {'refper': "2020-12-01", 'value': 3}
+]);
 
-let result = vlib.samePeriodPreviousYearPercentageChange(vector);
+let result = vector.samePeriodPreviousYearPercentageChange();
 ```
 
 Result:
@@ -369,24 +514,24 @@ Result:
 ]
 ```
 
-<a name="samePeriodPreviousYearDifference"></a>
-## samePeriodPreviousYearDifference(vector)
+<a name="Vector.samePeriodPreviousYearDifference"></a>
+### samePeriodPreviousYearDifference()
 
-Annualizes and returns a period-to-period difference vector of the input 
+Annualizes and returns a period-to-period difference vector of the calling 
 vector.
 
 Example:
 ```javascript
-let vector = [
+let vector = new Vector([
     {'refper': '2018-06-01', 'value': 0},
     {'refper': '2018-12-01', 'value': 2},
     {'refper': '2019-06-01', 'value': 0},
     {'refper': '2019-12-01', 'value': 6},
     {'refper': '2020-06-01', 'value': 0},
     {'refper': '2020-12-01', 'value': 4}
-];
+]);
 
-let result = vlib.samePeriodPreviousYearDifference(vector);
+let result = vector.samePeriodPreviousYearDifference();
 ```
 
 Result:
@@ -398,20 +543,50 @@ Result:
 ]
 ```
 
-<a name="round"></a>
-## round(vector, decimals)
+<a name="Vector.annualize"></a>
+### annualize()
 
-Rounds all values in the input vector to a specified number of decimal places. 
-If `decimals` is not specified than the default value of `0` will be used.  
+Annualizes a vector, returning a vector with the last datapoints for each year.
 
 Example:
 ```javascript
-let vector = [
-    {'refper': '2018-01-01', 'value': 1.555},
-    {'refper': '2018-02-01', 'value': 1.554}
-];
+let vector = new Vector([
+    {'refper': "2018-06-01", 'value': 0},
+    {'refper': "2018-12-01", 'value': 1},
+    {'refper': "2019-06-01", 'value': 2},
+    {'refper': "2019-12-01", 'value': 3},
+    {'refper': "2020-06-01", 'value': 4},
+    {'refper': "2020-12-01", 'value': 5}
+]);
 
-let result = vlib.round(vector, 2);
+let result = vector.annualize();
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-12-01", 'value': 1},
+    {'refper': "2019-12-01", 'value': 3},
+    {'refper': "2020-12-01", 'value': 5}
+]
+```
+
+<a name="Vector.round"></a>
+### round(decimals)
+
+Returns a new vector with all values in the calling vector roudned 
+to a specified number of decimal places. 
+
+If **decimals** is not specified then the default value of `0` will be used.  
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1.555},
+    {'refper': "2018-02-01", 'value': 1.554}
+]);
+
+let result = vector.round(2);
 ```
 
 Result:
@@ -422,21 +597,23 @@ Result:
 ]
 ```
 
-<a name="roundBankers"></a>
-## roundBankers(vector, decimals)
+<a name="Vector.roundBankers"></a>
+### roundBankers(decimals)
 
-Rounds all values in the input vector to a specified number of decimal places 
-using the [Banker's rounding algorithm](http://wiki.c2.com/?BankersRounding). 
-If `decimals` is not specified then the default value of `0` will be used.  
+Returns a new vector with all values in the calling vector rounded to a 
+specified number of decimal places using the 
+[Banker's rounding algorithm](http://wiki.c2.com/?BankersRounding). 
+
+If **decimals** is not specified then the default value of `0` will be used.  
 
 Example:
 ```javascript
-let vector = [
-    {'refper': '2018-01-01', 'value': 1.5},
-    {'refper': '2018-02-01', 'value': 2.5}
-];
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1.5},
+    {'refper': "2018-02-01", 'value': 2.5}
+]);
 
-let result = vlib.round(vector, 0);
+let result = vector.roundBankers(0);
 ```
 
 Result:
@@ -447,28 +624,42 @@ Result:
 ]
 ```
 
-<a name="filter"></a>
-## filter(vector, predicate)
+## VectorLib
 
-Returns a filtered vector based on a predicate function. The function 
-`predicate` should be a function that operates on a vector point and returns a `boolean`.   
+<a name="VectorLib.evaluate"></a>
+## evaluate(expression, vectors)
+
+Performs arithmetic on a set of vectors. This function returns a **Vector** 
+object.
+
+All input vectors will be intersected with each other before performing an 
+operation using the **intersection** function.
 
 Example:
 ```javascript
-let vector = [
-    {'refper': '2018-01-01', 'value': 0},
-    {'refper': '2018-01-02', 'value': 1},
-    {'refper': '2018-01-03', 'value': 2},
-];
+let vectors = {
+    'v1': new Vector([
+        {'refper': "2018-01-01", 'value': 1},
+        {'refper': "2018-02-01", 'value': 2}
+    ]),
+    'v2': new Vector([
+        {'refper': "2018-01-01", 'value': 3},
+        {'refper': "2018-02-01", 'value': 4}
+    ]),
+    'v3': new Vector([
+        {'refper': "2018-01-01", 'value': 2},
+        {'refper': "2018-02-01", 'value': 2}
+    ])
+};
 
-result = vlib.filter(vector, p => p.value % 2 == 0);
+let result = vlib.evaluate("(v1 + 2*v2) * v3", vectors);
 ```
 
 Result:
 ```javascript
 [
-    {'refper': '2018-01-01', 'value': 0},
-    {'refper': '2018-01-03', 'value': 2}
+    {'refper': "2018-01-01", 'value': 16},
+    {'refper': "2018-02-01", 'value': 24}
 ]
 ```
 

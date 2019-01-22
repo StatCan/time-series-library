@@ -2,6 +2,7 @@
 
 ## [2.0.0] - Unreleased
 ### Added
+- Added Vector class. Most functions are now functions of this class.
 - latestN() function.
 - get() function.
 - value() function.

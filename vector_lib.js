@@ -103,6 +103,15 @@ Vector = function(data) {
         return this.filter(rangeFilter);
     }
 
+    this.latestN = function(n) {
+        if (n > this.length) throw new Error("N > length of vector.");
+        let result = new Vector();
+        for (let p = this.length - n; p < this.length; p++) {
+            result.push(this.get(p));
+        }
+        return result;
+    }
+
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
         for (let p = 0; p < this.length; p++) {
@@ -136,15 +145,6 @@ Vector = function(data) {
             pThis++;
         }
 
-        return result;
-    }
-
-    this.latestN = function(n) {
-        if (n > this.length) throw new Error("N > length of vector.");
-        let result = new Vector();
-        for (let p = this.length - n; p < this.length; p++) {
-            result.push(this.get(p));
-        }
         return result;
     }
 
