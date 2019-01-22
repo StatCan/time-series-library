@@ -32,29 +32,29 @@ Using a web browser:
 # Usage
 
 **Vector:**  
-[get()](#Vector.get)  
-[refper(), refperStr()](#Vector.refper)  
-[value()](#Vector.value)  
+[get(index)](#Vector.get)  
+[refper(index), refperStr(index)](#Vector.refper)  
+[valueindex)](#Vector.value)  
 [length](#Vector.length)  
-[push()](#Vector.push)  
-[equals()](#Vector.equals)  
+[push(datapoint)](#Vector.push)  
+[equals(other)](#Vector.equals)  
 [copy()](#Vector.copy)  
-[filter()](#Vector.filter)  
-[range()](#Vector.range)  
-[latestN()](#Vector.latestN)  
-[interoperable()](#Vector.interoperable)  
-[intersection()](#Vector.intersection)  
-[periodTransformation()](#Vector.periodTransformation)  
-[periodToPeriodPercentageChange()](#Vector.periodToPeriodPercentageChange)  
+[filter(predicate)](#Vector.filter)  
+[range(startDate, endDate)](#Vector.range)  
+[latestN(n)](#Vector.latestN)  
+[interoperable(other)](#Vector.interoperable)  
+[intersection(other)](#Vector.intersection)  
+[periodTransformation(transformation)](#Vector.periodTransformation)  
+[periodToPeriodPercentageChange(transformation)](#Vector.periodToPeriodPercentageChange)  
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
 [annualize()](#Vector.annualize)  
-[round()](#Vector.round)  
-[roundBankers()](#Vector.roundBankers)  
+[round(decimals)](#Vector.round)  
+[roundBankers(decimals)](#Vector.roundBankers)  
 
 **VectorLib:**  
-[evaluate()](#VectorLib.evaluate)  
+[evaluate(expression, vectors)](#VectorLib.evaluate)  
 
 ## Vector
 
