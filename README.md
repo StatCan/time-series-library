@@ -3,6 +3,13 @@
 A JavaScript library for arithmetic on Statistics Canada time series 
 vector data.
 
+This library can be used with Node.js or any of the following web browsers:
+- Chrome
+- Firefox
+- Internet Explorer 11
+- Opera
+- Safari
+
 # Installation
 
 Using Node.js:
