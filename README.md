@@ -78,7 +78,7 @@ The value of **refper** may be a **yyyy-mm-dd** formatted date string or a
 <a name="Vector.get"></a>
 ### get(index)
 
-Returns he datapoint of a vector at a specific index.
+Returns the datapoint of a vector at a specific index.
 
 Example:
 ```javascript
@@ -240,7 +240,7 @@ Result:
 ### filter(predicate)
 
 Returns a filtered vector based on a predicate function. The function 
-`predicate` should be a function that operates on a datapoint and returns 
+**predicate** should be a function that operates on a datapoint and returns 
 a **boolean**.   
 
 Example:
