@@ -34,7 +34,7 @@ Using a web browser:
 **Vector:**  
 [get(index)](#Vector.get)  
 [refper(index), refperStr(index)](#Vector.refper)  
-[valueindex)](#Vector.value)  
+[value(index)](#Vector.value)  
 [length](#Vector.length)  
 [push(datapoint)](#Vector.push)  
 [equals(other)](#Vector.equals)  
