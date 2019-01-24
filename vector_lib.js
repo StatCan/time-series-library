@@ -205,9 +205,9 @@ Vector = function(data) {
         
         let result = new Vector();
         let currPoint = this.get(0);
-        let currYear = this.refper(0).getUTCFullYear();
+        let currYear = this.refper(0).getFullYear();
         for (let p = 1; p < this.length; p++) {
-            let nextYear = this.refper(p).getUTCFullYear();
+            let nextYear = this.refper(p).getFullYear();
             if (nextYear != currYear) {
                 result.push(currPoint);
             }
@@ -216,7 +216,7 @@ Vector = function(data) {
         }
         result.push(this.get(this.length - 1));
         return result.filter(function(point) {
-            return point.refper.getUTCMonth() == result.refper(0).getUTCMonth();
+            return point.refper.getMonth() == result.refper(0).getMonth();
         });
     }
 
@@ -699,13 +699,13 @@ VectorLib = function() {
     }
     
     datestring = function(date) {
-        return date.getUTCFullYear() + "-"
-                + (date.getUTCMonth() + 1).toString().padStart(2, "0") + "-"
-                + date.getUTCDate().toString().padStart(2, "0");
+        return date.getFullYear() + "-"
+                + (date.getMonth() + 1).toString().padStart(2, "0") + "-"
+                + date.getDate().toString().padStart(2, "0");
     }   
     
     realDate = function(year, month, day) {
-        return new Date(Date.UTC(year, month - 1, day));
+        return new Date(year, month - 1, day);
     }
     this.realDate = realDate;
 

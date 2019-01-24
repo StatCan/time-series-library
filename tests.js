@@ -507,13 +507,13 @@ describe('VectorLib', function() {
             ];
             vlib.formatDateObject(vector);
 
-            assert.strictEqual(vector[0].refper.getUTCFullYear(), 2018);
-            assert.strictEqual(vector[0].refper.getUTCMonth(), 0);
-            assert.strictEqual(vector[0].refper.getUTCDate(), 1);
+            assert.strictEqual(vector[0].refper.getFullYear(), 2018);
+            assert.strictEqual(vector[0].refper.getMonth(), 0);
+            assert.strictEqual(vector[0].refper.getDate(), 1);
 
-            assert.strictEqual(vector[1].refper.getUTCFullYear(), 2018);
-            assert.strictEqual(vector[1].refper.getUTCMonth(), 11);
-            assert.strictEqual(vector[1].refper.getUTCDate(), 31);
+            assert.strictEqual(vector[1].refper.getFullYear(), 2018);
+            assert.strictEqual(vector[1].refper.getMonth(), 11);
+            assert.strictEqual(vector[1].refper.getDate(), 31);
         });
     });
 
