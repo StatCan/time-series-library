@@ -73,7 +73,7 @@ let vector = new Vector([
 ```
 
 The value of **refper** may be a **yyyy-mm-dd** formatted date string or a 
-**Date** object. When using a date object, the UTC time will always be used.
+**Date** object.
 
 <a name="Vector.get"></a>
 ### get(index)
@@ -102,8 +102,7 @@ Result:
 Gets the refeperence period of a datapoint at a specific index. 
 
 The function **refper** return a data object and the function **refperStr** 
-returns a yyyy-mm-dd formatted date string. When getting a date object, UTC 
-time is always used.
+returns a yyyy-mm-dd formatted date string. 
 
 Example:
 ```javascript

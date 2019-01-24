@@ -14,6 +14,7 @@
 - round() and roundBankers() now return a new vector and no longer operate in 
 place.
 - Vectors will now always use date objects internally instead of date strings.
+- Vectors use local dates for reference periods instead of UTC.
 
 ### Removed
 - Bulk intersection function from VectorLib. This has been replaced by the 
