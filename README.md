@@ -75,6 +75,15 @@ let vector = new Vector([
 The value of **refper** may be a **yyyy-mm-dd** formatted date string or a 
 **Date** object.
 
+Datapoints may also have additional fields to hold any related metadata. These 
+fields will be conserved when operating on vectors.
+```js
+let vector = let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1, 'myKey': 'my value'},
+    {'refper': "2018-02-01", 'value': 2, 'myKey': 'my value'},
+]); 
+```
+
 <a name="Vector.get"></a>
 ### get(index)
 
@@ -85,7 +94,7 @@ Example:
 let vector = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2},
-    {'refper': "2018-02-01", 'value': 3}
+    {'refper': "2018-03-01", 'value': 3}
 ]);
 
 let result = vector.get(1);
@@ -101,15 +110,15 @@ Result:
 
 Gets the refeperence period of a datapoint at a specific index. 
 
-The function **refper** return a data object and the function **refperStr** 
-returns a yyyy-mm-dd formatted date string. 
+The function **refper** returns a data object and the function **refperStr** 
+returns a **yyyy-mm-dd** formatted date string. 
 
 Example:
 ```javascript
 let vector = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2},
-    {'refper': "2018-02-01", 'value': 3}
+    {'refper': "2018-03-01", 'value': 3}
 ]);
 
 let result = vector.refperStr(1);
@@ -130,7 +139,7 @@ Example:
 let vector = new Vector([
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2},
-    {'refper': "2018-02-01", 'value': 3}
+    {'refper': "2018-03-01", 'value': 3}
 ]);
 
 let result = vector.value(1);
@@ -442,7 +451,7 @@ Result:
 ```
 
 <a name="Vector.periodToPeriodPercentageChange"></a>
-## periodToPeriodPercentageChange()
+### periodToPeriodPercentageChange()
 
 Returns a period-to-period percentage change vector of the calling vector.
 
@@ -633,7 +642,7 @@ Result:
 ## VectorLib
 
 <a name="VectorLib.evaluate"></a>
-## evaluate(expression, vectors)
+### evaluate(expression, vectors)
 
 Performs arithmetic on a set of vectors. This function returns a **Vector** 
 object.
