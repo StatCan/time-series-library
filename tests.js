@@ -242,6 +242,26 @@ describe('Vector', function() {
             assert.strictEqual(v7.intersection(v1).equals(v7), true);
         });
     });
+
+    describe('#operate', function() {
+        it("should perform an operation on a vector", function() {
+            let vectorA = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2}
+            ]);      
+            let vectorB = new Vector([
+                {'refper': "2018-01-01", 'value': 3},
+                {'refper': "2018-02-01", 'value': 4}
+            ]);
+            let expected = new Vector([
+                {'refper': "2018-01-01", 'value': 4},
+                {'refper': "2018-02-01", 'value': 6}
+            ]);
+
+            let result = vectorA.operate(vectorB, (a, b) => a + b);
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
   
     describe('#periodDeltaTransformation', function() {
         it("should return a transformed vector based on a delta function", 
