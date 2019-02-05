@@ -44,6 +44,7 @@ Using a web browser:
 [latestN(n)](#Vector.latestN)  
 [interoperable(other)](#Vector.interoperable)  
 [intersection(other)](#Vector.intersection)  
+[operate(operation)](#Vector.operate)  
 [periodTransformation(transformation)](#Vector.periodTransformation)  
 [periodToPeriodPercentageChange(transformation)](#Vector.periodToPeriodPercentageChange)  
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
@@ -414,6 +415,38 @@ Result:
     {'refper': "2018-01-01", value: null},
     {'refper': "2018-02-01", value: 3},
     {'refper': "2018-03-01", value: 5}
+]
+```
+
+<a name="Vector.operate"></a>
+### operate(operation)
+
+Performs an operation with another vector. The parameter **operation** is 
+a function with two **Number** inputs **a** and **b** that returns the result 
+of an operation on both inputs. The input **a** should represent the value in 
+the calling vector and the input **b** should represent the value in the 
+other vector.
+
+The intersection of the two vectors are taken before performing the operation.
+
+Example:
+```js
+let vectorA = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2}
+]);
+
+let vectorB = new Vector([
+    {'refper': "2018-01-01", 'value': 3},
+    {'refper': "2018-02-01", 'value': 4}
+]);
+```
+
+Result:
+```js
+[
+    {'refper': "2018-01-01", 'value': 4},
+    {'refper': "2018-02-01", 'value': 6}  
 ]
 ```
 

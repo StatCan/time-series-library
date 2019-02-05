@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.0] - Unreleased
+### Added
+- Added operate() function.
+
 ## [2.0.0] - 2019-01-22
 ### Added
 - Added Vector class. Most functions are now functions of this class.
