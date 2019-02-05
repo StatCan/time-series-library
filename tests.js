@@ -361,8 +361,8 @@ describe('Vector', function() {
         });
     });
 
-    describe('#annualize', function() {
-        it("should return an annualized vector", function() {
+    describe('#annual', function() {
+        it("should convert a vector to an annual frequency", function() {
             let vector = new Vector([
                 {'refper': '2018-03-01', value: 0},
                 {'refper': '2018-06-01', value: 0},
@@ -370,7 +370,7 @@ describe('Vector', function() {
                 {'refper': '2018-12-01', value: 0},
                 {'refper': '2019-03-01', value: 0}
             ]);
-            let result = vector.annualize();
+            let result = vector.annual();
             assert.strictEqual(result.length, 1);
             assert.strictEqual(result.refperStr(0), '2018-12-01');
 
@@ -384,7 +384,7 @@ describe('Vector', function() {
                 {'refper': '2020-12-01', value: 0},
                 {'refper': '2020-12-02', value: 0}
             ]);
-            result = vector.annualize();
+            result = vector.annual();
             assert.strictEqual(result.length, 3);
             assert.strictEqual(result.refperStr(0), '2018-12-01');
             assert.strictEqual(result.refperStr(1), '2019-12-02');
@@ -394,7 +394,7 @@ describe('Vector', function() {
                 {'refper': '2018-06-01', value: 0},
                 {'refper': '2018-12-01', value: 0}
             ]);
-            result = vector.annualize();
+            result = vector.annual();
             assert.strictEqual(result.length, 1);
             assert.strictEqual(result.refperStr(0), '2018-12-01');
 
@@ -406,13 +406,34 @@ describe('Vector', function() {
                 {'refper': '2020-06-01', 'value': 0},
                 {'refper': '2020-12-01', 'value': 4}
             ]);
-            result = vector.annualize();
+            result = vector.annual();
             assert.strictEqual(result.length, 3);
             assert.strictEqual(result.refperStr(0), '2018-12-01');
             assert.strictEqual(result.refperStr(1), '2019-12-01');
             assert.strictEqual(result.refperStr(2), '2020-12-01');
         });
     });
+
+    describe('#monthly', function() {
+        it("should convert a vector to an annual frequency", function() {
+            let vector = new Vector([
+                {'refper': '2018-12-01', value: 0},
+                {'refper': '2018-12-12', value: 0},
+                {'refper': '2019-01-01', value: 0},
+                {'refper': '2019-01-12', value: 0},
+                {'refper': '2019-02-01', value: 0},
+                {'refper': '2019-02-12', value: 0}
+            ]);
+            let expected = new Vector([
+                {'refper': '2018-12-12', value: 0},
+                {'refper': '2019-01-12', value: 0},
+                {'refper': '2019-02-12', value: 0}
+            ]);
+            let result = vector.monthly();
+            assert.strictEqual(result.equals(expected), true);         
+        });
+    });
+
 
     describe('#round', function() {
         it("should round values in a vector", function() {

@@ -3,6 +3,11 @@
 ## [2.1.0] - Unreleased
 ### Added
 - Added operate() function.
+- Added annual() function.
+- Added monthly() function.
+
+### Removed
+- Removed annualize() function. The function annual() should be used instead.
 
 ## [2.0.0] - 2019-01-22
 ### Added
