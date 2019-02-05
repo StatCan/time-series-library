@@ -148,6 +148,30 @@ Vector = function(data) {
         return result;
     }
 
+    this.operate = function(other, operation) {
+        let a = this.intersection(other);
+        let b = other.intersection(this);
+
+        let result = new Vector();
+        
+        for (let p = 0; p < a.length; p++) {
+            let refperA = a.refper(p);
+            let refperB = b.refper(p);
+
+            let newPoint =  {
+                'refper': a.refper(p), 
+                'value': operation(a.value(p), b.value(p))
+            };
+            
+            // Merge keys added by the user.
+            safeMerge(newPoint, a.get(p));
+            
+            result.push(newPoint);
+        }
+        
+        return result;
+    }
+
     this.periodDeltaTransformation = function(operation) {
         let result = new Vector();
 
@@ -483,7 +507,7 @@ VectorLib = function() {
     **/
     operate = function(valueA, valueB, operation) {
         if (valueA.vectorType && valueB.vectorType) {
-            return vectorOperate(valueA, valueB, operation);
+            return valueA.operate(valueB, operation);
         }
         if (valueA.vectorType && !isNaN(valueB)) {
             return vectorScalarOperate(valueA, valueB, operation);
@@ -512,33 +536,6 @@ VectorLib = function() {
         }       
         return result;
     };
-
-
-    vectorOperate = function(vectorA, vectorB, operation) {
-        // Intersect vectors before operating.
-        vectorA = vectorA.intersection(vectorB);
-        vectorB = vectorB.intersection(vectorA);
-
-        let result = new Vector();
-        
-        for (let p = 0; p < vectorA.length; p++) {
-            let refperA = vectorA.refper(p);
-            let refperB = vectorB.refper(p);
-
-            let newPoint =  {
-                'refper': vectorA.refper(p), 
-                'value': operation(vectorA.value(p), vectorB.value(p))
-            };
-            
-            // Merge keys added by the user.
-            safeMerge(newPoint, vectorA.get(p));
-            
-            result.push(newPoint);
-        }
-        
-        return result;
-    };
-
 
     postfix = function(symbols) {
         let stack = ['('];
