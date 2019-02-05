@@ -2,6 +2,9 @@
 
 ## [2.1.0] - Unreleased
 ### Added
+- Added sum() function.
+- Added average() function.
+- Added reduce() function.
 - Added operate() function.
 - Added annual() function.
 - Added monthly() function.

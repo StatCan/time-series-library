@@ -149,13 +149,23 @@ Vector = function(data) {
     }
 
     this.sum = function() {
-        return this.data.reduce(function(accumulator, curr) {
-            return accumulator + curr.value;
+        return this.reduce(function(accumulator, curr) {
+            return accumulator + curr;
         });
     }
 
     this.average = function() {
+        if (this.length == 0) return null;
         return this.sum() / this.length;
+    }
+
+    this.reduce = function(reducer) {
+        if (this.length == 0) return null;
+        let accumulator = this.value(0);
+        for (let p = 1; p < this.length; p++) {
+            accumulator = reducer(accumulator, this.value(p));
+        }
+        return accumulator;
     }
 
     this.operate = function(other, operation) {
@@ -772,6 +782,7 @@ VectorLib = function() {
                 target[key] = source[key];
             }
         }
+        return target;
     }
 
     formatDateObject = function(date) {

@@ -243,6 +243,53 @@ describe('Vector', function() {
         });
     });
 
+    describe('#sum', function() {
+        it("should return the sum of a vector", function() {
+            let vector = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2},
+                {'refper': "2018-02-01", 'value': 3}
+            ]);  
+            assert.strictEqual(vector.sum(), 6);
+
+            vector = new Vector([
+                {'refper': "2018-01-01", 'value': 1}
+            ]);
+            assert.strictEqual(vector.sum(), 1);
+
+            vector = new Vector();
+            assert.strictEqual(vector.sum(), null);
+        });
+    })
+
+    describe('#average', function() {
+        it("should return the sum of a vector", function() {
+            let vector = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2},
+                {'refper': "2018-02-01", 'value': 3}
+            ]);  
+            assert.strictEqual(vector.average(), 2);
+
+            vector = new Vector();
+            assert.strictEqual(vector.average(), null);
+        });
+    })
+
+    describe('#reduce', function() {
+        it("should reduce a vector", function() {
+            let vector = new Vector([
+                {'refper': "2018-01-01", 'value': 1},
+                {'refper': "2018-02-01", 'value': 2},
+                {'refper': "2018-02-01", 'value': 3}
+            ]);  
+            let result = vector.reduce(function(accumulator, curr) {
+                return accumulator * curr;
+            });
+            assert.strictEqual(result, 6);
+        });
+    })
+
     describe('#operate', function() {
         it("should perform an operation on a vector", function() {
             let vectorA = new Vector([
@@ -417,21 +464,57 @@ describe('Vector', function() {
     describe('#monthly', function() {
         it("should convert a vector to an annual frequency", function() {
             let vector = new Vector([
-                {'refper': '2018-12-01', value: 0},
-                {'refper': '2018-12-12', value: 0},
-                {'refper': '2019-01-01', value: 0},
-                {'refper': '2019-01-12', value: 0},
-                {'refper': '2019-02-01', value: 0},
-                {'refper': '2019-02-12', value: 0}
+                {'refper': '2018-12-01', value: 1},
+                {'refper': '2018-12-12', value: 2},
+                {'refper': '2019-01-01', value: 3},
+                {'refper': '2019-01-12', value: 4},
+                {'refper': '2019-02-01', value: 5},
+                {'refper': '2019-02-12', value: 6}
             ]);
             let expected = new Vector([
-                {'refper': '2018-12-12', value: 0},
-                {'refper': '2019-01-12', value: 0},
-                {'refper': '2019-02-12', value: 0}
+                {'refper': '2018-12-12', value: 2},
+                {'refper': '2019-01-12', value: 4},
+                {'refper': '2019-02-12', value: 6}
             ]);
             let result = vector.monthly();
             assert.strictEqual(result.equals(expected), true);         
         });
+
+        it("should handle monthly sums", function() {
+            let vector = new Vector([
+                {'refper': '2018-12-01', value: 1},
+                {'refper': '2018-12-12', value: 2},
+                {'refper': '2019-01-01', value: 3},
+                {'refper': '2019-01-12', value: 4},
+                {'refper': '2019-02-01', value: 5},
+                {'refper': '2019-02-12', value: 6}
+            ]);
+            let expected = new Vector([
+                {'refper': '2018-12-12', value: 3},
+                {'refper': '2019-01-12', value: 7},
+                {'refper': '2019-02-12', value: 11}
+            ]);
+            let result = vector.monthly("sum");
+            assert.strictEqual(result.equals(expected), true);    
+        });
+
+        it("should handle monthly averages", function() {
+            let vector = new Vector([
+                {'refper': '2018-12-01', value: 1},
+                {'refper': '2018-12-12', value: 3},
+                {'refper': '2019-01-01', value: 5},
+                {'refper': '2019-01-12', value: 3},
+                {'refper': '2019-02-01', value: 7},
+                {'refper': '2019-02-12', value: 3}
+            ]);
+            let expected = new Vector([
+                {'refper': '2018-12-12', value: 2},
+                {'refper': '2019-01-12', value: 4},
+                {'refper': '2019-02-12', value: 5}
+            ]);
+            let result = vector.monthly("average");
+            assert.strictEqual(result.equals(expected), true);  
+        })
     });
 
 
