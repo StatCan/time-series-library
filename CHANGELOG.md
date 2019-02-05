@@ -9,7 +9,6 @@
 - Added annual() function.
 - Added monthly() function.
 
-
 ## [2.0.0] - 2019-01-22
 ### Added
 - Added Vector class. Most functions are now functions of this class.
