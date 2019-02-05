@@ -277,6 +277,7 @@ Vector = function(data) {
             return point.refper.getMonth() == join.refper(0).getMonth();
         });
     }
+    this.annualize = this.annual;
 
     this.quarterly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
@@ -326,27 +327,6 @@ Vector = function(data) {
         }
         if (next.length != 0) result.push(next);
         return result;
-    }
-
-
-    this.annualize = function() {
-        if (this.length == 0) return this;
-        
-        let result = new Vector();
-        let currPoint = this.get(0);
-        let currYear = this.refper(0).getFullYear();
-        for (let p = 1; p < this.length; p++) {
-            let nextYear = this.refper(p).getFullYear();
-            if (nextYear != currYear) {
-                result.push(currPoint);
-            }
-            currPoint = this.get(p);
-            currYear = nextYear;
-        }
-        result.push(this.get(this.length - 1));
-        return result.filter(function(point) {
-            return point.refper.getMonth() == result.refper(0).getMonth();
-        });
     }
 
     this.round = function(decimals) {
