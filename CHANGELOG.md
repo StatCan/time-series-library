@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.1.0] - Unreleased
+## [2.1.0] - 2019-02-07
 ### Added
 - Added sum() function.
 - Added average() function.
