@@ -44,13 +44,17 @@ Using a web browser:
 [latestN(n)](#Vector.latestN)  
 [interoperable(other)](#Vector.interoperable)  
 [intersection(other)](#Vector.intersection)  
+[sum()](#Vector.sum)  
+[average()](#Vector.average)  
+[reduce()](#Vector.reduce)  
 [operate(operation)](#Vector.operate)  
 [periodTransformation(transformation)](#Vector.periodTransformation)  
 [periodToPeriodPercentageChange(transformation)](#Vector.periodToPeriodPercentageChange)  
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
-[annualize()](#Vector.annualize)  
+[annual()](#Vector.annual)  
+[monthly()](#Vector.monthly)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
 
@@ -385,6 +389,75 @@ Result:
 ]
 ```
 
+<a name="Vector.sum"></a>
+### sum()
+
+Returns the sum of all values in a vector.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", value: 1},
+    {'refper': "2018-02-01", value: 2},
+    {'refper': "2018-03-01", value: 3},
+]);
+
+let result = vector.sum();
+```
+
+Result:
+```javascript
+6
+```
+
+<a name=Vector.average></a>
+### average()
+
+Returns the average of the values in a vector.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", value: 1},
+    {'refper': "2018-02-01", value: 2},
+    {'refper': "2018-03-01", value: 3},
+]);
+
+let result = vector.average();
+```
+
+Result:
+```javascript
+2
+```
+
+<a name="Vector.reduce"></a>
+### reduce(reducer)
+
+Reduces the values in a vector based on the function **reducer**.
+
+The function **reducer** has Number parameters **accumulator** and **current** 
+and should return a Number.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 2},
+    {'refper': "2018-02-01", 'value': 3},
+    {'refper': "2018-02-01", 'value': 4}
+]);  
+let result = vector.reduce(function(accumulator, current) {
+    return accumulator * current;
+});
+```
+
+Result:
+```
+24
+```
+
+
+
 <a name="Vector.periodDeltaTransformation"></a>
 ### periodDeltaTransformation(transformation)
 
@@ -440,6 +513,8 @@ let vectorB = new Vector([
     {'refper': "2018-01-01", 'value': 3},
     {'refper': "2018-02-01", 'value': 4}
 ]);
+
+let result = vectorA.operate(vectorB, (a, b) => a + b);
 ```
 
 Result:
@@ -591,10 +666,11 @@ Result:
 ]
 ```
 
-<a name="Vector.annualize"></a>
-### annualize()
+<a name="Vector.annual"></a>
+### annual()
 
-Annualizes a vector, returning a vector with the last datapoints for each year.
+Converts the frequency of a vector to annual, returning the last reference 
+period for each year.
 
 Example:
 ```javascript
@@ -607,7 +683,7 @@ let vector = new Vector([
     {'refper': "2020-12-01", 'value': 5}
 ]);
 
-let result = vector.annualize();
+let result = vector.annual();
 ```
 
 Result:
@@ -616,6 +692,35 @@ Result:
     {'refper': "2018-12-01", 'value': 1},
     {'refper': "2019-12-01", 'value': 3},
     {'refper': "2020-12-01", 'value': 5}
+]
+```
+
+<a name="Vector.monthly"></a>
+### monthly()
+
+Converts the frequency of a vector to monthly, returning the last reference 
+period for each month.
+
+Example:
+```javascript
+    let vector = new Vector([
+        {'refper': '2018-12-01', value: 1},
+        {'refper': '2018-12-12', value: 2},
+        {'refper': '2019-01-01', value: 3},
+        {'refper': '2019-01-12', value: 4},
+        {'refper': '2019-02-01', value: 5},
+        {'refper': '2019-02-12', value: 6}
+    ]);
+
+    let result = vector.monthly();
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-12-12', value: 2},
+    {'refper': '2019-01-12', value: 4},
+    {'refper': '2019-02-12', value: 6}
 ]
 ```
 
