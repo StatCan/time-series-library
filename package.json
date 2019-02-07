@@ -1,6 +1,6 @@
 {
   "name": "vector-lib",
-  "version": "1.3.0",
+  "version": "2.1.0",
   "description": "A JavaScript library for vector arithmetic",
   "main": "vector_lib.js",
   "scripts": {
