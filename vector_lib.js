@@ -279,7 +279,7 @@ Vector = function(data) {
     }
     this.annualize = this.annual;
 
-    this.quarterly = function(mode) {
+    this._quarterly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes["last"]; 
         }
