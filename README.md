@@ -667,10 +667,15 @@ Result:
 ```
 
 <a name="Vector.annual"></a>
-### annual()
+### annual(mode)
 
 Converts the frequency of a vector to annual, returning the last reference 
 period for each year.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each year (Default).
+- `"sum"`: Takes the sum of each year.
+- `"average"`: Takes the average of each year.
 
 Example:
 ```javascript
@@ -700,6 +705,11 @@ Result:
 
 Converts the frequency of a vector to monthly, returning the last reference 
 period for each month.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each month (Default).
+- `"sum"`: Takes the sum of each month.
+- `"average"`: Takes the average of each month.
 
 Example:
 ```javascript
