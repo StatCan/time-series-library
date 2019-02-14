@@ -14,9 +14,8 @@ This library can be used with Node.js or any of the following web browsers:
 
 Using Node.js:
 ```javascript
-let VectorLib = require('./vector_lib.js');
-let vector = new Vector();
-let vlib = new VectorLib();
+const Vector = require('./vector_lib.js').Vector;
+const VectorLib = require('./vector_lib.js').VectorLib;
 ```
 
 Using a web browser:
@@ -24,8 +23,8 @@ Using a web browser:
 <script src="./vector_lib.js"></script>
 
 <script>
-    let vector = new Vector();
-    let vlib = new VectorLib();
+    var Vector = vector_lib.Vector;
+    var VectorLib = vector_lib.VectorLib;
 </script>
 ```
 
