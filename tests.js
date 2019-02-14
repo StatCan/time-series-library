@@ -1,6 +1,8 @@
 let assert = require('assert');
 
-let VectorLib = require('./src/vector_lib.js');
+const VectorLib = require('./src/vector_lib.js').VectorLib;
+const Vector = require('./src/vector_lib.js').Vector;
+
 let vlib = new VectorLib();
 
 describe('Vector', function() {
