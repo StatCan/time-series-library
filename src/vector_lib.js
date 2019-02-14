@@ -1,37 +1,4 @@
-if (typeof window === 'undefined') {
-    // Running in Node.js.
-
-}
-else {
-    // Running in browser.
-    var module = { }; // Prevent browser exception when exporting as module.
-}
-
-// Polyfills
-if (!String.prototype.padStart) {
-    String.prototype.padStart = function padStart(targetLength,padString) {
-        targetLength = targetLength>>0; 
-        padString = String((typeof padString !== 'undefined' ? padString : ' '));
-        if (this.length > targetLength) {
-            return String(this);
-        }
-        else {
-            targetLength = targetLength-this.length;
-            if (targetLength > padString.length) {
-                padString += padString.repeat(targetLength/padString.length); 
-            }
-            return padString.slice(0,targetLength) + String(this);
-        }
-    };
-}
-
-if (!Array.isArray) {
-    Array.isArray = function(arg) {
-        return Object.prototype.toString.call(arg) === '[object Array]';
-    };
-}
-
-Vector = function(data) {
+var Vector = function(data) {
     this.vectorType = true;
     this.data = data === undefined ? [] : formatData(data);
     this.length = data === undefined ? 0 : data.length;
@@ -383,15 +350,15 @@ Vector = function(data) {
     }
 }
 
-VectorLib = function() {
-    operators = {
+var VectorLib = function() {
+    var operators = {
         '+': function(a, b) { return a + b; },
         '-': function(a, b) { return a - b; },
         '*': function(a, b) { return a * b; },
         '/': function(a, b) { return a / b; }
     };
     
-    operatorPriorities = {
+    var operatorPriorities = {
         '*': 2,
         '/': 2,
         '+': 1,
@@ -433,50 +400,6 @@ VectorLib = function() {
 
             return result;
         }
-    }
-
-    function arrayIntersection(vectors) {
-        let flatVectors = {};
-        
-        for (let v = 0; v < vectors.length; v++) {
-            let vector = vectors[v];
-            
-            for (let p = 0; p < vector.length; p++) {
-                let refper = vector[p].refper;
-                if (!(refper in flatVectors)) {
-                    flatVectors[refper] = [];
-                }
-                flatVectors[refper].push(vector[p]);
-            }
-        }
-        
-        // Get max vector for iterating
-        let intersection = [];
-        
-        let maxV = 0;
-        let maxL = vectors[0].length;
-        for (let v = 0; v < vectors.length; v++) {
-            if (vectors[v].length > maxL) {
-                maxV = v;
-                maxL = vectors[v].length;
-            }
-            
-            intersection.push([]);
-        }
-        maxV = vectors[maxV];
-        
-        for (let p = 0; p < maxV.length; p++) {
-            let point = maxV[p];
-            if (!(point.refper in flatVectors)) continue;
-            if (flatVectors[point.refper].length == vectors.length) {
-                let flatPoint = flatVectors[point.refper];
-                for (let f = 0; f < flatPoint.length; f++) {
-                    intersection[f].push(flatPoint[f]);
-                }
-            }
-        }		
-        
-        return intersection;
     }
  
     this.getVectorIds = function(expression) {
@@ -534,7 +457,7 @@ VectorLib = function() {
     };
     
     
-    ExpressionNode = function(value) {
+    var ExpressionNode = function(value) {
         this.operation = null;
         this.value = null;  
         this.left = null;
@@ -590,7 +513,7 @@ VectorLib = function() {
      *
      * operation: Function to apply to vector values. 
     **/
-    operate = function(valueA, valueB, operation) {
+    var operate = function(valueA, valueB, operation) {
         if (valueA.vectorType && valueB.vectorType) {
             return valueA.operate(valueB, operation);
         }
@@ -608,7 +531,7 @@ VectorLib = function() {
     };
 
 
-    vectorScalarOperate = function(vector, scalar, operation) {
+    var vectorScalarOperate = function(vector, scalar, operation) {
         let result = new Vector();     
         for (let p = 0; p < vector.length; p++) {
             let newPoint = {
@@ -622,7 +545,7 @@ VectorLib = function() {
         return result;
     };
 
-    postfix = function(symbols) {
+    var postfix = function(symbols) {
         let stack = ['('];
         let post = [];
         symbols.push(')');
@@ -658,7 +581,7 @@ VectorLib = function() {
     };
 
 
-    priority = function(symbol) {
+    var priority = function(symbol) {
         if (symbol in operatorPriorities) {
             return operatorPriorities[symbol];
         }
@@ -667,7 +590,7 @@ VectorLib = function() {
     };
 
 
-    splitSymbols = function(vexp) {
+    var splitSymbols = function(vexp) {
         let split = [];
         
         for (let pos = 0; pos < vexp.length; pos++) {
@@ -699,7 +622,7 @@ VectorLib = function() {
     };
 
 
-    readVector = function(vexp, pos) {
+    var readVector = function(vexp, pos) {
         let symbol = "v";
         pos++;
         
@@ -712,12 +635,12 @@ VectorLib = function() {
     };
 
 
-    readOperator = function(vexp, pos) {
+    var readOperator = function(vexp, pos) {
         return {'symbol': vexp[pos], 'pos': pos};
     };
 
 
-    readScalar = function(vexp, pos) {
+    var readScalar = function(vexp, pos) {
         let symbol = "";
         let start = pos;
         
@@ -732,12 +655,12 @@ VectorLib = function() {
     };
 
 
-    readBracket = function(vexp, pos) {
+    var readBracket = function(vexp, pos) {
         return {'symbol': vexp[pos], 'pos': pos};
     };
 
     
-    validateBrackets = function(vexp) {
+    var validateBrackets = function(vexp) {
         // TODO: Expand on this to also return position of incorrect bracket.
         let stack = [];
         
@@ -754,52 +677,55 @@ VectorLib = function() {
         return stack.length == 0;
     };
     
-    
-    // Merge but don't overwrite existing keys.
-    safeMerge = function(target, source) {
-        for (key in source) {
-            if (!(key in target)) {
-                target[key] = source[key];
-            }
-        }
-        return target;
-    }
-
-    formatDateObject = function(date) {
-        if (typeof date === 'string') return stringToDate(date);
-        return date;
-    }
-
-    formatDateString = function(date) {
-        if (typeof date === 'string') return date;
-        return datestring(date);
-    }
-
-    stringToDate = function(datestring) {
-        let split = datestring.split('-');
-        return realDate(
-                split[0], unpad(split[1], "0"), Number(unpad(split[2], "0")));
-    }
-    
-    datestring = function(date) {
-        return date.getFullYear() + "-"
-                + (date.getMonth() + 1).toString().padStart(2, "0") + "-"
-                + date.getDate().toString().padStart(2, "0");
-    }   
-    
-    realDate = function(year, month, day) {
-        return new Date(year, month - 1, day);
-    }
     this.realDate = realDate;
-
-    function unpad(str, chr) {
-        let start = 0;
-        for (let c = 0; c < str.length; c++) {
-            if (str[c] != chr) break;
-            start++;
-        }
-        return str.substring(start);
-    }  
 }
 
-module.exports = VectorLib;
+// Merge but don't overwrite existing keys.
+function safeMerge(target, source) {
+    for (let key in source) {
+        if (!(key in target)) {
+            target[key] = source[key];
+        }
+    }
+    return target;
+}
+
+function realDate(year, month, day) {
+    return new Date(year, month - 1, day);
+}
+
+function formatDateObject(date) {
+    if (typeof date === 'string') return stringToDate(date);
+    return date;
+}
+
+function formatDateString(date) {
+    if (typeof date === 'string') return date;
+    return datestring(date);
+}
+
+function stringToDate(datestring) {
+    let split = datestring.split('-');
+    return realDate(
+            split[0], unpad(split[1], "0"), Number(unpad(split[2], "0")));
+}
+
+function datestring(date) {
+    return date.getFullYear() + "-"
+            + (date.getMonth() + 1).toString().padStart(2, "0") + "-"
+            + date.getDate().toString().padStart(2, "0");
+}   
+
+function unpad(str, chr) {
+    let start = 0;
+    for (let c = 0; c < str.length; c++) {
+        if (str[c] != chr) break;
+        start++;
+    }
+    return str.substring(start);
+}  
+
+module.exports = {
+    'Vector': Vector,
+    'VectorLib': VectorLib
+};
