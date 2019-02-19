@@ -14,17 +14,17 @@ This library can be used with Node.js or any of the following web browsers:
 
 Using Node.js:
 ```javascript
-const Vector = require('./vector_lib.js').Vector;
-const VectorLib = require('./vector_lib.js').VectorLib;
+const Vector = require('./time_series_library.js').Vector;
+const VectorLib = require('./time_series_library.js').VectorLib;
 ```
 
 Using a web browser:
 ```html
-<script src="./vector_lib.js"></script>
+<script src="./time_series_library.js"></script>
 
 <script>
-    var Vector = vector_lib.Vector;
-    var VectorLib = vector_lib.VectorLib;
+    var Vector = time_series_library.Vector;
+    var VectorLib = time_series_library.VectorLib;
 </script>
 ```
 

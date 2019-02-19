@@ -1,8 +1,8 @@
 {
-  "name": "vector_lib",
+  "name": "time-series-library",
   "version": "2.1.0",
   "description": "A JavaScript library for vector arithmetic",
-  "main": "vector_lib.js",
+  "main": "time_series_library.js",
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "npm run test && npx rollup -c && npm run uglify",

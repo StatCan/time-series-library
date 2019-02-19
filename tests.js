@@ -1,7 +1,7 @@
 let assert = require('assert');
 
-const VectorLib = require('./src/vector_lib.js').VectorLib;
-const Vector = require('./src/vector_lib.js').Vector;
+const VectorLib = require('./src/time_series_library.js').VectorLib;
+const Vector = require('./src/time_series_library.js').Vector;
 
 let vlib = new VectorLib();
 

@@ -10,7 +10,7 @@ export default {
     output: {
         file: `dist/${main}`,
         format: "iife",
-        name: "vector_lib"
+        name: "time_series_library"
     },
     plugins: [
         resolve(),
