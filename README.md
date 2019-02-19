@@ -52,8 +52,8 @@ Using a web browser:
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
-[annual()](#Vector.annual)  
-[monthly()](#Vector.monthly)  
+[annual(mode)](#Vector.annual)  
+[monthly(mode)](#Vector.monthly)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
 
@@ -700,7 +700,7 @@ Result:
 ```
 
 <a name="Vector.monthly"></a>
-### monthly()
+### monthly(mode)
 
 Converts the frequency of a vector to monthly, returning the last reference 
 period for each month.
