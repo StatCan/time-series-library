@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2019-02-20
+### Added
+- Added quarter() function.
+
 ## [2.1.0] - 2019-02-07
 ### Added
 - Added sum() function.
