@@ -53,6 +53,7 @@ Using a web browser:
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
 [annual(mode)](#Vector.annual)  
+[quarter(mode, offset)](#Vector.quarter)  
 [monthly(mode)](#Vector.monthly)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
@@ -675,6 +676,46 @@ The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each year (Default).
 - `"sum"`: Takes the sum of each year.
 - `"average"`: Takes the average of each year.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-06-01", 'value': 0},
+    {'refper': "2018-12-01", 'value': 1},
+    {'refper': "2019-06-01", 'value': 2},
+    {'refper': "2019-12-01", 'value': 3},
+    {'refper': "2020-06-01", 'value': 4},
+    {'refper': "2020-12-01", 'value': 5}
+]);
+
+let result = vector.annual();
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-12-01", 'value': 1},
+    {'refper': "2019-12-01", 'value': 3},
+    {'refper': "2020-12-01", 'value': 5}
+]
+```
+
+<a name="Vector.quarter"></a>
+### quarter(mode, offset)
+
+Converts the frequency of a vector to quarterly, returning the last reference 
+period for each quarter.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each quarter (Default).
+- `"sum"`: Takes the sum of each quarter.
+- `"average"`: Takes the average of each quarter.
+
+The parameter **offset** is optional with a default value of `0`. This 
+parameter determines which months are used for each quarter:
+- `0`: March, June, September, December
+- `1`: February, May, August, November
+- `2`: January, April, July, October
 
 Example:
 ```javascript
