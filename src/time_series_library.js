@@ -237,7 +237,7 @@ var Vector = function(data) {
         }
 
         let split = frequencySplit(this, function(last, curr) {
-            return last.getYear() != curr.getYear();
+            return last.getFullYear() != curr.getFullYear();
         });
         let join =  frequencyJoin(split, mode)    
         return join.filter(function(point) {
@@ -267,7 +267,7 @@ var Vector = function(data) {
 
         let split = frequencySplit(this, function(last, curr) {
             return last.getMonth() != curr.getMonth() 
-                    || last.getYear() != curr.getYear();
+                    || last.getFullYear() != curr.getFullYear();
         });
         return frequencyJoin(split, mode);
     }
