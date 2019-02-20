@@ -239,24 +239,40 @@ var Vector = function(data) {
         let split = frequencySplit(this, function(last, curr) {
             return last.getFullYear() != curr.getFullYear();
         });
-        let join =  frequencyJoin(split, mode)    
+        let join = frequencyJoin(split, mode)    
         return join.filter(function(point) {
             return point.refper.getMonth() == join.refper(0).getMonth();
         });
     }
     this.annualize = this.annual;
 
-    this._quarterly = function(mode) {
+    this.quarter = function(mode, offset) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes["last"]; 
         }
+        offset = offset || 0;
+        offset = offset % 3;
 
-        let split = frequencySplit(this, function(last, curr) {
+        let filtered = this.filter(function(point) {
+            let m = point.refper.getMonth();
+            if (offset == 0) {
+                return m == 2 || m == 5 || m == 8 || m == 11;
+            }
+            else if (offset == 1) {
+                return m == 1 || m == 4 || m == 7 || m == 10;
+            }
+            else {
+                return m == 0 || m == 3 || m == 6 || m == 9;
+            }
+        });
+
+        let split = frequencySplit(filtered, function(last, curr) {
             // TODO: Is this correct.
-            let lastQuarter = Math.floor(last.getMonth() / 4);
-            let currQuarter = Math.floor(curr.getMonth() / 4);
+            let lastQuarter = Math.floor(((last.getMonth() - offset) % 12) / 3);
+            let currQuarter = Math.floor(((curr.getMonth() - offset) % 12) / 3);
             return lastQuarter != currQuarter;
         });
+        
         return frequencyJoin(split, mode);
     }
 

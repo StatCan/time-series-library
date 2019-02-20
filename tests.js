@@ -463,6 +463,52 @@ describe('Vector', function() {
         });
     });
 
+    describe('#quarter', function() {
+        it("should convert a vector to a quarterly frequency", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', value: 1},
+                {'refper': '2018-02-01', value: 2},
+                {'refper': '2019-03-01', value: 3},
+                {'refper': '2019-04-01', value: 4},
+                {'refper': '2019-05-01', value: 5},
+                {'refper': '2019-06-01', value: 6},
+                {'refper': '2019-07-01', value: 7},
+                {'refper': '2019-08-01', value: 8},
+                {'refper': '2019-09-01', value: 9},
+                {'refper': '2019-10-01', value: 10},
+                {'refper': '2019-11-01', value: 11},
+                {'refper': '2019-12-01', value: 12}
+            ]);
+
+            let expected = new Vector([
+                {'refper': '2019-03-01', value: 3},
+                {'refper': '2019-06-01', value: 6},
+                {'refper': '2019-09-01', value: 9},
+                {'refper': '2019-12-01', value: 12}
+            ]);
+            let result = vector.quarter();
+            assert.strictEqual(result.equals(expected), true);   
+
+            expected = new Vector([
+                {'refper': '2018-02-01', value: 2},
+                {'refper': '2019-05-01', value: 5},
+                {'refper': '2019-08-01', value: 8},
+                {'refper': '2019-11-01', value: 11}
+            ]);
+            result = vector.quarter("last", 1);
+            assert.strictEqual(result.equals(expected), true);  
+
+            expected = new Vector([
+                {'refper': '2018-01-01', value: 1},
+                {'refper': '2019-04-01', value: 4},
+                {'refper': '2019-07-01', value: 7},
+                {'refper': '2019-10-01', value: 10}
+            ]);
+            result = vector.quarter("last", 2);
+            assert.strictEqual(result.equals(expected), true);  
+        });
+    });
+
     describe('#monthly', function() {
         it("should convert a vector to an annual frequency", function() {
             let vector = new Vector([
