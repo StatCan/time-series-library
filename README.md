@@ -53,8 +53,9 @@ Using a web browser:
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
 [annual(mode)](#Vector.annual)  
-[quarter(mode, offset)](#Vector.quarter)  
+[quarter(mode, offset)](#Vector.quarterly)  
 [monthly(mode)](#Vector.monthly)  
+[weekly(mode)](#Vector.weekly)
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
 
@@ -700,8 +701,8 @@ Result:
 ]
 ```
 
-<a name="Vector.quarter"></a>
-### quarter(mode, offset)
+<a name="Vector.quarterly"></a>
+### quarterly(mode, offset)
 
 Converts the frequency of a vector to quarterly, returning the last reference 
 period for each quarter.
@@ -720,23 +721,30 @@ parameter determines which months are used for each quarter:
 Example:
 ```javascript
 let vector = new Vector([
-    {'refper': "2018-06-01", 'value': 0},
-    {'refper': "2018-12-01", 'value': 1},
-    {'refper': "2019-06-01", 'value': 2},
-    {'refper': "2019-12-01", 'value': 3},
-    {'refper': "2020-06-01", 'value': 4},
-    {'refper': "2020-12-01", 'value': 5}
+    {'refper': '2018-01-01', value: 1},
+    {'refper': '2018-02-01', value: 2},
+    {'refper': '2019-03-01', value: 3},
+    {'refper': '2019-04-01', value: 4},
+    {'refper': '2019-05-01', value: 5},
+    {'refper': '2019-06-01', value: 6},
+    {'refper': '2019-07-01', value: 7},
+    {'refper': '2019-08-01', value: 8},
+    {'refper': '2019-09-01', value: 9},
+    {'refper': '2019-10-01', value: 10},
+    {'refper': '2019-11-01', value: 11},
+    {'refper': '2019-12-01', value: 12}
 ]);
 
-let result = vector.annual();
+let result = vector.quarterly();
 ```
 
 Result:
 ```javascript
 [
-    {'refper': "2018-12-01", 'value': 1},
-    {'refper': "2019-12-01", 'value': 3},
-    {'refper': "2020-12-01", 'value': 5}
+    {'refper': '2019-03-01', value: 3},
+    {'refper': '2019-06-01', value: 6},
+    {'refper': '2019-09-01', value: 9},
+    {'refper': '2019-12-01', value: 12}
 ]
 ```
 
@@ -771,6 +779,44 @@ Result:
     {'refper': '2018-12-12', value: 2},
     {'refper': '2019-01-12', value: 4},
     {'refper': '2019-02-12', value: 6}
+]
+```
+
+<a name="Vector.weekly"></a>
+### weekly(mode)
+
+Converts the frequency of a vector to weekly, returning the last reference 
+period for each week.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each week (Default).
+- `"sum"`: Takes the sum of each week.
+- `"average"`: Takes the average of each week.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': '2019-02-11', value: 1},
+    {'refper': '2018-02-12', value: 2},
+    {'refper': '2019-02-13', value: 3},
+    {'refper': '2019-02-14', value: 4},
+    {'refper': '2019-02-15', value: 5},
+    {'refper': '2019-02-18', value: 6},
+    {'refper': '2019-02-19', value: 7},
+    {'refper': '2019-02-20', value: 8},
+    {'refper': '2019-02-21', value: 9},
+    {'refper': '2019-02-22', value: 10},
+    {'refper': '2019-02-25', value: 11}
+]);
+
+let result = vector.weekly();
+```
+
+Result:
+```javascript
+[
+    {'refper': '2019-02-15', value: 5},
+    {'refper': '2019-02-22', value: 10}
 ]
 ```
 
