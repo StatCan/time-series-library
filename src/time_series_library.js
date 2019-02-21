@@ -275,6 +275,7 @@ var Vector = function(data) {
         
         return frequencyJoin(split, mode);
     }
+    this.quarterly = quarter;
 
     this.monthly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
