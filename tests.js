@@ -577,8 +577,7 @@ describe('Vector', function() {
                 {'refper': '2019-02-19', value: 7},
                 {'refper': '2019-02-20', value: 8},
                 {'refper': '2019-02-21', value: 9},
-                {'refper': '2019-02-22', value: 10},
-                {'refper': '2019-02-25', value: 11}
+                {'refper': '2019-02-22', value: 10}
             ]);
 
             let expected = new Vector([

@@ -297,7 +297,7 @@ var Vector = function(data) {
         let split = frequencySplit(this, function(last, curr) {
             return curr.getDay() < last.getDay();
         });
-        let join = frequencyJoin(split, mode);
+        return frequencyJoin(split, mode);
     }
 
     function frequencyJoin(split, mode) {
