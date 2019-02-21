@@ -298,9 +298,6 @@ var Vector = function(data) {
             return curr.getDay() < last.getDay();
         });
         let join = frequencyJoin(split, mode);
-        return join.filter(function(point) {
-            return point.refper.getDay() == join.refper(0).getDay();
-        });
     }
 
     function frequencyJoin(split, mode) {
