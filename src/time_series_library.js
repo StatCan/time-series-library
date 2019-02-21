@@ -275,7 +275,7 @@ var Vector = function(data) {
         
         return frequencyJoin(split, mode);
     }
-    this.quarterly = quarter;
+    this.quarterly = this.quarter;
 
     this.monthly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
@@ -287,6 +287,20 @@ var Vector = function(data) {
                     || last.getFullYear() != curr.getFullYear();
         });
         return frequencyJoin(split, mode);
+    }
+
+    this.weekly = function(mode) {
+        if (mode == undefined || typeof mode === 'string') {
+            mode = this.modes[mode] || this.modes["last"]; 
+        }
+
+        let split = frequencySplit(this, function(last, curr) {
+            return curr.getDay() < last.getDay();
+        });
+        let join = frequencyJoin(split, mode);
+        return join.filter(function(point) {
+            return point.refper.getDay() == join.refper(0).getDay();
+        });
     }
 
     function frequencyJoin(split, mode) {

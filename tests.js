@@ -565,6 +565,30 @@ describe('Vector', function() {
         })
     });
 
+    describe('#weekly', function() {
+        it("should convert a vector to a weekly frequency", function() {
+            let vector = new Vector([
+                {'refper': '2019-02-11', value: 1},
+                {'refper': '2018-02-12', value: 2},
+                {'refper': '2019-02-13', value: 3},
+                {'refper': '2019-02-14', value: 4},
+                {'refper': '2019-02-15', value: 5},
+                {'refper': '2019-02-18', value: 6},
+                {'refper': '2019-02-19', value: 7},
+                {'refper': '2019-02-20', value: 8},
+                {'refper': '2019-02-21', value: 9},
+                {'refper': '2019-02-22', value: 10},
+                {'refper': '2019-02-25', value: 11}
+            ]);
+
+            let expected = new Vector([
+                {'refper': '2019-02-15', value: 5},
+                {'refper': '2019-02-22', value: 10}
+            ]);
+            let result = vector.weekly();
+            assert.strictEqual(result.equals(expected), true);   
+        });
+    });
 
     describe('#round', function() {
         it("should round values in a vector", function() {
