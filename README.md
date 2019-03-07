@@ -58,6 +58,7 @@ Using a web browser:
 [weekly(mode)](#Vector.weekly)
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
+[json()](#Vector.json)  
 
 **VectorLib:**  
 [evaluate(expression, vectors)](#VectorLib.evaluate)  
@@ -870,6 +871,28 @@ Result:
 [
     {'refper': "2018-01-01", 'value': 2},
     {'refper': "2018-02-01", 'value': 2}
+]
+```
+
+<a name="Vector.json"></a>
+### json()
+
+Converts a vector to a JSON formatted array.
+
+Example:
+```js
+let vector = new Vector([
+    {'refper': '2018-01-01', 'value': 1},
+    {'refper': '2018-02-01', 'value': 2}
+]);
+let result = vector.json();
+```
+
+Result:
+```json
+[
+    {"refper": "2018-01-01", "value": 1},
+    {"refper": "2018-02-01", "value": 2}
 ]
 ```
 

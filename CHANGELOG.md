@@ -4,6 +4,7 @@
 ### Added
 - Added weekly() function.
 - Added quarterly() alias to quarter().
+- Added json() function.
 
 ## [2.2.0] - 2019-02-20
 ### Added

@@ -618,6 +618,19 @@ describe('Vector', function() {
             assert.strictEqual(result.value(1), 2);
         });
     });
+
+    describe('#json', function() {
+        it("should convert a vector to a JSON array", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+            let result = vector.json();
+            
+            let newVector = new Vector(JSON.parse(result));
+            assert.strictEqual(vector.equals(newVector), true);
+        });
+    });
 });
 
 describe('VectorLib', function() {   
@@ -691,37 +704,6 @@ describe('VectorLib', function() {
             assert.strictEqual(ids[0], "1");
             assert.strictEqual(ids[1], "2");
             assert.strictEqual(ids[2], "3");
-        });
-    });
-
-    describe('#formatDateObject', function() {
-        it("should format all dates in a vector as objects", function() {
-            let vector = [
-                {'refper': '2018-01-01', 'value': 0},
-                {'refper': '2018-12-31', 'value': 0}
-            ];
-            vlib.formatDateObject(vector);
-
-            assert.strictEqual(vector[0].refper.getFullYear(), 2018);
-            assert.strictEqual(vector[0].refper.getMonth(), 0);
-            assert.strictEqual(vector[0].refper.getDate(), 1);
-
-            assert.strictEqual(vector[1].refper.getFullYear(), 2018);
-            assert.strictEqual(vector[1].refper.getMonth(), 11);
-            assert.strictEqual(vector[1].refper.getDate(), 31);
-        });
-    });
-
-    describe('#formatDateString', function() {
-        it("should format all dates in a vector as strings", function() {
-            let vector = [
-                {'refper': vlib.realDate(2018, 1, 1), 'value': 0},
-                {'refper': vlib.realDate(2018, 12, 31), 'value': 0}
-            ];
-            vlib.formatDateString(vector);
-
-            assert.strictEqual(vector[0].refper, '2018-01-01');
-            assert.strictEqual(vector[1].refper, '2018-12-31');
         });
     });
 });

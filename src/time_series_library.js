@@ -365,6 +365,10 @@ var Vector = function(data) {
         return br / Math.pow(10, decimals);
     }
 
+    this.json = function() {
+        return JSON.stringify(this.data);
+    }
+
     function formatData(data) {
         for (let p = 0; p < data.length; p++) {
             formatPoint(data[p]);
@@ -391,20 +395,6 @@ var VectorLib = function() {
         '/': 2,
         '+': 1,
         '-': 1,
-    };
-
-    this.formatDateObject = function(vector) {
-        for (let p = 0; p < vector.length; p++) {
-            vector[p].refper = formatDateObject(vector[p].refper);
-        }
-        return vector;
-    };
-
-    this.formatDateString = function(vector) {
-        for (let p = 0; p < vector.length; p++) {
-            vector[p].refper = formatDateString(vector[p].refper);
-        }
-        return vector;
     };
 
     this.intersection = function(vectors) {
@@ -723,19 +713,8 @@ function realDate(year, month, day) {
 }
 
 function formatDateObject(date) {
-    if (typeof date === 'string') return stringToDate(date);
+    if (typeof date === 'string') return new Date(date);
     return date;
-}
-
-function formatDateString(date) {
-    if (typeof date === 'string') return date;
-    return datestring(date);
-}
-
-function stringToDate(datestring) {
-    let split = datestring.split('-');
-    return realDate(
-            split[0], unpad(split[1], "0"), Number(unpad(split[2], "0")));
 }
 
 function datestring(date) {
@@ -743,15 +722,6 @@ function datestring(date) {
             + (date.getMonth() + 1).toString().padStart(2, "0") + "-"
             + date.getDate().toString().padStart(2, "0");
 }   
-
-function unpad(str, chr) {
-    let start = 0;
-    for (let c = 0; c < str.length; c++) {
-        if (str[c] != chr) break;
-        start++;
-    }
-    return str.substring(start);
-}  
 
 module.exports = {
     'Vector': Vector,
