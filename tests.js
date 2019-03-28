@@ -98,6 +98,20 @@ describe('Vector', function() {
         });
     });
 
+    describe('#map', function() {
+        it("should map a vector", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+            ]);
+            result = vector.map(p => p.value);
+            assert.strictEqual(result[0], 0);
+            assert.strictEqual(result[1], 1);
+            assert.strictEqual(result[2], 2);
+        });
+    });
+
     describe('#filter', function() {
         it("should return a filtered vector based on a predicate", function() {
             let vector = new Vector([

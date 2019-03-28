@@ -53,6 +53,10 @@ var Vector = function(data) {
         return copy;
     }
 
+    this.map = function(mapper) {
+        return this.data.map(mapper);
+    }
+
     this.filter = function(predicate) {
         let result = new Vector();
         for (let p = 0; p < this.length; p++) {

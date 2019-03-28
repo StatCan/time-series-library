@@ -38,6 +38,7 @@ Using a web browser:
 [push(datapoint)](#Vector.push)  
 [equals(other)](#Vector.equals)  
 [copy()](#Vector.copy)  
+[map(fn)](#Vector.map)  
 [filter(predicate)](#Vector.filter)  
 [range(startDate, endDate)](#Vector.range)  
 [latestN(n)](#Vector.latestN)  
@@ -249,6 +250,27 @@ Result:
     {'refper': "2018-01-01", 'value': 1},
     {'refper': "2018-02-01", 'value': 2}
 ]
+```
+
+<a name="Vector.map"></a>
+### map(fn)
+
+Applies a map function, **fn** on each point in a vector.   
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-01-02", 'value': 1},
+    {'refper': "2018-01-03", 'value': 2},
+]);
+
+let result = vector.map(p => p.value);
+```
+
+Result:
+```javascript
+[0, 1, 2]
 ```
 
 <a name="Vector.filter"></a>
