@@ -39,6 +39,7 @@ Using a web browser:
 [equals(other)](#Vector.equals)  
 [copy()](#Vector.copy)  
 [map(fn)](#Vector.map)  
+[find(predicate)](#Vector.find)  
 [filter(predicate)](#Vector.filter)  
 [range(startDate, endDate)](#Vector.range)  
 [latestN(n)](#Vector.latestN)  
@@ -271,6 +272,28 @@ let result = vector.map(p => p.value);
 Result:
 ```javascript
 [0, 1, 2]
+```
+
+<a name="Vector.find"></a>
+### find(predicate)
+
+Returns the first datapoint in a vector matching a predicate function. Returns 
+`undefined` if no match is found.   
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 0},
+    {'refper': "2018-01-02", 'value': 1},
+    {'refper': "2018-01-03", 'value': 2},
+]);
+
+let result = vector.find(p => p == 1);
+```
+
+Result:
+```javascript
+{'refper': "2018-01-02", 'value': 1}
 ```
 
 <a name="Vector.filter"></a>

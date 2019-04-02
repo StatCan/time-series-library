@@ -57,6 +57,10 @@ var Vector = function(data) {
         return this.data.map(mapper);
     }
 
+    this.find = function(predicate) {
+        return this.data.find(predicate);
+    }
+
     this.filter = function(predicate) {
         let result = new Vector();
         for (let p = 0; p < this.length; p++) {

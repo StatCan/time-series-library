@@ -6,6 +6,7 @@
 - Added quarterly() alias to quarter().
 - Added json() function.
 - Added map() function.
+- Added find() function.
 
 ## [2.2.0] - 2019-02-20
 ### Added

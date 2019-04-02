@@ -105,12 +105,28 @@ describe('Vector', function() {
                 {'refper': '2018-01-02', 'value': 1},
                 {'refper': '2018-01-03', 'value': 2},
             ]);
-            result = vector.map(p => p.value);
+            let result = vector.map(p => p.value);
             assert.strictEqual(result[0], 0);
             assert.strictEqual(result[1], 1);
             assert.strictEqual(result[2], 2);
         });
     });
+
+    describe('#map', function() {
+        it("should find the first datapoint matching a predicate.", function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+            ]);
+
+            let result = vector.find(p => p.value == 1);
+            assert.strictEqual(result.refper, vector.get(1).refper);
+            
+            result = vector.find(p => false);
+            assert.strictEqual(result, undefined);          
+        })
+    })
 
     describe('#filter', function() {
         it("should return a filtered vector based on a predicate", function() {
