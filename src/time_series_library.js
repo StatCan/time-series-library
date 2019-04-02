@@ -28,18 +28,16 @@ var Vector = function(data) {
         let pointEquals = function(a, b) {
             return a.refper.getTime() == b.refper.getTime() 
                     && a.value == b.value;
-        }
+        };
 
-        if (index !== undefined) {
-            return pointEquals(this.get(index), other.get(index));
-        }
+        if (index) return pointEquals(this.get(index), other.get(index));
+        if (this.length != other.length) return false;
+        
+        let foundNotEqual = this.find((point, i) => {
+            return !pointEquals(point, other.get(i))
+        });
+        if (foundNotEqual) return false;
 
-        if (this.length != other.length) {
-            return false;
-        } 
-        for (let p = 0; p < this.length; p++) {
-            if (!pointEquals(this.get(p), other.get(p))) return false;
-        }      
         return true;
     }
 
@@ -89,12 +87,11 @@ var Vector = function(data) {
 
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
-        for (let p = 0; p < this.length; p++) {
-            if (this.refper(p).getTime() != other.refper(p).getTime()) {
-                return false;
-            }
-        }   
-        return true;  
+        let foundInoperable = this.find((point, i) => {
+            return point.refper.getTime() != other.refper(i).getTime();
+        });
+        if (foundInoperable) return false;
+        return true;
     }
 
     this.intersection = function(other) {
@@ -626,7 +623,8 @@ var VectorLib = function() {
                 next = readVector(vexp, pos);
             }
             else if (!isNaN(vexp[pos]) 
-                    || (vexp[pos] == '-' && isNaN(vexp[pos - 1]) && !isNaN(vexp[pos + 1]))) {
+                    || (vexp[pos] == '-' && isNaN(vexp[pos - 1]) 
+                            && !isNaN(vexp[pos + 1]))) {
                 next = readScalar(vexp, pos);
             }
             else if (vexp[pos] in operators) {
