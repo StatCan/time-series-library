@@ -1,26 +1,26 @@
 /* eslint-env node */
 module.exports = {
-    "presets": [
+    'presets': [
         [
-            "@babel/env", {
-                "useBuiltIns": "usage",
+            '@babel/env', {
+                'useBuiltIns': 'usage',
             }
         ]
     ],
-    "env": {
-        "node": {
-            "presets": [
+    'env': {
+        'node': {
+            'presets': [
                 [
-                    "@babel/env", {
-                        "targets": {"node": 10},
-                        "useBuiltIns": "usage"
+                    '@babel/env', {
+                        'targets': {'node': 10},
+                        'useBuiltIns': 'usage'
                     }
                 ]
             ]
         }
     },
-    "plugins": ["@babel/plugin-proposal-object-rest-spread"],
-    "ignore": [
+    'plugins': ['@babel/plugin-proposal-object-rest-spread'],
+    'ignore': [
         /core-js/,
         /@babel\/runtime/
     ]

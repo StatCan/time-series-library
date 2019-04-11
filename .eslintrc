@@ -1,7 +1,9 @@
 {
     "env": {
         "es6": true,
-        "browser": true
+        "browser": true,
+        "node": true,
+        "mocha": true
     },
     "extends": ["eslint:recommended", "google"],
     "parserOptions": {
@@ -9,6 +11,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "indent": ["error", 4],
         "linebreak-style": [
             "error",
             "unix"
@@ -19,7 +22,7 @@
         ],
         "curly": 0,
         "comma-dangle": 0,
-        "max-len": 80,
+        "max-len": 2,
         "require-jsdoc": 0,
         "no-invalid-this": 1
     }
