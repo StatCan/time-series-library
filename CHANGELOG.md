@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.2.1] - Unreleased
+## [2.3.0] - 2019-04-11
 ### Added
 - Added weekly() function.
 - Added quarterly() alias to quarter().
