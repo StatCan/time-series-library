@@ -5,7 +5,7 @@
   "main": "time_series_library.js",
   "scripts": {
     "clean": "rm -rf dist/*",
-    "build": "npm run test && npx rollup -c && npm run uglify",
+    "build": "npm runt lint && npm run test && npx rollup -c && npm run uglify",
     "uglify": "npx uglifyjs-folder dist --each --output dist",
     "lint": "npx eslint .",
     "lint-fix": "npx eslint . --fix",

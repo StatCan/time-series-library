@@ -13,4 +13,7 @@ test:
   script:
    - npm install
    - npm test
-
+   
+lint:
+  script:
+   - npm run lint
