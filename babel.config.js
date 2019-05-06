@@ -4,6 +4,7 @@ module.exports = {
         [
             '@babel/env', {
                 'useBuiltIns': 'usage',
+                'corejs': 'core-js@2'
             }
         ]
     ],
@@ -13,7 +14,8 @@ module.exports = {
                 [
                     '@babel/env', {
                         'targets': {'node': 10},
-                        'useBuiltIns': 'usage'
+                        'useBuiltIns': 'usage',
+                        'corejs': 'core-js@2'
                     }
                 ]
             ]
