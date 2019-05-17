@@ -528,13 +528,13 @@ const VectorLib = function() {
     const addMonths = function(date, months) {
         const currYear = date.getFullYear();
         const currMonth = date.getMonth();
-        const newYear = currYear + Math.floor((currYear + months) / 12);
+        const newYear = currYear + Math.floor((currMonth + months) / 12);
         const newMonth = (currMonth + (months % 12)) % 12;
         return new Date(newYear, newMonth, daysInMonth(newYear, newMonth));
     };
 
     const daysInMonth = function(year, month) {
-        return new Date(year, month, 0).getDate();
+        return new Date(year, month + 1, 0).getDate();
     };
 
     this.evaluate = function(expression, vectors) {
