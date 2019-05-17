@@ -818,4 +818,30 @@ describe('VectorLib', function() {
             assert.strictEqual(vector.equals(expected), true);
         });
     });
+
+    describe('#generateBiAnnual', function() {
+        it('should generate a biannual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateBiAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2020-12-31', 'value': 1},
+                {'refper': '2022-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateTetraAnnual', function() {
+        it('should generate tetra-annual vector given a value list', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateTetraAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2023-12-31', 'value': 1},
+                {'refper': '2028-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
 });
