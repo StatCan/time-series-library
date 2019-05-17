@@ -489,11 +489,13 @@ const VectorLib = function() {
     };
 
     const nextDay = function(date) {
-        return date.addDays(1);
+        return new Date(
+            date.getFullYear(), date.getMonth(), date.getDate() + 1);
     };
 
     const nextWeek = function(date) {
-        return date.addDays(7);
+        return new Date(
+            date.getFullYear(), date.getMonth(), date.getDate() + 7);
     };
 
     const nextMonth = function(date) {
@@ -509,15 +511,18 @@ const VectorLib = function() {
     };
 
     const nextAnnum = function(date) {
-        return date.setFullYear(date.getFullYear() + 1);
+        return new Date(
+            date.getFullYear() + 1, date.getMonth, date.getDate());
     };
 
     const nextBiAnnum = function(date) {
-        return date.setFullYear(date.getFullYear() + 2);
+        return new Date(
+            date.getFullYear() + 2, date.getMonth, date.getDate());
     };
 
     const nextTetraAnnum = function(date) {
-        return date.setFullYear(date.getFullYear() + 5);
+        return new Date(
+            date.getFullYear() + 5, date.getMonth, date.getDate());
     };
 
     const addMonths = function(date, months) {
