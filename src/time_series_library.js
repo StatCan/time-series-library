@@ -426,6 +426,96 @@ const VectorLib = function() {
         return ids;
     };
 
+    this.generateDaily = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextDay);
+    };
+
+    this.generateWeekly = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextWeek);
+    };
+
+    this.generateMonthly = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextMonth);
+    };
+
+    this.generateQuarterly = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextQuarter);
+    };
+
+    this.generateSemiAnnual = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextSemiAnnum);
+    };
+
+    this.generateAnnual = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextAnnum);
+    };
+
+    this.generateBiAnnual = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextBiAnnum);
+    };
+
+    this.generateTetraAnnual = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        return generateVector(values, startDate, nextTetraAnnum);
+    };
+
+    const generateVector = function(values, startDate, nextDateFn) {
+        const vector = new Vector();
+        let currDate = startDate;
+        for (const value of values) {
+            vector.push({'refper': currDate, 'value': value});
+            currDate = nextDateFn(currDate);
+        }
+        return vector;
+    };
+
+    const nextDay = function(date) {
+        return date.addDays(1);
+    };
+
+    const nextWeek = function(date) {
+        return date.addDays(7);
+    };
+
+    const nextMonth = function(date) {
+        return addMonths(date, 1);
+    };
+
+    const nextQuarter = function(date) {
+        return addMonths(date, 4);
+    };
+
+    const nextSemiAnnum = function(date) {
+        return addMonths(date, 6);
+    };
+
+    const nextAnnum = function(date) {
+        return date.setFullYear(date.getFullYear() + 1);
+    };
+
+    const nextBiAnnum = function(date) {
+        return date.setFullYear(date.getFullYear() + 2);
+    };
+
+    const nextTetraAnnum = function(date) {
+        return date.setFullYear(date.getFullYear() + 5);
+    };
+
+    const addMonths = function(date, months) {
+        const currYear = date.getFullYear();
+        const currMonth = date.getMonth();
+        const newYear = currYear + Math.floor((currYear + months) / 12);
+        const newMonth = (currMonth + (months % 12)) % 12;
+        date.setFullYear(newYear);
+        date.setMonth(newMonth);
+    };
 
     this.evaluate = function(expression, vectors) {
         // {'v1': {'refper': "2018-01-01", 'value': 1}, ...}
