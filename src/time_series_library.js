@@ -503,7 +503,7 @@ const VectorLib = function() {
     };
 
     const nextQuarter = function(date) {
-        return addMonths(date, 4);
+        return addMonths(date, 3);
     };
 
     const nextSemiAnnum = function(date) {
