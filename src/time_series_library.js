@@ -1,29 +1,68 @@
+/**
+ * Create a new vector representing time series data.
+ * @param {Array.<Object>} data - Array of datapoints.
+ */
 const Vector = function(data) {
     this.vectorType = true;
     this.data = data === undefined ? [] : formatData(data);
+
+    /**
+     * Length of a vector.
+     */
     this.length = data === undefined ? 0 : data.length;
 
+    /**
+     * Gets the datapoint at a specific index.
+     * @param {Number} index - Index, starting from 0.
+     * @return {Object} - Datapoint.
+     */
     this.get = function(index) {
         return this.data[index];
     };
 
+    /**
+     * Gets the reference period of the datapoint at a specific index.
+     * @param {Number} index - Index, starting from 0.
+     * @return {Date} - Reference period.
+     */
     this.refper = function(index) {
         return this.data[index].refper;
     };
 
+    /**
+     * Gets the reference period string of the datapoint at a specific index.
+     * @param {Number} index - Index, starting from 0.
+     * @return {string} - Reference period string in yyyy-mm-dd format.
+     */
     this.refperStr = function(index) {
         return datestring(this.refper(index));
     };
 
+    /**
+     * Gets the value of a datapoint at a specific index.
+     * @param {Number} index - Index, starting from 0.
+     * @return {Number} - Value.
+     */
     this.value = function(index) {
         return this.data[index].value;
     };
 
+    /**
+     * Appends a new datapoint to the end of a vector.
+     * @param {Object} datapoint - New datapoint.
+     */
     this.push = function(datapoint) {
         this.data.push(formatPoint(datapoint));
         this.length++;
     };
 
+    /**
+     * Checks if this vector is equal to another.
+     * @param {Vector} other - Other vector.
+     * @param {Number} index - Check equality of only a single datapoint at
+     * this index. Equality of entire vector will be checked if undefined.
+     * @return {boolean} - True if vectors are equal, otherwise false.
+     */
     this.equals = function(other, index) {
         const pointEquals = function(a, b) {
             return a.refper.getTime() == b.refper.getTime()
@@ -41,6 +80,10 @@ const Vector = function(data) {
         return true;
     };
 
+    /**
+     * Creates a deep copy of a vector.
+     * @return {Vector} - Copy of vector.
+     */
     this.copy = function() {
         const copy = new Vector();
         for (let p = 0; p < this.length; p++) {
@@ -54,14 +97,29 @@ const Vector = function(data) {
         return copy;
     };
 
+    /**
+     * Maps all datapoints in this vector.
+     * @param {function} mapper - Mapper function.
+     * @return {Array.<any>} - Map result.
+     */
     this.map = function(mapper) {
         return this.data.map(mapper);
     };
 
+    /**
+     * Finds the first datapoint in this vector matching a predicate condition.
+     * @param {function} predicate - Predicate function.
+     * @return {object} - Datapoint. Returns null if none found.
+     */
     this.find = function(predicate) {
         return this.data.find(predicate);
     };
 
+    /**
+     * Finds all datapoints in this vector matching a predicate condition.
+     * @param {function} predicate - Predicate function.
+     * @return {Array.<object>} - Array of datapoints matching predicate.
+     */
     this.filter = function(predicate) {
         const result = new Vector();
         for (let p = 0; p < this.length; p++) {
@@ -70,6 +128,12 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Constrains this vector within a specified range.
+     * @param {Date} startDate - Start of range (inclusive).
+     * @param {Date} endDate - End of range (inclusive).
+     * @return {Vector} - Range of vector.
+     */
     this.range = function(startDate, endDate) {
         startDate = formatDateObject(startDate);
         endDate = formatDateObject(endDate);
@@ -79,6 +143,12 @@ const Vector = function(data) {
         return this.filter(rangeFilter);
     };
 
+    /**
+     * Gets the vector containing up to the last N reference periods of this
+     * vector.
+     * @param {Number} n - Last n reference periods.
+     * @return {Vector} - Last n reference period vector.
+     */
     this.latestN = function(n) {
         if (n > this.length) throw new Error('N > length of vector.');
         const result = new Vector();
@@ -88,6 +158,11 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Checks if this vector is interoperable with another.
+     * @param {Vector} other - Other vector.
+     * @return {boolean} - True if vectors are interoperable, otherwise false.
+     */
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
         const foundInoperable = this.find((point, i) => {
@@ -97,6 +172,11 @@ const Vector = function(data) {
         return true;
     };
 
+    /**
+     * Gets the intersection of this vector with another.
+     * @param {Vector} other - Other vector.
+     * @return {Vector} - Intersection result.
+     */
     this.intersection = function(other) {
         const result = new Vector();
 
@@ -121,17 +201,30 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Gets the sum of all values in this vector.
+     * @return {Number} - Sum.
+     */
     this.sum = function() {
         return this.reduce(function(accumulator, curr) {
             return accumulator + curr;
         });
     };
 
+    /**
+     * Gets the average of the values in this vector.
+     * @return {Number} - Average.
+     */
     this.average = function() {
         if (this.length == 0) return null;
         return this.sum() / this.length;
     };
 
+    /**
+     * Reduce the values of this vector using a reducer function.
+     * @param {function(any, any)} reducer - Reducer function.
+     * @return {any} Result of reduction.
+     */
     this.reduce = function(reducer) {
         if (this.length == 0) return null;
         let accumulator = this.value(0);
@@ -141,6 +234,12 @@ const Vector = function(data) {
         return accumulator;
     };
 
+    /**
+     * Performs an operation between this vector and another.
+     * @param {Vector} other - Other vector.
+     * @param {function(Number, Number)} operation - Operation function.
+     * @return {Vector} - Result of operation.
+     */
     this.operate = function(other, operation) {
         const a = this.intersection(other);
         const b = other.intersection(this);
@@ -162,6 +261,11 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Performs a period to period delta transformation on this vector.
+     * @param {function(Number, Number)} operation - Delta operation.
+     * @return {Vector} - Transformed vector.
+     */
     this.periodDeltaTransformation = function(operation) {
         const result = new Vector();
 
@@ -180,6 +284,11 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Performs a transformation on each value of this vector.
+     * @param {function(Number)} operation - Operation.
+     * @return {Vector} - Transformed vector.
+     */
     this.periodTransformation = function(operation) {
         const result = new Vector();
         for (let p = 0; p < this.length; p++) {
@@ -194,12 +303,20 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Get the period to period percentage change vector of this vector.
+     * @return {Vector} - Transformed vector.
+     */
     this.periodToPeriodPercentageChange = function() {
         return this.periodDeltaTransformation(function(curr, last) {
             return (curr - last) / Math.abs(last) * 100;
         });
     };
 
+    /**
+     * Get the period to period difference vector of this vector.
+     * @return {Vector} - Transformed vector.
+     */
     this.periodToPeriodDifference = function() {
         return this.periodDeltaTransformation(function(curr, last) {
             return curr - last;
@@ -234,6 +351,11 @@ const Vector = function(data) {
         }
     };
 
+    /**
+     * Converts vector to annual frequency.
+     * @param {string} mode - "last" (default), "sum", "average".
+     * @return {Vector} - Converted vector.
+     */
     this.annual = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes['last'];
@@ -249,6 +371,12 @@ const Vector = function(data) {
     };
     this.annualize = this.annual;
 
+    /**
+     * Converts vector to quarterly frequency.
+     * @param {string} mode - "last" (default), "sum", "average".
+     * @param {Number} offset - Offset.
+     * @return {Vector} - Converted vector.
+     */
     this.quarter = function(mode, offset) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes['last'];
@@ -280,6 +408,11 @@ const Vector = function(data) {
     };
     this.quarterly = this.quarter;
 
+    /**
+     * Converts vector to monthly frequency.
+     * @param {string} mode - "last" (default), "sum", "average".
+     * @return {Vector} - Converted vector.
+     */
     this.monthly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes['last'];
@@ -292,6 +425,11 @@ const Vector = function(data) {
         return frequencyJoin(split, mode);
     };
 
+    /**
+     * Converts vector to weekly frequency.
+     * @param {string} mode - "last" (default), "sum", "average".
+     * @return {Vector} - Converted vector.
+     */
     this.weekly = function(mode) {
         if (mode == undefined || typeof mode === 'string') {
             mode = this.modes[mode] || this.modes['last'];
@@ -326,6 +464,11 @@ const Vector = function(data) {
         return result;
     }
 
+    /**
+     * Gets rounded vector.
+     * @param {Number} decimals - Number of decimal places.
+     * @return {Vector} - Rounded vector.
+     */
     this.round = function(decimals) {
         const result = new Vector();
         for (let p = 0; p < this.length; p++) {
@@ -340,6 +483,11 @@ const Vector = function(data) {
         return result;
     };
 
+    /**
+     * Gets rounded vector using Banker's rounding algorithm.
+     * @param {Number} decimals - Number of decimal places.
+     * @return {Vector} - Rounded vector.
+     */
     this.roundBankers = function(decimals) {
         const result = new Vector();
         for (let p = 0; p < this.length; p++) {
