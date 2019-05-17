@@ -438,31 +438,43 @@ const VectorLib = function() {
 
     this.generateMonthly = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextMonth);
     };
 
     this.generateQuarterly = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextQuarter);
     };
 
     this.generateSemiAnnual = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextSemiAnnum);
     };
 
     this.generateAnnual = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextAnnum);
     };
 
     this.generateBiAnnual = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextBiAnnum);
     };
 
     this.generateTetraAnnual = function(values, startDate) {
         startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextTetraAnnum);
     };
 
@@ -513,8 +525,11 @@ const VectorLib = function() {
         const currMonth = date.getMonth();
         const newYear = currYear + Math.floor((currYear + months) / 12);
         const newMonth = (currMonth + (months % 12)) % 12;
-        date.setFullYear(newYear);
-        date.setMonth(newMonth);
+        return new Date(newYear, newMonth, daysInMonth(newYear, newMonth));
+    };
+
+    const daysInMonth = function(year, month) {
+        return new Date(year, month, 0).getDate();
     };
 
     this.evaluate = function(expression, vectors) {
