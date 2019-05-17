@@ -792,4 +792,30 @@ describe('VectorLib', function() {
             assert.strictEqual(vector.equals(expected), true);
         });
     });
+
+    describe('#generateSemiAnnual', function() {
+        it('should generate a semiannual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateSemiAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-06-30', 'value': 1},
+                {'refper': '2019-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateAnnual', function() {
+        it('should generate a annual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-12-31', 'value': 1},
+                {'refper': '2020-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
 });

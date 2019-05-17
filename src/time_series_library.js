@@ -512,17 +512,17 @@ const VectorLib = function() {
 
     const nextAnnum = function(date) {
         return new Date(
-            date.getFullYear() + 1, date.getMonth, date.getDate());
+            date.getFullYear() + 1, date.getMonth(), date.getDate());
     };
 
     const nextBiAnnum = function(date) {
         return new Date(
-            date.getFullYear() + 2, date.getMonth, date.getDate());
+            date.getFullYear() + 2, date.getMonth(), date.getDate());
     };
 
     const nextTetraAnnum = function(date) {
         return new Date(
-            date.getFullYear() + 5, date.getMonth, date.getDate());
+            date.getFullYear() + 5, date.getMonth(), date.getDate());
     };
 
     const addMonths = function(date, months) {
