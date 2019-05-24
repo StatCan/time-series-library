@@ -434,18 +434,25 @@ describe('Vector', function() {
     describe('#samePeriodPreviousYearPercentageChange', function() {
         it('should compute the annualized percent change vector', function() {
             const vector = new Vector([
-                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-06-01', 'value': 1},
                 {'refper': '2018-12-01', 'value': 2},
-                {'refper': '2019-06-01', 'value': 0},
-                {'refper': '2019-12-01', 'value': 6},
+                {'refper': '2019-06-01', 'value': 4},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-06-01', 'value': 4},
+                {'refper': '2020-12-01', 'value': 4}
+            ]);
+
+            const expected = new Vector([
+                {'refper': '2018-06-01', 'value': null},
+                {'refper': '2018-12-01', 'value': null},
+                {'refper': '2019-06-01', 'value': 300.0},
+                {'refper': '2019-12-01', 'value': 300.0},
                 {'refper': '2020-06-01', 'value': 0},
-                {'refper': '2020-12-01', 'value': 3}
+                {'refper': '2020-12-01', 'value': -50.0}
             ]);
 
             const result = vector.samePeriodPreviousYearPercentageChange();
-            assert.strictEqual(result.value(0), null);
-            assert.strictEqual(result.value(1), 200.0);
-            assert.strictEqual(result.value(2), -50.0);
+            assert.strictEqual(result.equals(expected), true);
         });
     });
 
@@ -459,11 +466,17 @@ describe('Vector', function() {
                 {'refper': '2020-06-01', 'value': 0},
                 {'refper': '2020-12-01', 'value': 4}
             ]);
+            const expected = new Vector([
+                {'refper': '2018-06-01', 'value': null},
+                {'refper': '2018-12-01', 'value': null},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 4},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': -2}
+            ]);
 
             const result = vector.samePeriodPreviousYearDifference();
-            assert.strictEqual(result.value(0), null);
-            assert.strictEqual(result.value(1), 4);
-            assert.strictEqual(result.value(2), -2);
+            assert.strictEqual(result.equals(expected), true);
         });
     });
 

@@ -289,7 +289,11 @@ const Vector = function(data) {
         // Create dictionary mapping dates to values.
         const set = {};
         for (const d of this.data) {
-            set[d.refper] = d.value;
+            const endOfMonth = new Date(
+                d.refper.getFullYear(),
+                d.refper.getMonth(),
+                daysInMonth(d.refper.getFullYear(), d.refper.getMonth()));
+            set[endOfMonth] = d.value;
         }
 
         const result = new Vector();
@@ -335,9 +339,7 @@ const Vector = function(data) {
      * @return {Vector} - Transformed vector.
      */
     this.periodToPeriodPercentageChange = function() {
-        return this.periodDeltaTransformation(function(curr, last) {
-            return (curr - last) / Math.abs(last) * 100;
-        });
+        return this.periodDeltaTransformation(percentageChange);
     };
 
     /**
@@ -351,11 +353,13 @@ const Vector = function(data) {
     };
 
     this.samePeriodPreviousYearPercentageChange = function() {
-        return this.annualize().periodToPeriodPercentageChange();
+        return this.samePeriodPreviousYearTransformation(percentageChange);
     };
 
     this.samePeriodPreviousYearDifference = function() {
-        return this.annualize().periodToPeriodDifference();
+        return this.samePeriodPreviousYearTransformation(function(curr, last) {
+            return curr - last;
+        });
     };
 
     this.modes = {
@@ -953,6 +957,10 @@ function datestring(date) {
 
 function daysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
+}
+
+function percentageChange(curr, last) {
+    return last == 0 ? null : (curr - last) / Math.abs(last) * 100;
 }
 
 module.exports = {
