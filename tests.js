@@ -358,6 +358,34 @@ describe('Vector', function() {
         });
     });
 
+    describe('samePeriodPreviousYearTransformation', function() {
+        it('should perform a SPPY transformation', function() {
+            const vector = new Vector([
+                {'refper': '2018-03-31', 'value': 1},
+                {'refper': '2018-06-30', 'value': 2},
+                {'refper': '2018-09-30', 'value': 3},
+                {'refper': '2018-12-31', 'value': 4},
+                {'refper': '2019-03-31', 'value': 5},
+                {'refper': '2019-06-30', 'value': 6},
+                {'refper': '2019-09-30', 'value': 7},
+                {'refper': '2019-12-31', 'value': 8}
+            ]);
+            const fn = (a, b) => a - b;
+            const expected = new Vector([
+                {'refper': '2018-03-31', 'value': null},
+                {'refper': '2018-06-30', 'value': null},
+                {'refper': '2018-09-30', 'value': null},
+                {'refper': '2018-12-31', 'value': null},
+                {'refper': '2019-03-31', 'value': 4},
+                {'refper': '2019-06-30', 'value': 4},
+                {'refper': '2019-09-30', 'value': 4},
+                {'refper': '2019-12-31', 'value': 4}
+            ]);
+            const result = vector.samePeriodPreviousYearTransformation(fn);
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
     describe('#periodTransformation', function() {
         it('should return a transformed vector based on a function',
             function() {

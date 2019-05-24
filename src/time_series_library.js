@@ -284,6 +284,33 @@ const Vector = function(data) {
         return result;
     };
 
+    this.samePeriodPreviousYearTransformation = function(operation) {
+        // Only works on frequecnies > monthly for now.
+        // Create dictionary mapping dates to values.
+        const set = {};
+        for (const d of this.data) {
+            set[d.refper] = d.value;
+        }
+
+        const result = new Vector();
+        for (const point of this.data) {
+            const refper = point.refper;
+            const previousYear = new Date(
+                refper.getFullYear() - 1,
+                refper.getMonth(),
+                daysInMonth(refper.getFullYear(), refper.getMonth()));
+
+            let newValue = null;
+            if (previousYear in set) {
+                newValue = operation(point.value, set[previousYear]);
+            }
+            const newPoint = {'refper': refper, 'value': newValue};
+            safeMerge(point, newPoint);
+            result.push(newPoint);
+        }
+        return result;
+    };
+
     /**
      * Performs a transformation on each value of this vector.
      * @param {function(Number)} operation - Operation.
@@ -681,10 +708,6 @@ const VectorLib = function() {
         return new Date(newYear, newMonth, daysInMonth(newYear, newMonth));
     };
 
-    const daysInMonth = function(year, month) {
-        return new Date(year, month + 1, 0).getDate();
-    };
-
     this.evaluate = function(expression, vectors) {
         // {'v1': {'refper': "2018-01-01", 'value': 1}, ...}
         expression = expression.replace(/ /g, '');
@@ -926,6 +949,10 @@ function datestring(date) {
     return date.getFullYear() + '-'
         + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getDate().toString().padStart(2, '0');
+}
+
+function daysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
 }
 
 module.exports = {
