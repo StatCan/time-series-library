@@ -64,6 +64,14 @@ Using a web browser:
 
 **VectorLib:**  
 [evaluate(expression, vectors)](#VectorLib.evaluate)  
+[generateDaily(values, startDate)](#VectorLib.generateDaily)  
+[generateWeekly(values, startDate)](#VectorLib.generateWeekly)  
+[generateMonthly(values, startDate)](#VectorLib.generateMonthly)  
+[generateQuarterly(values, startDate)](#VectorLib.generateQuarterly)  
+[generateSemiAnnual(values, startDate)](#VectorLib.generateSemiAnnual)  
+[generateAnnual(values, startDate)](#VectorLib.generateAnnual)  
+[generateBiAnnual(values, startDate)](#VectorLib.generateBiAnnual)  
+[generateTetraAnnual(values, startDate)](#VectorLib.generateTetraAnnual)  
 
 ## Vector
 
@@ -977,6 +985,172 @@ Result:
 [
     {'refper': "2018-01-01", 'value': 16},
     {'refper': "2018-02-01", 'value': 24}
+]
+```
+
+<a name="VectorLib.generateDaily"></a>
+### generateDaily(values, startDate)
+
+Generates a daily vector from a list of values starting from a specific 
+reference period.
+
+Example:
+```javascript
+let result = generateDaily([1, 2, 3], '2019-01-01');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-01", 'value': 1},
+    {'refper': "2019-01-02", 'value': 2},
+    {'refper': "2019-01-03", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateWeekly"></a>
+### generateWeekly(values, startDate)
+
+Generates a weekly vector from a list of values starting from a specific 
+reference period.
+
+Example:
+```javascript
+let result = generateWeekly([1, 2, 3], '2019-01-01');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-01", 'value': 1},
+    {'refper': "2019-01-08", 'value': 2},
+    {'refper': "2019-01-15", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateMonthly"></a>
+### generateMonthly(values, startDate)
+
+Generates a monthly vector from a list of values starting from a specific 
+reference period. The last day of each month will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateMonthly([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2019-02-28", 'value': 2},
+    {'refper': "2019-03-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateQuarterly"></a>
+### generateQuarterly(values, startDate)
+
+Generates a quarterly vector from a list of values starting from a specific 
+reference period. The last day of each month will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateQuarterly([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2019-04-30", 'value': 2},
+    {'refper': "2019-07-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateSemiAnnual"></a>
+### generateSemiAnnual(values, startDate)
+
+Generates a semi annual vector from a list of values starting from a specific 
+reference period. The last day of each month will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateSemiAnnual([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2019-07-31", 'value': 2},
+    {'refper': "2020-01-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateAnnual"></a>
+### generateAnnual(values, startDate)
+
+Generates an annual vector from a list of values starting from a specific 
+reference period. The last day of each year will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateAnnual([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2020-01-31", 'value': 2},
+    {'refper': "2021-01-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateSemiAnnual"></a>
+### generateBiAnnual(values, startDate)
+
+Generates a bi-annual vector from a list of values starting from a specific 
+reference period. The last day of each year will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateBiAnnual([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2021-01-31", 'value': 2},
+    {'refper': "2023-01-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateTetraAnnual"></a>
+### generateTetraAnnual(values, startDate)
+
+Generates a tetra-annual vector from a list of values starting from a specific 
+reference period. The last day of each year will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateTetraAnnual([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2024-01-31", 'value': 2},
+    {'refper': "2029-01-31", 'value': 3}
 ]
 ```
 
