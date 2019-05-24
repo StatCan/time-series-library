@@ -565,18 +565,10 @@ const Vector = function(data) {
 
 const VectorLib = function() {
     const operators = {
-        '+': function(a, b) {
-            return a + b;
-        },
-        '-': function(a, b) {
-            return a - b;
-        },
-        '*': function(a, b) {
-            return a * b;
-        },
-        '/': function(a, b) {
-            return a / b;
-        }
+        '+': (a, b) => a + b,
+        '-': (a, b) => a - b,
+        '*': (a, b) => a * b,
+        '/': (a, b) => a / b
     };
 
     const operatorPriorities = {
