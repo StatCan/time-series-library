@@ -3,8 +3,7 @@ module.exports = {
     'presets': [
         [
             '@babel/env', {
-                'useBuiltIns': 'usage',
-                'corejs': 'core-js@2'
+                'useBuiltIns': 'usage'
             }
         ]
     ],
@@ -13,9 +12,7 @@ module.exports = {
             'presets': [
                 [
                     '@babel/env', {
-                        'targets': {'node': 10},
-                        'useBuiltIns': 'usage',
-                        'corejs': 'core-js@2'
+                        'targets': {'node': 10}
                     }
                 ]
             ]
