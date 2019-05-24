@@ -49,6 +49,8 @@ Using a web browser:
 [average()](#Vector.average)  
 [reduce()](#Vector.reduce)  
 [operate(operation)](#Vector.operate)  
+[periodDeltaTransformation(transformation)](#Vector.periodDeltaTransformation)  
+[samePeriodPreviousYearTransformation(transformation)](#Vector.samePeriodPreviousYearTransformation)  
 [periodTransformation(transformation)](#Vector.periodTransformation)  
 [periodToPeriodPercentageChange(transformation)](#Vector.periodToPeriodPercentageChange)  
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
@@ -511,41 +513,6 @@ Result:
 24
 ```
 
-
-
-<a name="Vector.periodDeltaTransformation"></a>
-### periodDeltaTransformation(transformation)
-
-Returns a new vector that is the result of a period to period transformation on 
-the calling vector. The parameter **transformation** should be a function 
-with two **Number** inputs representing the value of the current period and 
-previous period and should return the transformed value.
-
-The first datapoint of the transformed vector will have a value of `null` since 
-there is no previoud period to compare to.
-
-Example:
-```javascript
-let vector = new Vector([
-    {'refper': "2018-01-01", value: 1},
-    {'refper': "2018-02-01", value: 2},
-    {'refper': "2018-03-01", value: 3},
-]);
-
-let result = vector.periodDeltaTransformation(function(curr, last)  {
-    return curr + last;
-});  
-```
-
-Result:
-```javascript
-[
-    {'refper': "2018-01-01", value: null},
-    {'refper': "2018-02-01", value: 3},
-    {'refper': "2018-03-01", value: 5}
-]
-```
-
 <a name="Vector.operate"></a>
 ### operate(operation)
 
@@ -577,6 +544,82 @@ Result:
 [
     {'refper': "2018-01-01", 'value': 4},
     {'refper': "2018-02-01", 'value': 6}  
+]
+```
+
+<a name="Vector.periodDeltaTransformation"></a>
+### periodDeltaTransformation(transformation)
+
+Returns a new vector that is the result of a period to period transformation on 
+the calling vector. The parameter **transformation** should be a function 
+with two **Number** inputs representing the value of the current period and 
+previous period and should return the transformed value.
+
+The first datapoint of the transformed vector will have a value of `null` since 
+there is no previous period to compare to.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", value: 1},
+    {'refper': "2018-02-01", value: 2},
+    {'refper': "2018-03-01", value: 3},
+]);
+
+let result = vector.periodDeltaTransformation(function(curr, last)  {
+    return curr + last;
+});  
+```
+
+Result:
+```javascript
+[
+    {'refper': "2018-01-01", value: null},
+    {'refper': "2018-02-01", value: 3},
+    {'refper': "2018-03-01", value: 5}
+]
+```
+
+<a name="Vector.samePeriodPreviousYearTransformation"></a>
+### samePeriodPreviousYearTransformation(transformation)
+
+Returns a new vector that is the result of a same period previous year 
+transformation on the calling vector. The parameter **transformation** should 
+be a function with two **Number** inputs representing the value of the current 
+period and previous period and should return the transformed value.
+
+The first few datapoints of the transformed vector will have a value of `null` 
+since there is no previous year to compare to.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': '2018-03-31', 'value': 1},
+    {'refper': '2018-06-30', 'value': 2},
+    {'refper': '2018-09-30', 'value': 3},
+    {'refper': '2018-12-31', 'value': 4},
+    {'refper': '2019-03-31', 'value': 5},
+    {'refper': '2019-06-30', 'value': 6},
+    {'refper': '2019-09-30', 'value': 7},
+    {'refper': '2019-12-31', 'value': 8}
+]);
+
+let result = vector.samePeriodPreviousYearTransformation(function(curr, last)  {
+    return curr - last;
+});  
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-03-31', 'value': null},
+    {'refper': '2018-06-30', 'value': null},
+    {'refper': '2018-09-30', 'value': null},
+    {'refper': '2018-12-31', 'value': null},
+    {'refper': '2019-03-31', 'value': 4},
+    {'refper': '2019-06-30', 'value': 4},
+    {'refper': '2019-09-30', 'value': 4},
+    {'refper': '2019-12-31', 'value': 4}
 ]
 ```
 
@@ -666,18 +709,20 @@ Result:
 <a name="Vector.samePeriodPreviousYearPercentageChange"></a>
 ### samePeriodPreviousYearPercentageChange()
 
-Annualizes and returns a period-to-period percent change vector of the calling 
+Returns the same period previous year percentage change vector of the calling 
 vector.
+
+**Note:** Only works for vectors with frequencies of monthly of lower.
 
 Example:
 ```javascript
 let vector = new Vector([
-    {'refper': "2018-06-01", 'value': 0},
-    {'refper': "2018-12-01", 'value': 2},
-    {'refper': "2019-06-01", 'value': 0},
-    {'refper': "2019-12-01", 'value': 6},
-    {'refper': "2020-06-01", 'value': 0},
-    {'refper': "2020-12-01", 'value': 3}
+    {'refper': '2018-06-01', 'value': 1},
+    {'refper': '2018-12-01', 'value': 2},
+    {'refper': '2019-06-01', 'value': 4},
+    {'refper': '2019-12-01', 'value': 8},
+    {'refper': '2020-06-01', 'value': 4},
+    {'refper': '2020-12-01', 'value': 4}
 ]);
 
 let result = vector.samePeriodPreviousYearPercentageChange();
@@ -686,17 +731,22 @@ let result = vector.samePeriodPreviousYearPercentageChange();
 Result:
 ```javascript
 [
-    {'refper': "2018-12-01", 'value': null},
-    {'refper': "2019-12-01", 'value': 200.0},
-    {'refper': "2020-12-01", 'value': -50.0}
+    {'refper': '2018-06-01', 'value': null},
+    {'refper': '2018-12-01', 'value': null},
+    {'refper': '2019-06-01', 'value': 300.0},
+    {'refper': '2019-12-01', 'value': 300.0},
+    {'refper': '2020-06-01', 'value': 0},
+    {'refper': '2020-12-01', 'value': -50.0}
 ]
 ```
 
 <a name="Vector.samePeriodPreviousYearDifference"></a>
 ### samePeriodPreviousYearDifference()
 
-Annualizes and returns a period-to-period difference vector of the calling 
+Returns the same period previous year difference vector of the calling 
 vector.
+
+**Note:** Only works for vectors with frequencies of monthly of lower.
 
 Example:
 ```javascript
@@ -709,15 +759,18 @@ let vector = new Vector([
     {'refper': '2020-12-01', 'value': 4}
 ]);
 
-let result = vector.samePeriodPreviousYearDifference();
+let result = vector.samePeriodPreviousYearPercentageChange();
 ```
 
 Result:
 ```javascript
 [
-    {'refper': "2018-01-01", 'value': null},
-    {'refper': "2018-02-01", 'value': 4},
-    {'refper': "2018-03-01", 'value': -3}
+    {'refper': '2018-06-01', 'value': null},
+    {'refper': '2018-12-01', 'value': null},
+    {'refper': '2019-06-01', 'value': 0},
+    {'refper': '2019-12-01', 'value': 4},
+    {'refper': '2020-06-01', 'value': 0},
+    {'refper': '2020-12-01', 'value': -2}
 ]
 ```
 
