@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.4.0] - Unreleased
+## [2.4.0] - 2019-05-24
 ### Added
 - Added vector generation functions.
 - Same period previous year transformation function.
