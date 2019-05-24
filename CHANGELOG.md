@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0] - Unreleased
+### Added
+- Added vector generation functions.
+- Same period previous year transformation function.
+
+### Changed
+- Corrected implementation of same period previous year functions.
+
 ## [2.3.0] - 2019-04-11
 ### Added
 - Added weekly() function.
