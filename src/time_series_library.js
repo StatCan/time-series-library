@@ -362,36 +362,12 @@ const Vector = function(data) {
         });
     };
 
-    this.modes = {
-        'last': function(vector) {
-            return vector.get(vector.length - 1);
-        },
-        'sum': function(vector) {
-            const point = {
-                'refper': vector.refper(vector.length - 1),
-                'value': vector.sum()
-            };
-            return safeMerge(point, vector.get(vector.length - 1));
-        },
-        'average': function(vector) {
-            const point = {
-                'refper': vector.refper(vector.length - 1),
-                'value': vector.average()
-            };
-            return safeMerge(point, vector.get(vector.length - 1));
-        }
-    };
-
     /**
      * Converts vector to annual frequency.
      * @param {string} mode - "last" (default), "sum", "average".
      * @return {Vector} - Converted vector.
      */
     this.annual = function(mode) {
-        if (mode == undefined || typeof mode === 'string') {
-            mode = this.modes[mode] || this.modes['last'];
-        }
-
         const split = frequencySplit(this, function(last, curr) {
             return last.getFullYear() != curr.getFullYear();
         });
@@ -409,9 +385,6 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.quarter = function(mode, offset) {
-        if (mode == undefined || typeof mode === 'string') {
-            mode = this.modes[mode] || this.modes['last'];
-        }
         offset = offset || 0;
         offset = offset % 3;
 
@@ -445,10 +418,6 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.monthly = function(mode) {
-        if (mode == undefined || typeof mode === 'string') {
-            mode = this.modes[mode] || this.modes['last'];
-        }
-
         const split = frequencySplit(this, function(last, curr) {
             return last.getMonth() != curr.getMonth()
                 || last.getFullYear() != curr.getFullYear();
@@ -462,10 +431,6 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.weekly = function(mode) {
-        if (mode == undefined || typeof mode === 'string') {
-            mode = this.modes[mode] || this.modes['last'];
-        }
-
         const split = frequencySplit(this, function(last, curr) {
             return curr.getDay() < last.getDay();
         });
@@ -473,6 +438,30 @@ const Vector = function(data) {
     };
 
     function frequencyJoin(split, mode) {
+        const modes = {
+            'last': function(vector) {
+                return vector.get(vector.length - 1);
+            },
+            'sum': function(vector) {
+                const point = {
+                    'refper': vector.refper(vector.length - 1),
+                    'value': vector.sum()
+                };
+                return safeMerge(point, vector.get(vector.length - 1));
+            },
+            'average': function(vector) {
+                const point = {
+                    'refper': vector.refper(vector.length - 1),
+                    'value': vector.average()
+                };
+                return safeMerge(point, vector.get(vector.length - 1));
+            }
+        };
+
+        if (mode == undefined || typeof mode === 'string') {
+            mode = modes[mode] || modes['last'];
+        }
+
         const result = new Vector();
         for (let i = 0; i < split.length; i++) {
             result.push(mode(split[i]));
