@@ -369,45 +369,22 @@ const Vector = function(data) {
      */
     this.annual = function(mode) {
         const split = frequencySplit(this, function(curr, last) {
-            return last.getFullYear() != curr.getFullYear();
+            return curr.getFullYear() == last.getFullYear() + 1 &&
+                curr.getMonth() == last.getMonth();
         });
-        const join = frequencyJoin(split, mode);
-        return join.filter(function(point) {
-            return point.refper.getMonth() == join.refper(0).getMonth();
-        });
+        return frequencyJoin(split, mode);
     };
     this.annualize = this.annual;
 
     /**
      * Converts vector to quarterly frequency.
      * @param {string} mode - "last" (default), "sum", "average".
-     * @param {Number} offset - Offset.
      * @return {Vector} - Converted vector.
      */
-    this.quarter = function(mode, offset) {
-        offset = offset || 0;
-        offset = offset % 3;
-
-        const filtered = this.filter(function(point) {
-            const m = point.refper.getMonth();
-            if (offset == 0) {
-                return m == 2 || m == 5 || m == 8 || m == 11;
-            } else if (offset == 1) {
-                return m == 1 || m == 4 || m == 7 || m == 10;
-            } else {
-                return m == 0 || m == 3 || m == 6 || m == 9;
-            }
+    this.quarter = function(mode) {
+        const split = frequencySplit(this, function(curr, last) {
+            return curr.getMonth() == (last.getMonth() + 3) % 12;
         });
-
-        const split = frequencySplit(filtered, function(curr, last) {
-            // TODO: Is this correct.
-            const lastQuarter = Math.floor(
-                ((last.getMonth() - offset) % 12) / 3);
-            const currQuarter = Math.floor(
-                ((curr.getMonth() - offset) % 12) / 3);
-            return lastQuarter != currQuarter;
-        });
-
         return frequencyJoin(split, mode);
     };
     this.quarterly = this.quarter;
@@ -419,8 +396,7 @@ const Vector = function(data) {
      */
     this.monthly = function(mode) {
         const split = frequencySplit(this, function(curr, last) {
-            return last.getMonth() != curr.getMonth()
-                || last.getFullYear() != curr.getFullYear();
+            return curr.getMonth() == (last.getMonth() + 1) % 12;
         });
         return frequencyJoin(split, mode);
     };
@@ -432,7 +408,8 @@ const Vector = function(data) {
      */
     this.weekly = function(mode) {
         const split = frequencySplit(this, function(curr, last) {
-            return curr.getDay() < last.getDay();
+            return curr.getDay() == last.getDay() &&
+                curr.getDate() != last.getDate(); // FIXME: Should not be needed
         });
         return frequencyJoin(split, mode);
     };
@@ -470,18 +447,39 @@ const Vector = function(data) {
     }
 
     function frequencySplit(vector, fn) {
-        const result = [];
-        let next = new Vector();
-        for (let p = 0; p < vector.length; p++) {
-            if (p > 0 && fn(vector.refper(p), vector.refper(p - 1))) {
-                result.push(next);
-                next = new Vector([vector.get(p)]);
-            } else {
-                next.push(vector.get(p));
-            }
+        let result = [];
+        const data = vector.data.reverse(); // Sort descending by time.
+
+        let curr = data[0];
+        let last = data[1];
+        if (curr === undefined || last == undefined) {
+            return [];
         }
-        if (next.length != 0) result.push(next);
-        return result;
+
+        let next = [];
+
+        for (let p = 0; p < data.length; p++) {
+            last = data[p];
+            // fn(curr, last)
+            if (fn(curr.refper, last.refper)) {
+                // Start new chunk.
+                result.push(new Vector(next.reverse()));
+                next = [];
+                curr = data[p];
+            }
+            next.push(vector.get(p));
+        }
+        if (next.length > 0) {
+            result.push(new Vector(next.reverse()));
+        }
+
+        // Ensure chunk sizes match the first.
+        if (result.length > 0) {
+            const size = result[0].length;
+            result = result.filter((chunk) => chunk.length == size);
+        }
+
+        return result.reverse();
     }
 
     /**
