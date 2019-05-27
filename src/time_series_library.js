@@ -368,7 +368,7 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.annual = function(mode) {
-        const split = frequencySplit(this, function(last, curr) {
+        const split = frequencySplit(this, function(curr, last) {
             return last.getFullYear() != curr.getFullYear();
         });
         const join = frequencyJoin(split, mode);
@@ -399,7 +399,7 @@ const Vector = function(data) {
             }
         });
 
-        const split = frequencySplit(filtered, function(last, curr) {
+        const split = frequencySplit(filtered, function(curr, last) {
             // TODO: Is this correct.
             const lastQuarter = Math.floor(
                 ((last.getMonth() - offset) % 12) / 3);
@@ -418,7 +418,7 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.monthly = function(mode) {
-        const split = frequencySplit(this, function(last, curr) {
+        const split = frequencySplit(this, function(curr, last) {
             return last.getMonth() != curr.getMonth()
                 || last.getFullYear() != curr.getFullYear();
         });
@@ -431,7 +431,7 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.weekly = function(mode) {
-        const split = frequencySplit(this, function(last, curr) {
+        const split = frequencySplit(this, function(curr, last) {
             return curr.getDay() < last.getDay();
         });
         return frequencyJoin(split, mode);
@@ -473,7 +473,7 @@ const Vector = function(data) {
         const result = [];
         let next = new Vector();
         for (let p = 0; p < vector.length; p++) {
-            if (p > 0 && fn(vector.refper(p - 1), vector.refper(p))) {
+            if (p > 0 && fn(vector.refper(p), vector.refper(p - 1))) {
                 result.push(next);
                 next = new Vector([vector.get(p)]);
             } else {
