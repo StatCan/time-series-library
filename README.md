@@ -57,7 +57,7 @@ Using a web browser:
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
 [annual(mode)](#Vector.annual)  
-[quarter(mode, offset)](#Vector.quarterly)  
+[quarterly(mode, offset)](#Vector.quarterly)  
 [monthly(mode)](#Vector.monthly)  
 [weekly(mode)](#Vector.weekly)
 [round(decimals)](#Vector.round)  
@@ -818,12 +818,6 @@ The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each quarter (Default).
 - `"sum"`: Takes the sum of each quarter.
 - `"average"`: Takes the average of each quarter.
-
-The parameter **offset** is optional with a default value of `0`. This 
-parameter determines which months are used for each quarter:
-- `0`: March, June, September, December
-- `1`: February, May, August, November
-- `2`: January, April, July, October
 
 Example:
 ```javascript

@@ -1,4 +1,8 @@
 # Changelog
+## [2.5.0] - Unreleased
+### Changed
+- Frequnecy conversion functions now start from the lastest reference period 
+and progress in descending order of time.
 
 ## [2.4.0] - 2019-05-24
 ### Added
