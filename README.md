@@ -800,17 +800,18 @@ Result:
 ]
 ```
 
-<a name="Vector.convertToFrequenct"></a>
+<a name="Vector.convertToFrequency"></a>
 ### convertToFrequency(mode, converter)
 
 Converts the frequency of a vector to a user defined frequency.
 
 The parameter **mode** is optional and can be one of the following strings:
-- `"last"`: Takes the last reference period of each tetra-annum (Default).
-- `"sum"`: Takes the sum of each tetra-annum.
-- `"average"`: Takes the average of each tetra-annum.
-- `"max"`: Takes the maximum value of each tetra-annum.
-- `"min"`: Takes the minimum value of each tetra-annum.
+- `"last"`: Takes the last reference period of each user defined frequency 
+(Default).
+- `"sum"`: Takes the sum of each user defined frequency.
+- `"average"`: Takes the average of each user defined frequency.
+- `"max"`: Takes the maximum value of each user defined frequency.
+- `"min"`: Takes the minimum value of each user defined frequency.
 
 The parameter **conveter** is a function with date parameters **curr** and 
 **last** and a `Boolean` return value. This function should return true when 
@@ -842,8 +843,9 @@ let result = vector.convertToFrequency('last', function(curr, last) {
 Result:
 ```javascript
 [
-    {'refper': "2022-12-01", 'value': 4},
-    {'refper': "2027-12-01", 'value': 9}
+    {'refper': '2018-12-12', value: 2},
+    {'refper': '2019-01-12', value: 4},
+    {'refper': '2019-02-12', value: 6}
 ]
 ```
 
