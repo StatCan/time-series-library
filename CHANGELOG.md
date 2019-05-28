@@ -1,4 +1,9 @@
 # Changelog
+
+## [2.5.1] - 2019-05-28
+### Changed
+- Replaced references to tetra-annual to quinquennial.
+
 ## [2.5.0] - 2019-05-28
 ### Added
 - Added values() function.

@@ -58,7 +58,7 @@ Using a web browser:
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
 [convertToFrequency(mode, converter)](#Vector.convertToFrequency)  
-[tetraAnnual(mode)](#Vector.tetraAnnual)  
+[quinquennial(mode)](#Vector.quinquennial)  
 [biAnnual(mode)](#Vector.biAnnual)  
 [annual(mode)](#Vector.annual)  
 [semiAnnual(mode)](#Vector.semiAnnual)  
@@ -78,7 +78,7 @@ Using a web browser:
 [generateSemiAnnual(values, startDate)](#VectorLib.generateSemiAnnual)  
 [generateAnnual(values, startDate)](#VectorLib.generateAnnual)  
 [generateBiAnnual(values, startDate)](#VectorLib.generateBiAnnual)  
-[generateTetraAnnual(values, startDate)](#VectorLib.generateTetraAnnual)  
+[generateQuinquennial(values, startDate)](#VectorLib.generateQuinquennial)  
 
 ## Vector
 
@@ -849,17 +849,17 @@ Result:
 ]
 ```
 
-<a name="Vector.tetraAnnual"></a>
-### tetraAnnual(mode)
+<a name="Vector.quinquennial"></a>
+### quinquennial(mode)
 
-Converts the frequency of a vector to tetra-annual (every 5 years).
+Converts the frequency of a vector to quinquennial (every 5 years).
 
 The parameter **mode** is optional and can be one of the following strings:
-- `"last"`: Takes the last reference period of each tetra-annum (Default).
-- `"sum"`: Takes the sum of each tetra-annum.
-- `"average"`: Takes the average of each tetra-annum.
-- `"max"`: Takes the maximum value of each tetra-annum.
-- `"min"`: Takes the minimum value of each tetra-annum.
+- `"last"`: Takes the last reference period of each quinquennium (Default).
+- `"sum"`: Takes the sum of each quinquennium.
+- `"average"`: Takes the average of each quinquennium.
+- `"max"`: Takes the maximum value of each quinquennium.
+- `"min"`: Takes the minimum value of each quinquennium.
 
 Example:
 ```javascript
@@ -876,7 +876,7 @@ let vector = new Vector([
     {'refper': "2027-12-01", 'value': 9}
 ]);
 
-let result = vector.tetraAnnual();
+let result = vector.quinquennial();
 ```
 
 Result:
@@ -1372,16 +1372,16 @@ Result:
 ]
 ```
 
-<a name="VectorLib.generateTetraAnnual"></a>
-### generateTetraAnnual(values, startDate)
+<a name="VectorLib.generateQuinquennial"></a>
+### generateQuinquennial(values, startDate)
 
-Generates a tetra-annual vector from a list of values starting from a specific 
+Generates a quinquennial vector from a list of values starting from a specific 
 reference period. The last day of each year will be used as the reference 
 periods.
 
 Example:
 ```javascript
-let result = generateTetraAnnual([1, 2, 3], '2019-01-31');
+let result = generateQuinquennial([1, 2, 3], '2019-01-31');
 ```
 
 Result:

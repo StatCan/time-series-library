@@ -401,11 +401,11 @@ const Vector = function(data) {
     };
 
     /**
-     * Converts vector to tetra-annual frequency.
+     * Converts vector to quinquennial frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.tetraAnnual = function(mode) {
+    this.quinquennial = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 5 &&
                 curr.getMonth() == last.getMonth();
@@ -712,11 +712,11 @@ const VectorLib = function() {
         return generateVector(values, startDate, nextBiAnnum);
     };
 
-    this.generateTetraAnnual = function(values, startDate) {
+    this.generateQuinquennial = function(values, startDate) {
         startDate = formatDateObject(startDate);
         startDate.setDate(
             daysInMonth(startDate.getFullYear(), startDate.getMonth()));
-        return generateVector(values, startDate, nextTetraAnnum);
+        return generateVector(values, startDate, nextQuinquennium);
     };
 
     const generateVector = function(values, startDate, nextDateFn) {
@@ -761,7 +761,7 @@ const VectorLib = function() {
             date.getFullYear() + 2, date.getMonth(), date.getDate());
     };
 
-    const nextTetraAnnum = function(date) {
+    const nextQuinquennium = function(date) {
         return new Date(
             date.getFullYear() + 5, date.getMonth(), date.getDate());
     };
