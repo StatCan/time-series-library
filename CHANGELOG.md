@@ -1,5 +1,13 @@
 # Changelog
 ## [2.5.0] - Unreleased
+### Added
+- Added values() function.
+- Added user defined convertToFrequency() function.
+- Added semiAnnual() frequency conversion function.
+- Added biAnnual() frequency conversion function.
+- Added tetraAnnual() frequency conversion function.
+- Added min and max modes for frequency conversion functions.
+
 ### Changed
 - Frequnecy conversion functions now start from the lastest reference period 
 and progress in descending order of time.

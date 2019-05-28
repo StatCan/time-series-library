@@ -48,6 +48,14 @@ const Vector = function(data) {
     };
 
     /**
+     * Gets the list of all values in a vector.
+     * @return {Array.<Number>} - Values.
+     */
+    this.values = function() {
+        return this.map((point) => point.value);
+    };
+
+    /**
      * Appends a new datapoint to the end of a vector.
      * @param {Object} datapoint - New datapoint.
      */
@@ -221,6 +229,24 @@ const Vector = function(data) {
     };
 
     /**
+     * Gets the max value in this vector.
+     * @return {Number} - Maximum.
+     */
+    this.max = function() {
+        if (this.length == 0) return null;
+        return Math.max.apply(null, this.values());
+    };
+
+    /**
+     * Gets the min value in this vector.
+     * @return {Number} - Minimum.
+     */
+    this.min = function() {
+        if (this.length == 0) return null;
+        return Math.min.apply(null, this.values());
+    };
+
+    /**
      * Reduce the values of this vector using a reducer function.
      * @param {function(any, any)} reducer - Reducer function.
      * @return {any} Result of reduction.
@@ -363,55 +389,98 @@ const Vector = function(data) {
     };
 
     /**
+     * Converts vector to a defined frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @param {function} converter - Function with date parameters current and
+     * last that true if current is the defined frequency away from last.
+     * @return {Vector} - Converted vector.
+     */
+    this.convertToFrequency = function(mode, converter) {
+        const split = frequencySplit(this, converter);
+        return frequencyJoin(split, mode);
+    };
+
+    /**
+     * Converts vector to tetra-annual frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @return {Vector} - Converted vector.
+     */
+    this.tetraAnnual = function(mode) {
+        return this.convertToFrequency(mode, function(curr, last) {
+            return curr.getFullYear() == last.getFullYear() + 5 &&
+                curr.getMonth() == last.getMonth();
+        });
+    };
+
+    /**
+     * Converts vector to bi-annual frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @return {Vector} - Converted vector.
+     */
+    this.biAnnual = function(mode) {
+        return this.convertToFrequency(mode, function(curr, last) {
+            return curr.getFullYear() == last.getFullYear() + 2 &&
+                curr.getMonth() == last.getMonth();
+        });
+    };
+
+    /**
      * Converts vector to annual frequency.
-     * @param {string} mode - "last" (default), "sum", "average".
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
     this.annual = function(mode) {
-        const split = frequencySplit(this, function(curr, last) {
+        return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 1 &&
                 curr.getMonth() == last.getMonth();
         });
-        return frequencyJoin(split, mode);
     };
     this.annualize = this.annual;
 
     /**
+     * Converts vector to semi-annual frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @return {Vector} - Converted vector.
+     */
+    this.semiAnnual = function(mode) {
+        return this.convertToFrequency(mode, function(curr, last) {
+            return curr.getMonth() == (last.getMonth() + 6) % 12;
+        });
+    };
+
+    /**
      * Converts vector to quarterly frequency.
-     * @param {string} mode - "last" (default), "sum", "average".
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
     this.quarter = function(mode) {
-        const split = frequencySplit(this, function(curr, last) {
+        return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 3) % 12;
         });
-        return frequencyJoin(split, mode);
     };
     this.quarterly = this.quarter;
 
     /**
      * Converts vector to monthly frequency.
-     * @param {string} mode - "last" (default), "sum", "average".
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
     this.monthly = function(mode) {
-        const split = frequencySplit(this, function(curr, last) {
+        return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 1) % 12;
         });
-        return frequencyJoin(split, mode);
     };
 
     /**
      * Converts vector to weekly frequency.
-     * @param {string} mode - "last" (default), "sum", "average".
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
     this.weekly = function(mode) {
-        const split = frequencySplit(this, function(curr, last) {
+        return this.convertToFrequency(mode, function(curr, last) {
             return curr.getDay() == last.getDay() &&
                 curr.getDate() != last.getDate(); // FIXME: Should not be needed
         });
-        return frequencyJoin(split, mode);
     };
 
     function frequencyJoin(split, mode) {
@@ -430,6 +499,20 @@ const Vector = function(data) {
                 const point = {
                     'refper': vector.refper(vector.length - 1),
                     'value': vector.average()
+                };
+                return safeMerge(point, vector.get(vector.length - 1));
+            },
+            'max': function(vector) {
+                const point = {
+                    'refper': vector.refper(vector.length - 1),
+                    'value': vector.max()
+                };
+                return safeMerge(point, vector.get(vector.length - 1));
+            },
+            'min': function(vector) {
+                const point = {
+                    'refper': vector.refper(vector.length - 1),
+                    'value': vector.min()
                 };
                 return safeMerge(point, vector.get(vector.length - 1));
             }

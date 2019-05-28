@@ -615,6 +615,42 @@ describe('Vector', function() {
             const result = vector.monthly('average');
             assert.strictEqual(result.equals(expected), true);
         });
+
+        it('should handle monthly maximums', function() {
+            const vector = new Vector([
+                {'refper': '2018-12-01', 'value': 1},
+                {'refper': '2018-12-12', 'value': 3},
+                {'refper': '2019-01-01', 'value': 5},
+                {'refper': '2019-01-12', 'value': 3},
+                {'refper': '2019-02-01', 'value': 7},
+                {'refper': '2019-02-12', 'value': 3}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-12-12', 'value': 3},
+                {'refper': '2019-01-12', 'value': 5},
+                {'refper': '2019-02-12', 'value': 7}
+            ]);
+            const result = vector.monthly('max');
+            assert.strictEqual(result.equals(expected), true);
+        });
+
+        it('should handle monthly minimums', function() {
+            const vector = new Vector([
+                {'refper': '2018-12-01', 'value': 1},
+                {'refper': '2018-12-12', 'value': 3},
+                {'refper': '2019-01-01', 'value': 5},
+                {'refper': '2019-01-12', 'value': 3},
+                {'refper': '2019-02-01', 'value': 7},
+                {'refper': '2019-02-12', 'value': 3}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-12-12', 'value': 1},
+                {'refper': '2019-01-12', 'value': 3},
+                {'refper': '2019-02-12', 'value': 3}
+            ]);
+            const result = vector.monthly('min');
+            assert.strictEqual(result.equals(expected), true);
+        });
     });
 
     describe('#weekly', function() {
