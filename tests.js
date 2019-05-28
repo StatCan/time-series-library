@@ -36,6 +36,21 @@ describe('Vector', function() {
         });
     });
 
+    describe('#values', function() {
+        it('should return the list of values', function() {
+            const v = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+            assert.deepStrictEqual(v.values(), [1, 2]);
+        });
+
+        it('should handle the emprty vector', function() {
+            const v = new Vector();
+            assert.deepStrictEqual(v.values(), []);
+        });
+    });
+
     describe('#push', function() {
         it('should append a datapoint to a vector', function() {
             const v = new Vector([
@@ -112,7 +127,7 @@ describe('Vector', function() {
         });
     });
 
-    describe('#map', function() {
+    describe('#find', function() {
         it('should find the first datapoint matching a predicate.', function() {
             const vector = new Vector([
                 {'refper': '2018-01-01', 'value': 0},
@@ -480,6 +495,62 @@ describe('Vector', function() {
         });
     });
 
+    describe('#tetraAnnual', function() {
+        it('should convert vector to a tetra-annual frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            const expected = new Vector([
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            const result = vector.tetraAnnual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#biAnnual', function() {
+        it('should convert vector to a bi-annual frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            const expected = new Vector([
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            const result = vector.biAnnual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
     describe('#annual', function() {
         it('should convert a vector to an annual frequency', function() {
             let vector = new Vector([
@@ -530,6 +601,35 @@ describe('Vector', function() {
             assert.strictEqual(result.refperStr(0), '2018-12-01');
             assert.strictEqual(result.refperStr(1), '2019-12-01');
             assert.strictEqual(result.refperStr(2), '2020-12-01');
+        });
+    });
+
+    describe('#semiAnnual', function() {
+        it('should convert vector to a semi-annual frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-03-01', 'value': 1},
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-09-01', 'value': 3},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-03-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-09-01', 'value': 7},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-03-01', 'value': 9},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-09-01', 'value': 11},
+                {'refper': '2020-12-01', 'value': 12}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-12-01', 'value': 12}
+            ]);
+            const result = vector.semiAnnual();
+            assert.strictEqual(result.equals(expected), true);
         });
     });
 
