@@ -34,6 +34,7 @@ Using a web browser:
 [get(index)](#Vector.get)  
 [refper(index), refperStr(index)](#Vector.refper)  
 [value(index)](#Vector.value)  
+[values()](#Vector.values)  
 [length](#Vector.length)  
 [push(datapoint)](#Vector.push)  
 [equals(other)](#Vector.equals)  
@@ -56,7 +57,11 @@ Using a web browser:
 [periodToPeriodDifference()](#Vector.periodToPeriodDifference)  
 [samePeriodPreviousYearPercentageChange()](#Vector.samePeriodPreviousYearPercentageChange)  
 [samePeriodPreviousYearDifference()](#Vector.samePeriodPreviousYearDifference)  
+[convertToFrequency(mode, converter)](#Vector.convertToFrequency)  
+[tetraAnnual(mode)](#Vector.tetraAnnual)  
+[biAnnual(mode)](#Vector.biAnnual)  
 [annual(mode)](#Vector.annual)  
+[semiAnnual(mode)](#Vector.semiAnnual)  
 [quarterly(mode, offset)](#Vector.quarterly)  
 [monthly(mode)](#Vector.monthly)  
 [weekly(mode)](#Vector.weekly)
@@ -167,6 +172,27 @@ let result = vector.value(1);
 Result:
 ```javascript
 2
+```
+
+<a name="Vector.values"></a>
+### values()
+
+Return the list of values in a vector.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-01-01", 'value': 1},
+    {'refper': "2018-02-01", 'value': 2},
+    {'refper': "2018-03-01", 'value': 3}
+]);
+
+let result = vector.values();
+```
+
+Result:
+```javascript
+[1, 2, 3]
 ```
 
 <a name="Vector.length"></a>
@@ -774,16 +800,137 @@ Result:
 ]
 ```
 
+<a name="Vector.convertToFrequenct"></a>
+### convertToFrequency(mode, converter)
+
+Converts the frequency of a vector to a user defined frequency.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each tetra-annum (Default).
+- `"sum"`: Takes the sum of each tetra-annum.
+- `"average"`: Takes the average of each tetra-annum.
+- `"max"`: Takes the maximum value of each tetra-annum.
+- `"min"`: Takes the minimum value of each tetra-annum.
+
+The parameter **conveter** is a function with date parameters **curr** and 
+**last** and a `Boolean` return value. This function should return true when 
+**curr** and **last** are the defined frequency apart.
+
+**Note:** For the mode of operation, the vector is split into chunks where each 
+chunk starts when the **converter** returns `true`. This operation starts from 
+the last reference period of the vector and proceeds in descending order by 
+time. Any chunk that does not have the same size as the latest chunk will be 
+removed.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': '2018-12-01', value: 1},
+    {'refper': '2018-12-12', value: 2},
+    {'refper': '2019-01-01', value: 3},
+    {'refper': '2019-01-12', value: 4},
+    {'refper': '2019-02-01', value: 5},
+    {'refper': '2019-02-12', value: 6}
+]);
+
+let result = vector.convertToFrequency('last', function(curr, last) {
+    // Define frequency as monthly.
+    return curr.getMonth() === (last.getMonth() + 1) % 12;
+});
+```
+
+Result:
+```javascript
+[
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2027-12-01", 'value': 9}
+]
+```
+
+<a name="Vector.tetraAnnual"></a>
+### tetraAnnual(mode)
+
+Converts the frequency of a vector to tetra-annual (every 5 years).
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each tetra-annum (Default).
+- `"sum"`: Takes the sum of each tetra-annum.
+- `"average"`: Takes the average of each tetra-annum.
+- `"max"`: Takes the maximum value of each tetra-annum.
+- `"min"`: Takes the minimum value of each tetra-annum.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-12-01", 'value': 0},
+    {'refper': "2019-12-01", 'value': 1},
+    {'refper': "2020-12-01", 'value': 2},
+    {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2023-12-01", 'value': 5},
+    {'refper': "2024-12-01", 'value': 6},
+    {'refper': "2025-12-01", 'value': 7},
+    {'refper': "2026-12-01", 'value': 8},
+    {'refper': "2027-12-01", 'value': 9}
+]);
+
+let result = vector.tetraAnnual();
+```
+
+Result:
+```javascript
+[
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2027-12-01", 'value': 9}
+]
+```
+
+<a name="Vector.biAnnual"></a>
+### biAnnual(mode)
+
+Converts the frequency of a vector to bi-annual.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each bi-annum (Default).
+- `"sum"`: Takes the sum of each bi-annum.
+- `"average"`: Takes the average of each bi-annum.
+- `"max"`: Takes the maximum value of each bi-annum.
+- `"min"`: Takes the minimum value of each bi-annum.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-12-01", 'value': 0},
+    {'refper': "2019-12-01", 'value': 1},
+    {'refper': "2020-12-01", 'value': 2},
+    {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2023-12-01", 'value': 5}
+]);
+
+let result = vector.biAnnual();
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-12-01", 'value': 1},
+    {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2023-12-01", 'value': 5}
+]
+```
+
 <a name="Vector.annual"></a>
 ### annual(mode)
 
-Converts the frequency of a vector to annual, returning the last reference 
-period for each year.
+Converts the frequency of a vector to annual.
 
 The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each year (Default).
 - `"sum"`: Takes the sum of each year.
 - `"average"`: Takes the average of each year.
+- `"max"`: Takes the maximum value of each year.
+- `"min"`: Takes the minimum value of each year.
 
 Example:
 ```javascript
@@ -808,16 +955,57 @@ Result:
 ]
 ```
 
+<a name="Vector.semiAnnual"></a>
+### semiAnnual(mode)
+
+Converts the frequency of a vector to semi-annual.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each semi-annum (Default).
+- `"sum"`: Takes the sum of each semi-annum.
+- `"average"`: Takes the average of each semi-annum.
+- `"max"`: Takes the maximum value of each semi-annum.
+- `"min"`: Takes the minimum value of each seni-annum.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': '2018-01-01', value: 1},
+    {'refper': '2018-02-01', value: 2},
+    {'refper': '2019-03-01', value: 3},
+    {'refper': '2019-04-01', value: 4},
+    {'refper': '2019-05-01', value: 5},
+    {'refper': '2019-06-01', value: 6},
+    {'refper': '2019-07-01', value: 7},
+    {'refper': '2019-08-01', value: 8},
+    {'refper': '2019-09-01', value: 9},
+    {'refper': '2019-10-01', value: 10},
+    {'refper': '2019-11-01', value: 11},
+    {'refper': '2019-12-01', value: 12}
+]);
+
+let result = vector.semiAnnual();
+```
+
+Result:
+```javascript
+[
+    {'refper': '2019-06-01', value: 6},
+    {'refper': '2019-12-01', value: 12}
+]
+```
+
 <a name="Vector.quarterly"></a>
 ### quarterly(mode, offset)
 
-Converts the frequency of a vector to quarterly, returning the last reference 
-period for each quarter.
+Converts the frequency of a vector to quarterly.
 
 The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each quarter (Default).
 - `"sum"`: Takes the sum of each quarter.
 - `"average"`: Takes the average of each quarter.
+- `"max"`: Takes the maximum value of each quarter.
+- `"min"`: Takes the minimum value of each quarter.
 
 Example:
 ```javascript
@@ -852,13 +1040,14 @@ Result:
 <a name="Vector.monthly"></a>
 ### monthly(mode)
 
-Converts the frequency of a vector to monthly, returning the last reference 
-period for each month.
+Converts the frequency of a vector to monthly.
 
 The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each month (Default).
 - `"sum"`: Takes the sum of each month.
 - `"average"`: Takes the average of each month.
+- `"max"`: Takes the maximum value of each month.
+- `"min"`: Takes the minimum value of each month.
 
 Example:
 ```javascript
@@ -886,13 +1075,14 @@ Result:
 <a name="Vector.weekly"></a>
 ### weekly(mode)
 
-Converts the frequency of a vector to weekly, returning the last reference 
-period for each week.
+Converts the frequency of a vector to weekly.
 
 The parameter **mode** is optional and can be one of the following strings:
 - `"last"`: Takes the last reference period of each week (Default).
 - `"sum"`: Takes the sum of each week.
 - `"average"`: Takes the average of each week.
+- `"max"`: Takes the maximum value of each week.
+- `"min"`: Takes the minimum value of each week.
 
 Example:
 ```javascript

@@ -1,5 +1,5 @@
 # Changelog
-## [2.5.0] - Unreleased
+## [2.5.0] - 2019-05-28
 ### Added
 - Added values() function.
 - Added user defined convertToFrequency() function.
