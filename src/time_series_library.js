@@ -406,9 +406,10 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.quinquennial = function(mode) {
+        const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 5 &&
-                curr.getMonth() == last.getMonth();
+                curr.getMonth() == month;
         });
     };
 
@@ -418,9 +419,10 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.biAnnual = function(mode) {
+        const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 2 &&
-                curr.getMonth() == last.getMonth();
+                curr.getMonth() == month;
         });
     };
 
@@ -430,9 +432,10 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.annual = function(mode) {
+        const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 1 &&
-                curr.getMonth() == last.getMonth();
+                curr.getMonth() == month;
         });
     };
     this.annualize = this.annual;
@@ -482,6 +485,11 @@ const Vector = function(data) {
                 curr.getDate() != last.getDate(); // FIXME: Should not be needed
         });
     };
+
+    function maxMonth(vector) {
+        return Math.max.apply(
+            null, vector.map((point) => point.refper.getMonth()));
+    }
 
     function frequencyJoin(split, mode) {
         const modes = {
@@ -556,9 +564,9 @@ const Vector = function(data) {
             result.push(new Vector(next.reverse()));
         }
 
-        // Ensure chunk sizes match the first.
+        // Ensure chunk sizes match the maximum to filter out periods.
         if (result.length > 0) {
-            const size = result[0].length;
+            const size = Math.max.apply(null, result.map((v) => v.length));
             result = result.filter((chunk) => chunk.length == size);
         }
 

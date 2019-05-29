@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.5.2] - 2019-05-29
+### Changed
+- Frequecy conversions to annual are now always fixed to the last reference 
+period of each year.
+
 ## [2.5.1] - 2019-05-28
 ### Changed
 - Replaced references to tetra-annual to quinquennial.
