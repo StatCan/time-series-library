@@ -409,7 +409,7 @@ const Vector = function(data) {
         const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 5 &&
-                curr.getMonth() == month;
+                last.getMonth() == month;
         });
     };
 
@@ -422,7 +422,7 @@ const Vector = function(data) {
         const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 2 &&
-                curr.getMonth() == month;
+                last.getMonth() == month;
         });
     };
 
@@ -435,7 +435,7 @@ const Vector = function(data) {
         const month = maxMonth(this);
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getFullYear() == last.getFullYear() + 1 &&
-                curr.getMonth() == month;
+                last.getMonth() == month;
         });
     };
     this.annualize = this.annual;

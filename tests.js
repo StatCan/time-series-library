@@ -562,7 +562,7 @@ describe('Vector', function() {
             ]);
             let result = vector.annual();
             assert.strictEqual(result.length, 1);
-            assert.strictEqual(result.refperStr(0), '2019-03-01');
+            assert.strictEqual(result.refperStr(0), '2018-12-01');
 
             vector = new Vector([
                 {'refper': '2018-06-01', 'value': 0},
@@ -601,6 +601,24 @@ describe('Vector', function() {
             assert.strictEqual(result.refperStr(0), '2018-12-01');
             assert.strictEqual(result.refperStr(1), '2019-12-01');
             assert.strictEqual(result.refperStr(2), '2020-12-01');
+
+            vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-04-01', 'value': 2},
+                {'refper': '2018-07-01', 'value': 3},
+                {'refper': '2018-10-01', 'value': 4},
+                {'refper': '2019-01-01', 'value': 5},
+                {'refper': '2019-04-01', 'value': 6},
+                {'refper': '2019-07-01', 'value': 7},
+                {'refper': '2019-10-01', 'value': 8},
+                {'refper': '2020-01-01', 'value': 9}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-10-01', 'value': 4},
+                {'refper': '2019-10-01', 'value': 8},
+            ]);
+            result = vector.annual();
+            assert.strictEqual(result.equals(expected), true);
         });
     });
 
