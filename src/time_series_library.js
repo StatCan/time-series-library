@@ -400,17 +400,24 @@ const Vector = function(data) {
         return frequencyJoin(split, mode);
     };
 
+    function convertToYearlyFrequency(vector, mode, years) {
+        const month = maxMonth(vector);
+        vector.data = dropWhile(vector.data, (point) => {
+            return point.refper.getMonth() != month;
+        });
+        vector.length = vector.data.length;
+        return vector.convertToFrequency(mode, function(curr, last) {
+            return curr.getFullYear() == last.getFullYear() + years;
+        });
+    }
+
     /**
      * Converts vector to quinquennial frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
     this.quinquennial = function(mode) {
-        const month = maxMonth(this);
-        return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + 5 &&
-                last.getMonth() == month;
-        });
+        return convertToYearlyFrequency(this, mode, 5);
     };
 
     /**
@@ -419,11 +426,7 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.biAnnual = function(mode) {
-        const month = maxMonth(this);
-        return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + 2 &&
-                last.getMonth() == month;
-        });
+        return convertToYearlyFrequency(this, mode, 2);
     };
 
     /**
@@ -432,11 +435,7 @@ const Vector = function(data) {
      * @return {Vector} - Converted vector.
      */
     this.annual = function(mode) {
-        const month = maxMonth(this);
-        return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + 1 &&
-                last.getMonth() == month;
-        });
+        return convertToYearlyFrequency(this, mode, 1);
     };
     this.annualize = this.annual;
 
@@ -999,6 +998,16 @@ const VectorLib = function() {
 
     this.realDate = realDate;
 };
+
+function dropWhile(array, predicate) {
+    let removeCount = 0;
+    let i = array.length - 1;
+    while (i > 0 && predicate(array[i])) {
+        removeCount++;
+        i--;
+    }
+    return array.slice(0, array.length - removeCount);
+}
 
 // Merge but don't overwrite existing keys.
 function safeMerge(target, source) {

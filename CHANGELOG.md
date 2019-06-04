@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.3] - 2019-06-04
+### Changed
+- Fixed computation of last frequency chunk for annual conversions.
+
 ## [2.5.2] - 2019-05-29
 ### Changed
 - Frequecy conversions to annual are now always fixed to the last reference 

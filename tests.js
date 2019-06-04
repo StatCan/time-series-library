@@ -523,7 +523,7 @@ describe('Vector', function() {
 
     describe('#biAnnual', function() {
         it('should convert vector to a bi-annual frequency', function() {
-            const vector = new Vector([
+            let vector = new Vector([
                 {'refper': '2018-01-31', 'value': 1},
                 {'refper': '2019-01-31', 'value': 2},
                 {'refper': '2020-01-31', 'value': 3},
@@ -538,7 +538,7 @@ describe('Vector', function() {
                 {'refper': '2029-01-31', 'value': 12},
                 {'refper': '2030-01-31', 'value': 13},
             ]);
-            const expected = new Vector([
+            let expected = new Vector([
                 {'refper': '2020-01-31', 'value': 3},
                 {'refper': '2022-01-31', 'value': 5},
                 {'refper': '2024-01-31', 'value': 7},
@@ -546,7 +546,28 @@ describe('Vector', function() {
                 {'refper': '2028-01-31', 'value': 11},
                 {'refper': '2030-01-31', 'value': 13}
             ]);
-            const result = vector.biAnnual();
+            let result = vector.biAnnual();
+            assert.strictEqual(result.equals(expected), true);
+
+            vector = new Vector([
+                {'refper': '2018-03-01', 'value': 1},
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-09-01', 'value': 3},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-03-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-09-01', 'value': 7},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-03-01', 'value': 9},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-09-01', 'value': 11},
+                {'refper': '2020-12-01', 'value': 12},
+                {'refper': '2021-03-31', 'value': 13},
+            ]);
+            expected = new Vector([
+                {'refper': '2020-12-01', 'value': 12},
+            ]);
+            result = vector.biAnnual();
             assert.strictEqual(result.equals(expected), true);
         });
     });
