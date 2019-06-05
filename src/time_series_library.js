@@ -656,7 +656,7 @@ const VectorLib = function() {
     };
 
     this.getVectorIds = function(expression) {
-        expression = expression.replace(/ /g, '');
+        expression = expression.replace(/ /g, '').toLowerCase();
         const ids = [];
         let nextId = '';
         for (let c = 0; c < expression.length; c++) {

@@ -932,6 +932,14 @@ describe('VectorLib', function() {
             assert.strictEqual(ids[1], '2');
             assert.strictEqual(ids[2], '3');
         });
+
+        it('should detect uppercase and lowercase Vs', function() {
+            const ids = vlib.getVectorIds('(V1 + v2) * (2*V3)');
+            assert.strictEqual(ids.length, 3);
+            assert.strictEqual(ids[0], '1');
+            assert.strictEqual(ids[1], '2');
+            assert.strictEqual(ids[2], '3');
+        });
     });
 
     describe('#generateDaily', function() {
