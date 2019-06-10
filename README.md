@@ -64,7 +64,7 @@ Using a web browser:
 [semiAnnual(mode)](#Vector.semiAnnual)  
 [quarterly(mode, offset)](#Vector.quarterly)  
 [monthly(mode)](#Vector.monthly)  
-[weekly(mode)](#Vector.weekly)
+[weekly(mode)](#Vector.weekly)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
 [json()](#Vector.json)  
@@ -998,7 +998,7 @@ Result:
 ```
 
 <a name="Vector.quarterly"></a>
-### quarterly(mode, offset)
+### quarterly(mode)
 
 Converts the frequency of a vector to quarterly.
 
