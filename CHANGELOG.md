@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.4] - 2019-06-10
+### Changed
+- Removed 'v' character from vector identifiers.
+
 ## [2.5.3] - 2019-06-04
 ### Changed
 - Fixed computation of last frequency chunk for annual conversions.

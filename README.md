@@ -1202,15 +1202,15 @@ operation using the **intersection** function.
 Example:
 ```javascript
 let vectors = {
-    'v1': new Vector([
+    '1': new Vector([
         {'refper': "2018-01-01", 'value': 1},
         {'refper': "2018-02-01", 'value': 2}
     ]),
-    'v2': new Vector([
+    '2': new Vector([
         {'refper': "2018-01-01", 'value': 3},
         {'refper': "2018-02-01", 'value': 4}
     ]),
-    'v3': new Vector([
+    '3': new Vector([
         {'refper': "2018-01-01", 'value': 2},
         {'refper': "2018-02-01", 'value': 2}
     ])
