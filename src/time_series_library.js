@@ -76,16 +76,11 @@ const Vector = function(data) {
             return a.refper.getTime() == b.refper.getTime()
                 && a.value == b.value;
         };
-
         if (index) return pointEquals(this.get(index), other.get(index));
         if (this.length != other.length) return false;
-
-        const foundNotEqual = this.find((point, i) => {
+        return !this.some((point, i) => {
             return !pointEquals(point, other.get(i));
         });
-        if (foundNotEqual) return false;
-
-        return true;
     };
 
     /**
@@ -113,6 +108,15 @@ const Vector = function(data) {
      */
     this.find = function(predicate) {
         return this.data.find(predicate);
+    };
+
+    /**
+     * Returns true if there is a datapoint that matches a predicate condition.
+     * @param {function} predicate - Predicate function.
+     * @return {object} - True if condition matched, otherwise false.
+     */
+    this.some = function(predicate) {
+        return this.data.some(predicate);
     };
 
     /**
@@ -147,11 +151,7 @@ const Vector = function(data) {
      */
     this.latestN = function(n) {
         if (n > this.length) throw new Error('N > length of vector.');
-        const result = new Vector();
-        for (let p = this.length - n; p < this.length; p++) {
-            result.push(this.get(p));
-        }
-        return result;
+        return new Vector(this.data.slice(-n));
     };
 
     /**
@@ -161,11 +161,9 @@ const Vector = function(data) {
      */
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
-        const foundInoperable = this.find((point, i) => {
+        return !this.some((point, i) => {
             return point.refper.getTime() != other.refper(i).getTime();
         });
-        if (foundInoperable) return false;
-        return true;
     };
 
     /**
