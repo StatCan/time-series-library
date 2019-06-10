@@ -129,11 +129,7 @@ const Vector = function(data) {
      * @return {Array.<object>} - Array of datapoints matching predicate.
      */
     this.filter = function(predicate) {
-        const result = new Vector();
-        for (let p = 0; p < this.length; p++) {
-            if (predicate(this.get(p))) result.push(this.get(p));
-        }
-        return result;
+        return new Vector(this.data.filter((point) => predicate(point)));
     };
 
     /**
