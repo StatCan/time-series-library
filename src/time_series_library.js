@@ -93,16 +93,8 @@ const Vector = function(data) {
      * @return {Vector} - Copy of vector.
      */
     this.copy = function() {
-        const copy = new Vector();
-        for (let p = 0; p < this.length; p++) {
-            const copyPoint = {
-                'refper': this.refper(p),
-                'value': this.value(p)
-            };
-            safeMerge(copyPoint, this.get(p));
-            copy.push(copyPoint);
-        }
-        return copy;
+        return new Vector(
+            this.data.map((point) => newPointValue(point, point.value)));
     };
 
     /**
@@ -266,21 +258,10 @@ const Vector = function(data) {
         const a = this.intersection(other);
         const b = other.intersection(this);
 
-        const result = new Vector();
-
-        for (let p = 0; p < a.length; p++) {
-            const newPoint = {
-                'refper': a.refper(p),
-                'value': operation(a.value(p), b.value(p))
-            };
-
-            // Merge keys added by the user.
-            safeMerge(newPoint, a.get(p));
-
-            result.push(newPoint);
-        }
-
-        return result;
+        const data = a.data.map((pointA, i) => {
+            return newPointValue(pointA, operation(pointA.value, b.value(i)));
+        });
+        return new Vector(data);
     };
 
     /**
@@ -289,21 +270,12 @@ const Vector = function(data) {
      * @return {Vector} - Transformed vector.
      */
     this.periodDeltaTransformation = function(operation) {
-        const result = new Vector();
-
-        for (let p = 0; p < this.length; p++) {
-            let value = null;
-            if (this.get(p - 1) != undefined) {
-                const lastVal = this.value(p - 1);
-                const currVal = this.value(p);
-                value = operation(currVal, lastVal);
-            }
-            const point = {'refper': this.refper(p), 'value': value};
-            safeMerge(point, this.get(p));
-            result.push(point);
-        }
-
-        return result;
+        const data = this.data.map((point, i, data) => {
+            const newValue = data[i-1] == undefined ?
+                null : operation(point.value, data[i-1].value);
+            return newPointValue(point, newValue);
+        });
+        return new Vector(data);
     };
 
     this.samePeriodPreviousYearTransformation = function(operation) {
@@ -343,17 +315,10 @@ const Vector = function(data) {
      * @return {Vector} - Transformed vector.
      */
     this.periodTransformation = function(operation) {
-        const result = new Vector();
-        for (let p = 0; p < this.length; p++) {
-            const point = this.get(p);
-            const newPoint = {
-                'refper': point.refper,
-                'value': operation(point.value)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
+        const data = this.data.map((point) => {
+            return newPointValue(point, operation(point.value));
+        });
+        return new Vector(data);
     };
 
     /**
@@ -488,48 +453,26 @@ const Vector = function(data) {
 
     function frequencyJoin(split, mode) {
         const modes = {
-            'last': function(vector) {
-                return vector.get(vector.length - 1);
+            'last': (vector) => vector.get(vector.length - 1),
+            'sum': (vector) => {
+                return newPointValue(
+                    vector.get(vector.length - 1), vector.sum());
             },
-            'sum': function(vector) {
-                const point = {
-                    'refper': vector.refper(vector.length - 1),
-                    'value': vector.sum()
-                };
-                return safeMerge(point, vector.get(vector.length - 1));
+            'average': (vector) => {
+                return newPointValue(
+                    vector.get(vector.length - 1), vector.average());
             },
-            'average': function(vector) {
-                const point = {
-                    'refper': vector.refper(vector.length - 1),
-                    'value': vector.average()
-                };
-                return safeMerge(point, vector.get(vector.length - 1));
+            'max': (vector) => {
+                return newPointValue(
+                    vector.get(vector.length - 1), vector.max());
             },
-            'max': function(vector) {
-                const point = {
-                    'refper': vector.refper(vector.length - 1),
-                    'value': vector.max()
-                };
-                return safeMerge(point, vector.get(vector.length - 1));
-            },
-            'min': function(vector) {
-                const point = {
-                    'refper': vector.refper(vector.length - 1),
-                    'value': vector.min()
-                };
-                return safeMerge(point, vector.get(vector.length - 1));
+            'min': (vector) => {
+                return newPointValue(
+                    vector.get(vector.length - 1), vector.min());
             }
         };
 
-        if (mode == undefined || typeof mode === 'string') {
-            mode = modes[mode] || modes['last'];
-        }
-
-        const result = new Vector();
-        for (let i = 0; i < split.length; i++) {
-            result.push(mode(split[i]));
-        }
-        return result;
+        return new Vector(split.map((chunk) => modes[mode || 'last'](chunk)));
     }
 
     function frequencySplit(vector, fn) {
@@ -574,17 +517,10 @@ const Vector = function(data) {
      * @return {Vector} - Rounded vector.
      */
     this.round = function(decimals) {
-        const result = new Vector();
-        for (let p = 0; p < this.length; p++) {
-            const point = this.get(p);
-            const newPoint = {
-                'refper': point.refper,
-                'value': scalarRound(point.value, decimals)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
+        const data = this.data.map((point) => {
+            return newPointValue(point, scalarRound(point.value, decimals));
+        });
+        return new Vector(data);
     };
 
     /**
@@ -593,17 +529,11 @@ const Vector = function(data) {
      * @return {Vector} - Rounded vector.
      */
     this.roundBankers = function(decimals) {
-        const result = new Vector();
-        for (let p = 0; p < this.length; p++) {
-            const point = this.get(p);
-            const newPoint = {
-                'refper': point.refper,
-                'value': scalarRoundBankers(point.value, decimals)
-            };
-            safeMerge(newPoint, point);
-            result.push(newPoint);
-        }
-        return result;
+        const data = this.data.map((point) => {
+            return newPointValue(
+                point, scalarRoundBankers(point.value, decimals));
+        });
+        return new Vector(data);
     };
 
     function scalarRound(value, decimals) {
@@ -871,17 +801,10 @@ const VectorLib = function() {
     };
 
     const vectorScalarOperate = function(vector, scalar, operation) {
-        const result = new Vector();
-        for (let p = 0; p < vector.length; p++) {
-            const newPoint = {
-                'refper': vector.refper(p),
-                'value': operation(vector.value(p), scalar)
-            };
-            // Merge keys added by the user.
-            safeMerge(newPoint, vector.get(p));
-            result.push(newPoint);
-        }
-        return result;
+        const data = vector.data.map((point) => {
+            return newPointValue(point, operation(point.value, scalar));
+        });
+        return new Vector(data);
     };
 
     const postfix = function(symbols) {
@@ -1013,6 +936,10 @@ function safeMerge(target, source) {
         }
     }
     return target;
+}
+
+function newPointValue(point, newValue) {
+    return safeMerge({'refper': point.refper, 'value': newValue}, point);
 }
 
 function realDate(year, month, day) {
