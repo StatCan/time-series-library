@@ -968,10 +968,6 @@ function percentageChange(curr, last) {
     return last == 0 ? null : (curr - last) / Math.abs(last) * 100;
 }
 
-function isNum(value) {
-    return typeof value == 'number';
-}
-
 module.exports = {
     'Vector': Vector,
     'VectorLib': VectorLib
