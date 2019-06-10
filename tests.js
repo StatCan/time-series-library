@@ -891,29 +891,29 @@ describe('Vector', function() {
 describe('VectorLib', function() {
     describe('#evaluate', function() {
         const vectors = {
-            'v1': new Vector([
+            '1': new Vector([
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]),
-            'v2': new Vector([
+            '2': new Vector([
                 {'refper': '2018-01-01', 'value': 3},
                 {'refper': '2018-02-01', 'value': 4}
             ]),
-            'v3': new Vector([
+            '3': new Vector([
                 {'refper': '2018-01-01', 'value': 2},
                 {'refper': '2018-02-01', 'value': 2}
             ]),
-            'v4': new Vector([
+            '4': new Vector([
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2},
                 {'refper': '2018-03-01', 'value': 3}
             ]),
-            'v5': new Vector([
+            '5': new Vector([
                 {'refper': '2018-01-01', 'value': 4},
                 {'refper': '2018-02-01', 'value': 5},
                 {'refper': '2018-03-01', 'value': 6}
             ]),
-            'v6': new Vector([
+            '6': new Vector([
                 {'refper': '2018-01-01', 'value': 7},
                 {'refper': '2018-02-01', 'value': 8},
                 {'refper': '2018-03-01', 'value': 9}
@@ -955,18 +955,17 @@ describe('VectorLib', function() {
     describe('#getVectorIds', function() {
         it('should return the list of vector IDs in a string', function() {
             const ids = vlib.getVectorIds('(v1 + v2) * (2*v3)');
-            assert.strictEqual(ids.length, 3);
-            assert.strictEqual(ids[0], '1');
-            assert.strictEqual(ids[1], '2');
-            assert.strictEqual(ids[2], '3');
+            assert.deepStrictEqual(ids, ['1', '2', '3']);
         });
 
         it('should detect uppercase and lowercase Vs', function() {
             const ids = vlib.getVectorIds('(V1 + v2) * (2*V3)');
-            assert.strictEqual(ids.length, 3);
-            assert.strictEqual(ids[0], '1');
-            assert.strictEqual(ids[1], '2');
-            assert.strictEqual(ids[2], '3');
+            assert.deepStrictEqual(ids, ['1', '2', '3']);
+        });
+
+        it('should not return duplicates', function() {
+            const ids = vlib.getVectorIds('v1 + v2 + v2 + v3');
+            assert.deepStrictEqual(ids, ['1', '2', '3']);
         });
     });
 

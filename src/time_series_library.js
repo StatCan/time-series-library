@@ -581,21 +581,14 @@ const VectorLib = function() {
 
     this.getVectorIds = function(expression) {
         expression = expression.replace(/ /g, '').toLowerCase();
-        const ids = [];
-        let nextId = '';
-        for (let c = 0; c < expression.length; c++) {
-            if (expression[c] == 'v' && !isNaN(expression[c + 1])) {
-                nextId = 'v';
-            } else if (nextId != '' && !isNaN(expression[c])) {
-                nextId += expression[c];
-            } else {
-                if (nextId != '') ids.push(nextId.substring(1));
-                nextId = '';
-            }
-        }
 
-        if (nextId != '') ids.push(nextId.substring(1));
-        return ids;
+        const allowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+
+        const chunks = expression.split('v');
+        const ids = chunks.map((chunk) => {
+            return takeWhile(chunk, (c) => allowed.includes(c));
+        }).filter((id) => id.length > 0).map((id) => id[0]);
+        return [...new Set(ids)];
     };
 
     this.generateDaily = function(values, startDate) {
@@ -718,7 +711,7 @@ const VectorLib = function() {
             const symbol = post[s];
 
             if (typeof symbol === 'string' && symbol[0] == 'v') {
-                stack.push(new ExpressionNode(vectors[symbol]));
+                stack.push(new ExpressionNode(vectors[symbol.substring(1)]));
             } else if (!isNaN(symbol)) {
                 stack.push(new ExpressionNode(symbol));
             } else {
@@ -926,6 +919,18 @@ function dropWhile(array, predicate) {
     return array.slice(0, array.length - removeCount);
 }
 
+function takeWhile(array, predicate) {
+    const result = [];
+    for (const item of array) {
+        if (!predicate(item)) {
+            return result;
+        } else {
+            result.push(item);
+        }
+    }
+    return result;
+}
+
 // Merge but don't overwrite existing keys.
 function safeMerge(target, source) {
     for (const key in source) {
@@ -961,6 +966,10 @@ function daysInMonth(year, month) {
 
 function percentageChange(curr, last) {
     return last == 0 ? null : (curr - last) / Math.abs(last) * 100;
+}
+
+function isNum(value) {
+    return typeof value == 'number';
 }
 
 module.exports = {
