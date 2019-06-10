@@ -12,6 +12,8 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]);
+            assert.strictEqual(
+                v.get(1).refper.getTime(), new Date(2018, 1, 1).getTime());
             assert.strictEqual(v.get(1).value, 2);
         });
     });
@@ -22,8 +24,19 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]);
-            assert.strictEqual(v.refperStr(1), '2018-02-01');
+            assert.strictEqual(
+                v.refper(1).getTime(), new Date(2018, 1, 1).getTime());
         });
+    });
+
+    describe('#refperStr', function() {
+        'should return the reference period string at a given index', () => {
+            const v = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+            assert.strictEqual(v.refperStr(1), '2018-02-01');
+        };
     });
 
     describe('#value', function() {
@@ -45,7 +58,7 @@ describe('Vector', function() {
             assert.deepStrictEqual(v.values(), [1, 2]);
         });
 
-        it('should handle the emprty vector', function() {
+        it('should handle the empty vector', function() {
             const v = new Vector();
             assert.deepStrictEqual(v.values(), []);
         });
@@ -57,8 +70,13 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 1}
             ]);
             v.push({'refper': '2018-02-01', 'value': 2});
-            assert.strictEqual(v.value(1), 2);
-            assert.strictEqual(v.length, 2);
+
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+
+            assert.ok(v.equals(expected));
         });
     });
 
@@ -98,17 +116,18 @@ describe('Vector', function() {
     });
 
     describe('#copy', function() {
-        it('should create a copy of a vector', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-01', 'value': 1, 'extra': 0},
-                {'refper': '2018-01-02', 'value': 2}
-            ]);
+        const vector = new Vector([
+            {'refper': '2018-01-01', 'value': 1, 'extra': 0},
+            {'refper': '2018-01-02', 'value': 2}
+        ]);
 
-            const result = vector.copy(vector);
-            assert.strictEqual(result.refperStr(0), '2018-01-01');
-            assert.strictEqual(result.refperStr(1), '2018-01-02');
-            assert.strictEqual(result.value(0), 1);
-            assert.strictEqual(result.value(1), 2);
+        const result = vector.copy();
+
+        it('should create a copy of a vector', function() {
+            assert.ok(result.equals(vector));
+        });
+
+        it('should preserve user defined datapoint attributes', function() {
             assert.strictEqual(result.get(0).extra, 0);
         });
     });
@@ -120,25 +139,29 @@ describe('Vector', function() {
                 {'refper': '2018-01-02', 'value': 1},
                 {'refper': '2018-01-03', 'value': 2},
             ]);
-            const result = vector.map((p) => p.value);
-            assert.strictEqual(result[0], 0);
-            assert.strictEqual(result[1], 1);
-            assert.strictEqual(result[2], 2);
+            assert.deepStrictEqual(vector.map((p) => p.value), [0, 1, 2]);
+        });
+
+        it('should return an empty list when mapping an empty vector', () => {
+            const vector = new Vector();
+            assert.deepStrictEqual(vector.map((p) => p), []);
         });
     });
 
     describe('#find', function() {
+        const vector = new Vector([
+            {'refper': '2018-01-01', 'value': 0},
+            {'refper': '2018-01-02', 'value': 1},
+            {'refper': '2018-01-03', 'value': 2},
+        ]);
+
         it('should find the first datapoint matching a predicate.', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-01', 'value': 0},
-                {'refper': '2018-01-02', 'value': 1},
-                {'refper': '2018-01-03', 'value': 2},
-            ]);
-
-            let result = vector.find((p) => p.value == 1);
+            const result = vector.find((p) => p.value == 1);
             assert.strictEqual(result.refper, vector.get(1).refper);
+        });
 
-            result = vector.find((p) => false);
+        it('should return undefined if no match is found', function() {
+            const result = vector.find((p) => false);
             assert.strictEqual(result, undefined);
         });
     });
@@ -150,10 +173,12 @@ describe('Vector', function() {
                 {'refper': '2018-01-02', 'value': 1},
                 {'refper': '2018-01-03', 'value': 2},
             ]);
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-03', 'value': 2},
+            ]);
             const result = vector.filter((p) => p.value % 2 == 0);
-            assert.strictEqual(result.value(0), 0);
-            assert.strictEqual(result.value(1), 2);
-            assert.strictEqual(result.length, 2);
+            assert.ok(result.equals(expected));
         });
     });
 
@@ -165,10 +190,12 @@ describe('Vector', function() {
                 {'refper': '2018-01-03', 'value': 2},
                 {'refper': '2018-01-04', 'value': 3}
             ]);
+            const expected = new Vector([
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2}
+            ]);
             const result = vector.range('2018-01-02', '2018-01-03');
-            assert.strictEqual(result.length, 2);
-            assert.strictEqual(result.value(0), 1);
-            assert.strictEqual(result.value(1), 2);
+            assert.ok(result.equals(expected));
         });
     });
 
@@ -180,11 +207,12 @@ describe('Vector', function() {
                 {'refper': '2018-03-01', 'value': 3},
                 {'refper': '2018-04-01', 'value': 4}
             ]);
+            const expected = new Vector([
+                {'refper': '2018-03-01', 'value': 3},
+                {'refper': '2018-04-01', 'value': 4}
+            ]);
             const result = vector.latestN(2);
-
-            assert.strictEqual(result.length, 2);
-            assert.strictEqual(result.value(0), 3);
-            assert.strictEqual(result.value(1), 4);
+            assert.ok(result.equals(expected));
         });
     });
 
