@@ -10,8 +10,7 @@
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint . --fix",
     "test": "./node_modules/.bin/mocha tests.js",
-    "prebuild": "npm run clean",
-    "prepare": "npm run build"
+    "prebuild": "npm run clean"
   },
   "repository": {
     "type": "git",
