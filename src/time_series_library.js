@@ -587,7 +587,7 @@ const VectorLib = function() {
         const chunks = expression.split('v');
         const ids = chunks.map((chunk) => {
             return takeWhile(chunk, (c) => allowed.includes(c));
-        }).filter((id) => id.length > 0).map((id) => id[0]);
+        }).filter((id) => id.length > 0).map((id) => id.join(''));
         return [...new Set(ids)];
     };
 

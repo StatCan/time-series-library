@@ -954,13 +954,17 @@ describe('VectorLib', function() {
 
     describe('#getVectorIds', function() {
         it('should return the list of vector IDs in a string', function() {
-            const ids = vlib.getVectorIds('(v1 + v2) * (2*v3)');
-            assert.deepStrictEqual(ids, ['1', '2', '3']);
+            const ids = vlib.getVectorIds('(v1 + v22) * (2*v3)');
+            assert.deepStrictEqual(ids, ['1', '22', '3']);
         });
 
         it('should detect uppercase and lowercase Vs', function() {
             const ids = vlib.getVectorIds('(V1 + v2) * (2*V3)');
             assert.deepStrictEqual(ids, ['1', '2', '3']);
+        });
+
+        it('should handle a single vector ID', function() {
+            assert.deepStrictEqual(vlib.getVectorIds('v10'), ['10']);
         });
 
         it('should not return duplicates', function() {
