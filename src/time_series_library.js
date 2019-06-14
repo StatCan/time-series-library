@@ -548,7 +548,11 @@ const Vector = function(data) {
     }
 
     this.json = function() {
-        return JSON.stringify(this.data);
+        return JSON.stringify(this.data.map((point) => {
+            return safeMerge(
+                {'refper': datestring(point.refper), 'value': point.value},
+                point);
+        }));
     };
 
     function formatData(data) {
@@ -955,7 +959,7 @@ function realDate(year, month, day) {
 }
 
 function formatDateObject(date) {
-    if (typeof date === 'string') return new Date(date);
+    if (typeof date === 'string') return new Date(`${date}T00:00:00`);
     return date;
 }
 
