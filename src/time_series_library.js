@@ -588,7 +588,12 @@ const VectorLib = function() {
         const ids = chunks.map((chunk) => {
             return takeWhile(chunk, (c) => allowed.includes(c));
         }).filter((id) => id.length > 0).map((id) => id.join(''));
-        return [...new Set(ids)];
+
+        const unique = [];
+        ids.map((id) => {
+            if (!unique.includes(id)) unique.push(id);
+        });
+        return unique;
     };
 
     this.generateDaily = function(values, startDate) {
