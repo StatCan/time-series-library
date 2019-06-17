@@ -959,7 +959,9 @@ function realDate(year, month, day) {
 }
 
 function formatDateObject(date) {
-    if (typeof date === 'string') return new Date(`${date}T00:00:00`);
+    if (typeof date === 'string') {
+        return new Date(`${date.split('T')[0]}T00:00:00`);
+    }
     return date;
 }
 
