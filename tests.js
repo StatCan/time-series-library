@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+const moment = require('moment');
 const assert = require('assert');
 
 const VectorLib = require('./src/time_series_library.js').VectorLib;
@@ -12,8 +14,7 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]);
-            assert.strictEqual(
-                v.get(1).refper.getTime(), new Date(2018, 1, 1).getTime());
+            assert.ok(v.get(1).refper.isSame('2018-02-01'));
             assert.strictEqual(v.get(1).value, 2);
         });
     });
@@ -24,8 +25,7 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]);
-            assert.strictEqual(
-                v.refper(1).getTime(), new Date(2018, 1, 1).getTime());
+            assert.ok(v.refper(1).isSame(moment('2018-02-01')));
         });
     });
 

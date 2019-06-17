@@ -36,5 +36,8 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "uglifyjs-folder": "^1.5.1",
     "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
   }
 }

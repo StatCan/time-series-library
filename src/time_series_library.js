@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 /**
  * Create a new vector representing time series data.
  * @param {Array.<Object>} data - Array of datapoints.
@@ -73,8 +75,7 @@ const Vector = function(data) {
      */
     this.equals = function(other, index) {
         const pointEquals = function(a, b) {
-            return a.refper.getTime() == b.refper.getTime()
-                && a.value == b.value;
+            return a.refper.isSame(b.refper) && a.value == b.value;
         };
         if (index) return pointEquals(this.get(index), other.get(index));
         if (this.length != other.length) return false;
@@ -161,9 +162,7 @@ const Vector = function(data) {
      */
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
-        return !this.some((point, i) => {
-            return point.refper.getTime() != other.refper(i).getTime();
-        });
+        return !this.some((point, i) => !point.refper.isSame(other.refper(i)));
     };
 
     /**
@@ -180,7 +179,7 @@ const Vector = function(data) {
             while (pOther < other.length) {
                 const thisRefper = this.refper(pThis);
                 const otherRefper = other.refper(pOther);
-                if (thisRefper.getTime() == otherRefper.getTime()) {
+                if (thisRefper.isSame(otherRefper)) {
                     result.push(this.get(pThis));
                     pOther++;
                 } else if (thisRefper > otherRefper) {
@@ -281,20 +280,13 @@ const Vector = function(data) {
         // Create dictionary mapping dates to values.
         const set = {};
         for (const d of this.data) {
-            const endOfMonth = new Date(
-                d.refper.getFullYear(),
-                d.refper.getMonth(),
-                daysInMonth(d.refper.getFullYear(), d.refper.getMonth()));
-            set[endOfMonth] = d.value;
+            set[d.refper.endOf('month')] = d.value;
         }
 
         const result = new Vector();
         for (const point of this.data) {
             const refper = point.refper;
-            const previousYear = new Date(
-                refper.getFullYear() - 1,
-                refper.getMonth(),
-                daysInMonth(refper.getFullYear(), refper.getMonth()));
+            const previousYear = refper.subtract(1, 'years');
 
             let newValue = null;
             if (previousYear in set) {
@@ -362,11 +354,11 @@ const Vector = function(data) {
     function convertToYearlyFrequency(vector, mode, years) {
         const month = maxMonth(vector);
         vector.data = dropWhile(vector.data, (point) => {
-            return point.refper.getMonth() != month;
+            return point.refper.month() != month;
         });
         vector.length = vector.data.length;
         return vector.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + years;
+            return curr.year() == last.year() + years;
         });
     }
 
@@ -405,7 +397,7 @@ const Vector = function(data) {
      */
     this.semiAnnual = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getMonth() == (last.getMonth() + 6) % 12;
+            return curr.month() == (last.month() + 6) % 12;
         });
     };
 
@@ -416,7 +408,7 @@ const Vector = function(data) {
      */
     this.quarter = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getMonth() == (last.getMonth() + 3) % 12;
+            return curr.month() == (last.month() + 3) % 12;
         });
     };
     this.quarterly = this.quarter;
@@ -428,7 +420,7 @@ const Vector = function(data) {
      */
     this.monthly = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getMonth() == (last.getMonth() + 1) % 12;
+            return curr.month() == (last.month() + 1 ) % 12;
         });
     };
 
@@ -439,14 +431,14 @@ const Vector = function(data) {
      */
     this.weekly = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getDay() == last.getDay() &&
-                curr.getDate() != last.getDate(); // FIXME: Should not be needed
+            return curr.day() == last.day() &&
+                curr.date() != last.date(); // FIXME: Should not be needed
         });
     };
 
     function maxMonth(vector) {
         return Math.max.apply(
-            null, vector.map((point) => point.refper.getMonth()));
+            null, vector.map((point) => point.refper.month()));
     }
 
     function frequencyJoin(split, mode) {
@@ -611,44 +603,32 @@ const VectorLib = function() {
     };
 
     this.generateMonthly = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextMonth);
     };
 
     this.generateQuarterly = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextQuarter);
     };
 
     this.generateSemiAnnual = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextSemiAnnum);
     };
 
     this.generateAnnual = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextAnnum);
     };
 
     this.generateBiAnnual = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextBiAnnum);
     };
 
     this.generateQuinquennial = function(values, startDate) {
-        startDate = formatDateObject(startDate);
-        startDate.setDate(
-            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        startDate = formatDateObject(startDate).endOf('month');
         return generateVector(values, startDate, nextQuinquennium);
     };
 
@@ -663,13 +643,11 @@ const VectorLib = function() {
     };
 
     const nextDay = function(date) {
-        return new Date(
-            date.getFullYear(), date.getMonth(), date.getDate() + 1);
+        return date.add(1, 'days');
     };
 
     const nextWeek = function(date) {
-        return new Date(
-            date.getFullYear(), date.getMonth(), date.getDate() + 7);
+        return date.add(7, 'days');
     };
 
     const nextMonth = function(date) {
@@ -685,26 +663,19 @@ const VectorLib = function() {
     };
 
     const nextAnnum = function(date) {
-        return new Date(
-            date.getFullYear() + 1, date.getMonth(), date.getDate());
+        return date.add(1, 'years');
     };
 
     const nextBiAnnum = function(date) {
-        return new Date(
-            date.getFullYear() + 2, date.getMonth(), date.getDate());
+        return date.add(2, 'years');
     };
 
     const nextQuinquennium = function(date) {
-        return new Date(
-            date.getFullYear() + 5, date.getMonth(), date.getDate());
+        return date.add(5, 'years');
     };
 
     const addMonths = function(date, months) {
-        const currYear = date.getFullYear();
-        const currMonth = date.getMonth();
-        const newYear = currYear + Math.floor((currMonth + months) / 12);
-        const newMonth = (currMonth + (months % 12)) % 12;
-        return new Date(newYear, newMonth, daysInMonth(newYear, newMonth));
+        return date.add(months, 'months');
     };
 
     this.evaluate = function(expression, vectors) {
@@ -915,7 +886,7 @@ const VectorLib = function() {
     };
 
 
-    this.realDate = realDate;
+    this.date = date;
 };
 
 function dropWhile(array, predicate) {
@@ -954,23 +925,17 @@ function newPointValue(point, newValue) {
     return safeMerge({'refper': point.refper, 'value': newValue}, point);
 }
 
-function realDate(year, month, day) {
-    return new Date(year, month - 1, day);
+function date(year, month, day) {
+    return moment(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
 }
 
 function formatDateObject(date) {
-    if (typeof date === 'string') return new Date(`${date}T00:00:00`);
+    if (typeof date === 'string') return moment(date.split('T')[0]);
     return date;
 }
 
 function datestring(date) {
-    return date.getFullYear() + '-'
-        + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
-        + date.getDate().toString().padStart(2, '0');
-}
-
-function daysInMonth(year, month) {
-    return new Date(year, month + 1, 0).getDate();
+    return date.format('YYYY-MM-DD');
 }
 
 function percentageChange(curr, last) {
