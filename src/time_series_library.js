@@ -75,7 +75,7 @@ const Vector = function(data) {
      */
     this.equals = function(other, index) {
         const pointEquals = function(a, b) {
-            return a.refper.isSame(b.refper) && a.value == b.value;
+            return a.refper.isSame(b.refper, 'day') && a.value == b.value;
         };
         if (index) return pointEquals(this.get(index), other.get(index));
         if (this.length != other.length) return false;
@@ -162,7 +162,9 @@ const Vector = function(data) {
      */
     this.interoperable = function(other) {
         if (this.length != other.length) return false;
-        return !this.some((point, i) => !point.refper.isSame(other.refper(i)));
+        return !this.some((point, i) => {
+            return !point.refper.isSame(other.refper(i), 'day');
+        });
     };
 
     /**
@@ -179,7 +181,7 @@ const Vector = function(data) {
             while (pOther < other.length) {
                 const thisRefper = this.refper(pThis);
                 const otherRefper = other.refper(pOther);
-                if (thisRefper.isSame(otherRefper)) {
+                if (thisRefper.isSame(otherRefper, 'day')) {
                     result.push(this.get(pThis));
                     pOther++;
                 } else if (thisRefper > otherRefper) {
