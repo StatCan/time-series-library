@@ -45,7 +45,7 @@ Using a web browser:
 [range(startDate, endDate)](#Vector.range)  
 [latestN(n)](#Vector.latestN)  
 [interoperable(other)](#Vector.interoperable)  
-[intersection(other)](#Vector.intersection)  
+[intersection(others)](#Vector.intersection)  
 [sum()](#Vector.sum)  
 [average()](#Vector.average)  
 [reduce()](#Vector.reduce)  
@@ -440,9 +440,11 @@ true
 ```
 
 <a name="Vector.intersection"></a>
-### intersection(other)
+### intersection(others)
 
-Returns the result of the intersction of the calling vector with another. 
+Returns the result of the intersection of the calling vector with other vectors. 
+
+The parameter **others** can either be a single vector or an array of vectors.
 
 The result of vectors **a** intersected with **b** is defined as the vector 
 **a'** and such that **a'** is composed only of datapoints with reference 
