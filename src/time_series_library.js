@@ -168,7 +168,7 @@ const Vector = function(data) {
 
     /**
      * Gets the intersection of this vector with another.
-     * @param {Vector} other - Other vector.
+     * @param {Vector} others - Other vectors.
      * @return {Vector} - Intersection result.
      */
     this.intersection = function(others) {
