@@ -369,6 +369,15 @@ const Vector = function(data) {
     };
 
     /**
+     * Converts vector to tri-annual frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @return {Vector} - Converted vector.
+     */
+    this.triAnnual = function(mode) {
+        return convertToYearlyFrequency(this, mode, 3);
+    };
+
+    /**
      * Converts vector to bi-annual frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
@@ -418,6 +427,17 @@ const Vector = function(data) {
     this.monthly = function(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 1) % 12;
+        });
+    };
+
+    /**
+     * Converts vector to bi-monthly frequency.
+     * @param {string} mode - "last" (default), "sum", "average", "max", "min".
+     * @return {Vector} - Converted vector.
+     */
+    this.biMonthly = function(mode) {
+        return this.convertToFrequency(mode, function(curr, last) {
+            return curr.getMonth() == (last.getMonth() + 2) % 12;
         });
     };
 
@@ -606,6 +626,13 @@ const VectorLib = function() {
         return generateVector(values, startDate, nextMonth);
     };
 
+    this.generateBiMonthly = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return generateVector(values, startDate, nextBiMonth);
+    };
+
     this.generateQuarterly = function(values, startDate) {
         startDate = formatDateObject(startDate);
         startDate.setDate(
@@ -632,6 +659,13 @@ const VectorLib = function() {
         startDate.setDate(
             daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return generateVector(values, startDate, nextBiAnnum);
+    };
+
+    this.generateTriAnnual = function(values, startDate) {
+        startDate = formatDateObject(startDate);
+        startDate.setDate(
+            daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return generateVector(values, startDate, nextTriAnnum);
     };
 
     this.generateQuinquennial = function(values, startDate) {
@@ -665,6 +699,10 @@ const VectorLib = function() {
         return addMonths(date, 1);
     };
 
+    const nextBiMonth = function(date) {
+        return addMonths(date, 2);
+    };
+
     const nextQuarter = function(date) {
         return addMonths(date, 3);
     };
@@ -681,6 +719,11 @@ const VectorLib = function() {
     const nextBiAnnum = function(date) {
         return new Date(
             date.getFullYear() + 2, date.getMonth(), date.getDate());
+    };
+
+    const nextTriAnnum = function(date) {
+        return new Date(
+            date.getFullYear() + 3, date.getMonth(), date.getDate());
     };
 
     const nextQuinquennium = function(date) {
