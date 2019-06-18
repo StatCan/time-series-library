@@ -340,7 +340,7 @@ describe('Vector', function() {
             assert.strictEqual(vector.sum(), 1);
 
             vector = new Vector();
-            assert.strictEqual(vector.sum(), null);
+            assert.strictEqual(vector.sum(), 0);
         });
     });
 

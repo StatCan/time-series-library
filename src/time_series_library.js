@@ -97,8 +97,8 @@ const Vector = function(data) {
      * @param {function} mapper - Mapper function.
      * @return {Array.<any>} - Map result.
      */
-    this.map = function(mapper) {
-        return this.data.map(mapper);
+    this.map = function(...args) {
+        return this.data.map(...args);
     };
 
     /**
@@ -106,8 +106,8 @@ const Vector = function(data) {
      * @param {function} predicate - Predicate function.
      * @return {object} - Datapoint. Returns null if none found.
      */
-    this.find = function(predicate) {
-        return this.data.find(predicate);
+    this.find = function(...args) {
+        return this.data.find(...args);
     };
 
     /**
@@ -115,8 +115,8 @@ const Vector = function(data) {
      * @param {function} predicate - Predicate function.
      * @return {object} - True if condition matched, otherwise false.
      */
-    this.some = function(predicate) {
-        return this.data.some(predicate);
+    this.some = function(...args) {
+        return this.data.some(...args);
     };
 
     /**
@@ -124,8 +124,8 @@ const Vector = function(data) {
      * @param {function} predicate - Predicate function.
      * @return {Array.<object>} - Array of datapoints matching predicate.
      */
-    this.filter = function(predicate) {
-        return new Vector(this.data.filter((point) => predicate(point)));
+    this.filter = function(...args) {
+        return new Vector(this.data.filter(...args));
     };
 
     /**
@@ -196,7 +196,7 @@ const Vector = function(data) {
     this.sum = function() {
         return this.reduce(function(accumulator, curr) {
             return accumulator + curr;
-        });
+        }, 0);
     };
 
     /**
@@ -231,13 +231,8 @@ const Vector = function(data) {
      * @param {function(any, any)} reducer - Reducer function.
      * @return {any} Result of reduction.
      */
-    this.reduce = function(reducer) {
-        if (this.length == 0) return null;
-        let accumulator = this.value(0);
-        for (let p = 1; p < this.length; p++) {
-            accumulator = reducer(accumulator, this.value(p));
-        }
-        return accumulator;
+    this.reduce = function(...args) {
+        return this.map((point) => point.value).reduce(...args);
     };
 
     /**
