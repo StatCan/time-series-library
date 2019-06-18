@@ -183,19 +183,25 @@ describe('Vector', function() {
     });
 
     describe('#range', function() {
+        const vector = new Vector([
+            {'refper': '2018-01-01', 'value': 0},
+            {'refper': '2018-01-02', 'value': 1},
+            {'refper': '2018-01-03', 'value': 2},
+            {'refper': '2018-01-04', 'value': 3}
+        ]);
+
         it('should return the given date range of a vector', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-01', 'value': 0},
-                {'refper': '2018-01-02', 'value': 1},
-                {'refper': '2018-01-03', 'value': 2},
-                {'refper': '2018-01-04', 'value': 3}
-            ]);
             const expected = new Vector([
                 {'refper': '2018-01-02', 'value': 1},
                 {'refper': '2018-01-03', 'value': 2}
             ]);
             const result = vector.range('2018-01-02', '2018-01-03');
             assert.ok(result.equals(expected));
+        });
+
+        it('should return the empty vector if no periods are in range', () => {
+            const result = vector.range('2020-01-01', '2020-12-31');
+            assert.ok(result.equals(new Vector()));
         });
     });
 
@@ -322,6 +328,10 @@ describe('Vector', function() {
 
         it('should allow intersecting with multiple vectors', function() {
             assert.ok(v1.intersection([v2, v5]).equals(v1Intv2v5));
+        });
+
+        it('should return an empty vector on an empty vector', () => {
+            assert.ok(new Vector().intersection(v1).equals(new Vector()));
         });
     });
 
