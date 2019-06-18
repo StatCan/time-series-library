@@ -301,20 +301,27 @@ describe('Vector', function() {
             {'refper': '2018-06-01', 'value': 6}
         ]);
         const v1Intv7 = new Vector([]);
+        const v1Intv2v5 = new Vector([
+            {'refper': '2018-01-01', 'value': 1}
+        ]);
 
         it('should intersect this vector with another', function() {
-            assert.strictEqual(v1.intersection(v2).equals(v1Intv2), true);
-            assert.strictEqual(v1.intersection(v3).equals(v1Intv3), true);
-            assert.strictEqual(v1.intersection(v4).equals(v1Intv4), true);
-            assert.strictEqual(v1.intersection(v5).equals(v1Intv5), true);
-            assert.strictEqual(v1.intersection(v6).equals(v1Intv6), true);
-            assert.strictEqual(v1.intersection(v7).equals(v1Intv7), true);
-            assert.strictEqual(v2.intersection(v1).equals(v2), true);
-            assert.strictEqual(v3.intersection(v1).equals(v3), true);
-            assert.strictEqual(v4.intersection(v1).equals(v4), true);
-            assert.strictEqual(v5.intersection(v1).equals(v5), true);
-            assert.strictEqual(v6.intersection(v1).equals(v6), true);
-            assert.strictEqual(v7.intersection(v1).equals(v7), true);
+            assert.ok(v1.intersection(v2).equals(v1Intv2));
+            assert.ok(v1.intersection(v3).equals(v1Intv3));
+            assert.ok(v1.intersection(v4).equals(v1Intv4));
+            assert.ok(v1.intersection(v5).equals(v1Intv5));
+            assert.ok(v1.intersection(v6).equals(v1Intv6));
+            assert.ok(v1.intersection(v7).equals(v1Intv7));
+            assert.ok(v2.intersection(v1).equals(v2));
+            assert.ok(v3.intersection(v1).equals(v3));
+            assert.ok(v4.intersection(v1).equals(v4));
+            assert.ok(v5.intersection(v1).equals(v5));
+            assert.ok(v6.intersection(v1).equals(v6));
+            assert.ok(v7.intersection(v1).equals(v7));
+        });
+
+        it('should allow intersecting with multiple vectors', function() {
+            assert.ok(v1.intersection([v2, v5]).equals(v1Intv2v5));
         });
     });
 
