@@ -171,28 +171,22 @@ const Vector = function(data) {
      * @param {Vector} other - Other vector.
      * @return {Vector} - Intersection result.
      */
-    this.intersection = function(other) {
-        const result = new Vector();
+    this.intersection = function(others) {
+        if (!Array.isArray(others)) others = [others];
 
-        let pThis = 0;
-        let pOther = 0;
-        while (pThis < this.length) {
-            while (pOther < other.length) {
-                const thisRefper = this.refper(pThis);
-                const otherRefper = other.refper(pOther);
-                if (thisRefper.getTime() == otherRefper.getTime()) {
-                    result.push(this.get(pThis));
-                    pOther++;
-                } else if (thisRefper > otherRefper) {
-                    pOther++;
-                } else {
-                    break;
-                }
-            }
-            pThis++;
-        }
+        const refperCounts = {};
 
-        return result;
+        const refpers = [
+            ...this.data.map((p) => p.refper),
+            ...others.reduce((a, c) => [...a, ...c.map((p) => p.refper)], [])
+        ];
+
+        refpers.map((refper) => {
+            if (refper in refperCounts) refperCounts[refper]++;
+            else refperCounts[refper] = 1;
+        });
+
+        return this.filter((p) => refperCounts[p.refper] == others.length + 1);
     };
 
     /**
