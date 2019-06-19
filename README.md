@@ -60,10 +60,12 @@ Using a web browser:
 [convertToFrequency(mode, converter)](#Vector.convertToFrequency)  
 [weekly(mode)](#Vector.weekly)  
 [monthly(mode)](#Vector.monthly)  
+[biMonthly(mode)](#Vector.biMonthly)  
 [quarterly(mode)](#Vector.quarterly)  
 [semiAnnual(mode)](#Vector.semiAnnual)  
 [annual(mode)](#Vector.annual)  
 [biAnnual(mode)](#Vector.biAnnual)  
+[triAnnnual(mode)](#Vector.triAnnual)  
 [quinquennial(mode)](#Vector.quinquennial)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
@@ -74,10 +76,12 @@ Using a web browser:
 [generateDaily(values, startDate)](#VectorLib.generateDaily)  
 [generateWeekly(values, startDate)](#VectorLib.generateWeekly)  
 [generateMonthly(values, startDate)](#VectorLib.generateMonthly)  
+[generateBiMonthly(values, startDate)](#VectorLib.generateBiMonthly)  
 [generateQuarterly(values, startDate)](#VectorLib.generateQuarterly)  
 [generateSemiAnnual(values, startDate)](#VectorLib.generateSemiAnnual)  
 [generateAnnual(values, startDate)](#VectorLib.generateAnnual)  
 [generateBiAnnual(values, startDate)](#VectorLib.generateBiAnnual)  
+[generateTriAnnual(values, startDate)](#VectorLib.generateTriAnnual)  
 [generateQuinquennial(values, startDate)](#VectorLib.generateQuinquennial)  
 
 ## Vector
@@ -925,6 +929,41 @@ Result:
 ]
 ```
 
+<a name="Vector.biMonthly"></a>
+### biMonthly(mode)
+
+Converts the frequency of a vector to bi-monthly.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each two month period (Default).
+- `"sum"`: Takes the sum of each two month period.
+- `"average"`: Takes the average of each two month period.
+- `"max"`: Takes the maximum value of each two month period.
+- `"min"`: Takes the minimum value of each two month period.
+
+Example:
+```javascript
+    let vector = new Vector([
+        {'refper': '2018-01-01', value: 1},
+        {'refper': '2018-02-01', value: 2},
+        {'refper': '2019-03-01', value: 3},
+        {'refper': '2019-04-01', value: 4},
+        {'refper': '2019-05-01', value: 5},
+        {'refper': '2019-06-01', value: 6}
+    ]);
+
+    let result = vector.biMonthly();
+```
+
+Result:
+```javascript
+[
+    {'refper': '2018-02-01', value: 2},
+    {'refper': '2019-04-01', value: 4},
+    {'refper': '2019-06-01', value: 6}
+]
+```
+
 <a name="Vector.quarterly"></a>
 ### quarterly(mode)
 
@@ -1073,6 +1112,40 @@ Result:
 [
     {'refper': "2019-12-01", 'value': 1},
     {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2023-12-01", 'value': 5}
+]
+```
+
+<a name="Vector.triAnnual"></a>
+### triAnnual(mode)
+
+Converts the frequency of a vector to tri-annual.
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each tri-annum (Default).
+- `"sum"`: Takes the sum of each tri-annum.
+- `"average"`: Takes the average of each tri-annum.
+- `"max"`: Takes the maximum value of each tri-annum.
+- `"min"`: Takes the minimum value of each tri-annum.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-12-01", 'value': 0},
+    {'refper': "2019-12-01", 'value': 1},
+    {'refper': "2020-12-01", 'value': 2},
+    {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2023-12-01", 'value': 5}
+]);
+
+let result = vector.triAnnual();
+```
+
+Result:
+```javascript
+[
+    {'refper': "2020-12-01", 'value': 2},
     {'refper': "2023-12-01", 'value': 5}
 ]
 ```
@@ -1290,6 +1363,27 @@ Result:
 ]
 ```
 
+<a name="VectorLib.generateBiMonthly"></a>
+### generateMonthly(values, startDate)
+
+Generates a bi-monthly vector from a list of values starting from a specific 
+reference period. The last day of each month will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateBiMonthly([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2019-03-31", 'value': 2},
+    {'refper': "2019-05-31", 'value': 3}
+]
+```
+
 <a name="VectorLib.generateQuarterly"></a>
 ### generateQuarterly(values, startDate)
 
@@ -1353,7 +1447,7 @@ Result:
 ]
 ```
 
-<a name="VectorLib.generateSemiAnnual"></a>
+<a name="VectorLib.generateBiAnnual"></a>
 ### generateBiAnnual(values, startDate)
 
 Generates a bi-annual vector from a list of values starting from a specific 
@@ -1371,6 +1465,27 @@ Result:
     {'refper': "2019-01-31", 'value': 1},
     {'refper': "2021-01-31", 'value': 2},
     {'refper': "2023-01-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateTriAnnual"></a>
+### generateTriAnnual(values, startDate)
+
+Generates a tri-annual vector from a list of values starting from a specific 
+reference period. The last day of each year will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateTriAnnual([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2020-01-31", 'value': 1},
+    {'refper': "2023-01-31", 'value': 2},
+    {'refper': "2026-01-31", 'value': 3}
 ]
 ```
 
