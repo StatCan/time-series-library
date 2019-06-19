@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0] - 2019-06-19
+
+### Added
+- Added biMonthly() and triAnnual() functions.
+- Added generateBiMonthly() and generateTriAnnual() functions.
+
+### Chanegd
+- Allow other arguments to map, reduce, and filter functions.
+
+### Fixed
+- Fixed handling of dates to be compatible with all time zones. 
+
 ## [2.5.4] - 2019-06-10
 ### Changed
 - Removed 'v' character from vector identifiers.
