@@ -540,265 +540,26 @@ describe('Vector', function() {
         });
     });
 
-    describe('#quinquennial', function() {
-        it('should convert vector to a quinquennial frequency', function() {
+    describe('#weekly', function() {
+        it('should convert a vector to a weekly frequency', function() {
             const vector = new Vector([
-                {'refper': '2018-01-31', 'value': 1},
-                {'refper': '2019-01-31', 'value': 2},
-                {'refper': '2020-01-31', 'value': 3},
-                {'refper': '2021-01-31', 'value': 4},
-                {'refper': '2022-01-31', 'value': 5},
-                {'refper': '2023-01-31', 'value': 6},
-                {'refper': '2024-01-31', 'value': 7},
-                {'refper': '2025-01-31', 'value': 8},
-                {'refper': '2026-01-31', 'value': 9},
-                {'refper': '2027-01-31', 'value': 10},
-                {'refper': '2028-01-31', 'value': 11},
-                {'refper': '2029-01-31', 'value': 12},
-                {'refper': '2030-01-31', 'value': 13},
-            ]);
-            const expected = new Vector([
-                {'refper': '2025-01-31', 'value': 8},
-                {'refper': '2030-01-31', 'value': 13}
-            ]);
-            const result = vector.quinquennial();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#triAnnual', function() {
-        it('should convert vector to a tri-annual frequency', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-31', 'value': 1},
-                {'refper': '2019-01-31', 'value': 2},
-                {'refper': '2020-01-31', 'value': 3},
-                {'refper': '2021-01-31', 'value': 4},
-                {'refper': '2022-01-31', 'value': 5},
-                {'refper': '2023-01-31', 'value': 6},
-                {'refper': '2024-01-31', 'value': 7},
-                {'refper': '2025-01-31', 'value': 8},
-                {'refper': '2026-01-31', 'value': 9},
-                {'refper': '2027-01-31', 'value': 10},
-                {'refper': '2028-01-31', 'value': 11},
-                {'refper': '2029-01-31', 'value': 12},
-                {'refper': '2030-01-31', 'value': 13},
-            ]);
-            const expected = new Vector([
-                {'refper': '2021-01-31', 'value': 4},
-                {'refper': '2024-01-31', 'value': 7},
-                {'refper': '2027-01-31', 'value': 10},
-                {'refper': '2030-01-31', 'value': 13}
-            ]);
-            const result = vector.triAnnual();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#biAnnual', function() {
-        it('should convert vector to a bi-annual frequency', function() {
-            let vector = new Vector([
-                {'refper': '2018-01-31', 'value': 1},
-                {'refper': '2019-01-31', 'value': 2},
-                {'refper': '2020-01-31', 'value': 3},
-                {'refper': '2021-01-31', 'value': 4},
-                {'refper': '2022-01-31', 'value': 5},
-                {'refper': '2023-01-31', 'value': 6},
-                {'refper': '2024-01-31', 'value': 7},
-                {'refper': '2025-01-31', 'value': 8},
-                {'refper': '2026-01-31', 'value': 9},
-                {'refper': '2027-01-31', 'value': 10},
-                {'refper': '2028-01-31', 'value': 11},
-                {'refper': '2029-01-31', 'value': 12},
-                {'refper': '2030-01-31', 'value': 13},
-            ]);
-            let expected = new Vector([
-                {'refper': '2020-01-31', 'value': 3},
-                {'refper': '2022-01-31', 'value': 5},
-                {'refper': '2024-01-31', 'value': 7},
-                {'refper': '2026-01-31', 'value': 9},
-                {'refper': '2028-01-31', 'value': 11},
-                {'refper': '2030-01-31', 'value': 13}
-            ]);
-            let result = vector.biAnnual();
-            assert.strictEqual(result.equals(expected), true);
-
-            vector = new Vector([
-                {'refper': '2018-03-01', 'value': 1},
-                {'refper': '2018-06-01', 'value': 2},
-                {'refper': '2018-09-01', 'value': 3},
-                {'refper': '2018-12-01', 'value': 4},
-                {'refper': '2019-03-01', 'value': 5},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-09-01', 'value': 7},
-                {'refper': '2019-12-01', 'value': 8},
-                {'refper': '2020-03-01', 'value': 9},
-                {'refper': '2020-06-01', 'value': 10},
-                {'refper': '2020-09-01', 'value': 11},
-                {'refper': '2020-12-01', 'value': 12},
-                {'refper': '2021-03-31', 'value': 13},
-            ]);
-            expected = new Vector([
-                {'refper': '2020-12-01', 'value': 12},
-            ]);
-            result = vector.biAnnual();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#annual', function() {
-        it('should convert a vector to an annual frequency', function() {
-            let vector = new Vector([
-                {'refper': '2018-03-01', 'value': 0},
-                {'refper': '2018-06-01', 'value': 0},
-                {'refper': '2018-09-01', 'value': 0},
-                {'refper': '2018-12-01', 'value': 0},
-                {'refper': '2019-03-01', 'value': 0}
-            ]);
-            let result = vector.annual();
-            assert.strictEqual(result.length, 1);
-            assert.strictEqual(result.refperStr(0), '2018-12-01');
-
-            vector = new Vector([
-                {'refper': '2018-06-01', 'value': 0},
-                {'refper': '2018-12-01', 'value': 0},
-                {'refper': '2019-06-01', 'value': 0},
-                {'refper': '2019-12-01', 'value': 0},
-                {'refper': '2019-12-02', 'value': 0},
-                {'refper': '2020-06-01', 'value': 0},
-                {'refper': '2020-12-01', 'value': 0},
-                {'refper': '2020-12-02', 'value': 0}
-            ]);
-            result = vector.annual();
-            assert.strictEqual(result.length, 2);
-            assert.strictEqual(result.refperStr(0), '2019-12-02');
-            assert.strictEqual(result.refperStr(1), '2020-12-02');
-
-
-            vector = new Vector([
-                {'refper': '2018-06-01', 'value': 0},
-                {'refper': '2018-12-01', 'value': 0}
-            ]);
-            result = vector.annual();
-            assert.strictEqual(result.length, 1);
-            assert.strictEqual(result.refperStr(0), '2018-12-01');
-
-            vector = new Vector([
-                {'refper': '2018-06-01', 'value': 0},
-                {'refper': '2018-12-01', 'value': 2},
-                {'refper': '2019-06-01', 'value': 0},
-                {'refper': '2019-12-01', 'value': 6},
-                {'refper': '2020-06-01', 'value': 0},
-                {'refper': '2020-12-01', 'value': 4}
-            ]);
-            result = vector.annual();
-            assert.strictEqual(result.length, 3);
-            assert.strictEqual(result.refperStr(0), '2018-12-01');
-            assert.strictEqual(result.refperStr(1), '2019-12-01');
-            assert.strictEqual(result.refperStr(2), '2020-12-01');
-
-            vector = new Vector([
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-04-01', 'value': 2},
-                {'refper': '2018-07-01', 'value': 3},
-                {'refper': '2018-10-01', 'value': 4},
-                {'refper': '2019-01-01', 'value': 5},
-                {'refper': '2019-04-01', 'value': 6},
-                {'refper': '2019-07-01', 'value': 7},
-                {'refper': '2019-10-01', 'value': 8},
-                {'refper': '2020-01-01', 'value': 9}
-            ]);
-            const expected = new Vector([
-                {'refper': '2018-10-01', 'value': 4},
-                {'refper': '2019-10-01', 'value': 8},
-            ]);
-            result = vector.annual();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#semiAnnual', function() {
-        it('should convert vector to a semi-annual frequency', function() {
-            const vector = new Vector([
-                {'refper': '2018-03-01', 'value': 1},
-                {'refper': '2018-06-01', 'value': 2},
-                {'refper': '2018-09-01', 'value': 3},
-                {'refper': '2018-12-01', 'value': 4},
-                {'refper': '2019-03-01', 'value': 5},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-09-01', 'value': 7},
-                {'refper': '2019-12-01', 'value': 8},
-                {'refper': '2020-03-01', 'value': 9},
-                {'refper': '2020-06-01', 'value': 10},
-                {'refper': '2020-09-01', 'value': 11},
-                {'refper': '2020-12-01', 'value': 12}
-            ]);
-            const expected = new Vector([
-                {'refper': '2018-06-01', 'value': 2},
-                {'refper': '2018-12-01', 'value': 4},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-12-01', 'value': 8},
-                {'refper': '2020-06-01', 'value': 10},
-                {'refper': '2020-12-01', 'value': 12}
-            ]);
-            const result = vector.semiAnnual();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#quarter', function() {
-        it('should convert a vector to a quarterly frequency', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-02-01', 'value': 2},
-                {'refper': '2019-03-01', 'value': 3},
-                {'refper': '2019-04-01', 'value': 4},
-                {'refper': '2019-05-01', 'value': 5},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-07-01', 'value': 7},
-                {'refper': '2019-08-01', 'value': 8},
-                {'refper': '2019-09-01', 'value': 9},
-                {'refper': '2019-10-01', 'value': 10},
-                {'refper': '2019-11-01', 'value': 11},
-                {'refper': '2019-12-01', 'value': 12}
+                {'refper': '2019-02-11', 'value': 1},
+                {'refper': '2018-02-12', 'value': 2},
+                {'refper': '2019-02-13', 'value': 3},
+                {'refper': '2019-02-14', 'value': 4},
+                {'refper': '2019-02-15', 'value': 5},
+                {'refper': '2019-02-18', 'value': 6},
+                {'refper': '2019-02-19', 'value': 7},
+                {'refper': '2019-02-20', 'value': 8},
+                {'refper': '2019-02-21', 'value': 9},
+                {'refper': '2019-02-22', 'value': 10}
             ]);
 
             const expected = new Vector([
-                {'refper': '2019-03-01', 'value': 3},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-09-01', 'value': 9},
-                {'refper': '2019-12-01', 'value': 12}
+                {'refper': '2019-02-15', 'value': 5},
+                {'refper': '2019-02-22', 'value': 10}
             ]);
-            const result = vector.quarter();
-            assert.strictEqual(result.equals(expected), true);
-        });
-    });
-
-    describe('#biMonthly', function() {
-        it('should convert a vector to a bi-monthly frequency', function() {
-            const vector = new Vector([
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-02-01', 'value': 2},
-                {'refper': '2019-03-01', 'value': 3},
-                {'refper': '2019-04-01', 'value': 4},
-                {'refper': '2019-05-01', 'value': 5},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-07-01', 'value': 7},
-                {'refper': '2019-08-01', 'value': 8},
-                {'refper': '2019-09-01', 'value': 9},
-                {'refper': '2019-10-01', 'value': 10},
-                {'refper': '2019-11-01', 'value': 11},
-                {'refper': '2019-12-01', 'value': 12}
-            ]);
-
-            const expected = new Vector([
-                {'refper': '2018-02-01', 'value': 2},
-                {'refper': '2019-04-01', 'value': 4},
-                {'refper': '2019-06-01', 'value': 6},
-                {'refper': '2019-08-01', 'value': 8},
-                {'refper': '2019-10-01', 'value': 10},
-                {'refper': '2019-12-01', 'value': 12}
-            ]);
-            const result = vector.biMonthly();
+            const result = vector.weekly();
             assert.strictEqual(result.equals(expected), true);
         });
     });
@@ -895,26 +656,265 @@ describe('Vector', function() {
         });
     });
 
-    describe('#weekly', function() {
-        it('should convert a vector to a weekly frequency', function() {
+    describe('#biMonthly', function() {
+        it('should convert a vector to a bi-monthly frequency', function() {
             const vector = new Vector([
-                {'refper': '2019-02-11', 'value': 1},
-                {'refper': '2018-02-12', 'value': 2},
-                {'refper': '2019-02-13', 'value': 3},
-                {'refper': '2019-02-14', 'value': 4},
-                {'refper': '2019-02-15', 'value': 5},
-                {'refper': '2019-02-18', 'value': 6},
-                {'refper': '2019-02-19', 'value': 7},
-                {'refper': '2019-02-20', 'value': 8},
-                {'refper': '2019-02-21', 'value': 9},
-                {'refper': '2019-02-22', 'value': 10}
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2019-03-01', 'value': 3},
+                {'refper': '2019-04-01', 'value': 4},
+                {'refper': '2019-05-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-07-01', 'value': 7},
+                {'refper': '2019-08-01', 'value': 8},
+                {'refper': '2019-09-01', 'value': 9},
+                {'refper': '2019-10-01', 'value': 10},
+                {'refper': '2019-11-01', 'value': 11},
+                {'refper': '2019-12-01', 'value': 12}
             ]);
 
             const expected = new Vector([
-                {'refper': '2019-02-15', 'value': 5},
-                {'refper': '2019-02-22', 'value': 10}
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2019-04-01', 'value': 4},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-08-01', 'value': 8},
+                {'refper': '2019-10-01', 'value': 10},
+                {'refper': '2019-12-01', 'value': 12}
             ]);
-            const result = vector.weekly();
+            const result = vector.biMonthly();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#quarter', function() {
+        it('should convert a vector to a quarterly frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2019-03-01', 'value': 3},
+                {'refper': '2019-04-01', 'value': 4},
+                {'refper': '2019-05-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-07-01', 'value': 7},
+                {'refper': '2019-08-01', 'value': 8},
+                {'refper': '2019-09-01', 'value': 9},
+                {'refper': '2019-10-01', 'value': 10},
+                {'refper': '2019-11-01', 'value': 11},
+                {'refper': '2019-12-01', 'value': 12}
+            ]);
+
+            const expected = new Vector([
+                {'refper': '2019-03-01', 'value': 3},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-09-01', 'value': 9},
+                {'refper': '2019-12-01', 'value': 12}
+            ]);
+            const result = vector.quarter();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#semiAnnual', function() {
+        it('should convert vector to a semi-annual frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-03-01', 'value': 1},
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-09-01', 'value': 3},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-03-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-09-01', 'value': 7},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-03-01', 'value': 9},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-09-01', 'value': 11},
+                {'refper': '2020-12-01', 'value': 12}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-12-01', 'value': 12}
+            ]);
+            const result = vector.semiAnnual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#annual', function() {
+        it('should convert a vector to an annual frequency', function() {
+            let vector = new Vector([
+                {'refper': '2018-03-01', 'value': 0},
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-09-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 0},
+                {'refper': '2019-03-01', 'value': 0}
+            ]);
+            let result = vector.annual();
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result.refperStr(0), '2018-12-01');
+
+            vector = new Vector([
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 0},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 0},
+                {'refper': '2019-12-02', 'value': 0},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': 0},
+                {'refper': '2020-12-02', 'value': 0}
+            ]);
+            result = vector.annual();
+            assert.strictEqual(result.length, 2);
+            assert.strictEqual(result.refperStr(0), '2019-12-02');
+            assert.strictEqual(result.refperStr(1), '2020-12-02');
+
+
+            vector = new Vector([
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 0}
+            ]);
+            result = vector.annual();
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result.refperStr(0), '2018-12-01');
+
+            vector = new Vector([
+                {'refper': '2018-06-01', 'value': 0},
+                {'refper': '2018-12-01', 'value': 2},
+                {'refper': '2019-06-01', 'value': 0},
+                {'refper': '2019-12-01', 'value': 6},
+                {'refper': '2020-06-01', 'value': 0},
+                {'refper': '2020-12-01', 'value': 4}
+            ]);
+            result = vector.annual();
+            assert.strictEqual(result.length, 3);
+            assert.strictEqual(result.refperStr(0), '2018-12-01');
+            assert.strictEqual(result.refperStr(1), '2019-12-01');
+            assert.strictEqual(result.refperStr(2), '2020-12-01');
+
+            vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-04-01', 'value': 2},
+                {'refper': '2018-07-01', 'value': 3},
+                {'refper': '2018-10-01', 'value': 4},
+                {'refper': '2019-01-01', 'value': 5},
+                {'refper': '2019-04-01', 'value': 6},
+                {'refper': '2019-07-01', 'value': 7},
+                {'refper': '2019-10-01', 'value': 8},
+                {'refper': '2020-01-01', 'value': 9}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-10-01', 'value': 4},
+                {'refper': '2019-10-01', 'value': 8},
+            ]);
+            result = vector.annual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#biAnnual', function() {
+        it('should convert vector to a bi-annual frequency', function() {
+            let vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            let expected = new Vector([
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            let result = vector.biAnnual();
+            assert.strictEqual(result.equals(expected), true);
+
+            vector = new Vector([
+                {'refper': '2018-03-01', 'value': 1},
+                {'refper': '2018-06-01', 'value': 2},
+                {'refper': '2018-09-01', 'value': 3},
+                {'refper': '2018-12-01', 'value': 4},
+                {'refper': '2019-03-01', 'value': 5},
+                {'refper': '2019-06-01', 'value': 6},
+                {'refper': '2019-09-01', 'value': 7},
+                {'refper': '2019-12-01', 'value': 8},
+                {'refper': '2020-03-01', 'value': 9},
+                {'refper': '2020-06-01', 'value': 10},
+                {'refper': '2020-09-01', 'value': 11},
+                {'refper': '2020-12-01', 'value': 12},
+                {'refper': '2021-03-31', 'value': 13},
+            ]);
+            expected = new Vector([
+                {'refper': '2020-12-01', 'value': 12},
+            ]);
+            result = vector.biAnnual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#triAnnual', function() {
+        it('should convert vector to a tri-annual frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            const expected = new Vector([
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            const result = vector.triAnnual();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#quinquennial', function() {
+        it('should convert vector to a quinquennial frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            const expected = new Vector([
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            const result = vector.quinquennial();
             assert.strictEqual(result.equals(expected), true);
         });
     });
