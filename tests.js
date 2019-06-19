@@ -1158,7 +1158,7 @@ describe('VectorLib', function() {
     });
 
     describe('#generateTriAnnual', function() {
-        it('should generate a biannual vector given a list of values', () => {
+        it('should generate a tri-annual vector given a list of values', () => {
             const values = [0, 1, 2];
             const vector = vlib.generateTriAnnual(values, '2018-12-30');
             const expected = new Vector([
