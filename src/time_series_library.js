@@ -1008,7 +1008,7 @@ function daysInMonth(year, month) {
 }
 
 function percentageChange(curr, last) {
-    return last == 0 ? null : (curr - last) / Math.abs(last) * 100;
+    return last == 0 ? null : ((curr - last) / Math.abs(last)) * 100;
 }
 
 module.exports = {
