@@ -1,7 +1,11 @@
 # Changelog
 
-## [2.6.0] - 2019-06-19
+## [2.6.1] - 2019-06-21
+### Fixed
+- Fixed same period previous year transformations not correctly recognizing the 
+previous February reference period.
 
+## [2.6.0] - 2019-06-19
 ### Added
 - Added biMonthly() and triAnnual() functions.
 - Added generateBiMonthly() and generateTriAnnual() functions.

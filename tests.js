@@ -444,6 +444,88 @@ describe('Vector', function() {
             const result = vector.samePeriodPreviousYearTransformation(fn);
             assert.strictEqual(result.equals(expected), true);
         });
+
+        it('should handle the monthly frequency', function() {
+            const vector = new Vector([
+                {'refper': '2015-01-01', 'value': 0},
+                {'refper': '2015-02-01', 'value': 0},
+                {'refper': '2015-03-01', 'value': 0},
+                {'refper': '2015-04-01', 'value': 0},
+                {'refper': '2015-05-01', 'value': 0},
+                {'refper': '2015-06-01', 'value': 0},
+                {'refper': '2015-07-01', 'value': 0},
+                {'refper': '2015-08-01', 'value': 0},
+                {'refper': '2015-09-01', 'value': 0},
+                {'refper': '2015-10-01', 'value': 0},
+                {'refper': '2015-11-01', 'value': 0},
+                {'refper': '2015-12-01', 'value': 0},
+                {'refper': '2016-01-01', 'value': 0},
+                {'refper': '2016-02-01', 'value': 0},
+                {'refper': '2016-03-01', 'value': 0},
+                {'refper': '2016-04-01', 'value': 0},
+                {'refper': '2016-05-01', 'value': 0},
+                {'refper': '2016-06-01', 'value': 0},
+                {'refper': '2016-07-01', 'value': 0},
+                {'refper': '2016-08-01', 'value': 0},
+                {'refper': '2016-09-01', 'value': 0},
+                {'refper': '2016-10-01', 'value': 0},
+                {'refper': '2016-11-01', 'value': 0},
+                {'refper': '2016-12-01', 'value': 0},
+                {'refper': '2017-01-01', 'value': 0},
+                {'refper': '2017-02-01', 'value': 0},
+                {'refper': '2017-03-01', 'value': 0},
+                {'refper': '2017-04-01', 'value': 0},
+                {'refper': '2017-05-01', 'value': 0},
+                {'refper': '2017-06-01', 'value': 0},
+                {'refper': '2017-07-01', 'value': 0},
+                {'refper': '2017-08-01', 'value': 0},
+                {'refper': '2017-09-01', 'value': 0},
+                {'refper': '2017-10-01', 'value': 0},
+                {'refper': '2017-11-01', 'value': 0},
+                {'refper': '2017-12-01', 'value': 0}
+            ]);
+            const fn = (a, b) => a - b;
+            const expected = new Vector([
+                {'refper': '2015-01-01', 'value': null},
+                {'refper': '2015-02-01', 'value': null},
+                {'refper': '2015-03-01', 'value': null},
+                {'refper': '2015-04-01', 'value': null},
+                {'refper': '2015-05-01', 'value': null},
+                {'refper': '2015-06-01', 'value': null},
+                {'refper': '2015-07-01', 'value': null},
+                {'refper': '2015-08-01', 'value': null},
+                {'refper': '2015-09-01', 'value': null},
+                {'refper': '2015-10-01', 'value': null},
+                {'refper': '2015-11-01', 'value': null},
+                {'refper': '2015-12-01', 'value': null},
+                {'refper': '2016-01-01', 'value': 0},
+                {'refper': '2016-02-01', 'value': 0},
+                {'refper': '2016-03-01', 'value': 0},
+                {'refper': '2016-04-01', 'value': 0},
+                {'refper': '2016-05-01', 'value': 0},
+                {'refper': '2016-06-01', 'value': 0},
+                {'refper': '2016-07-01', 'value': 0},
+                {'refper': '2016-08-01', 'value': 0},
+                {'refper': '2016-09-01', 'value': 0},
+                {'refper': '2016-10-01', 'value': 0},
+                {'refper': '2016-11-01', 'value': 0},
+                {'refper': '2016-12-01', 'value': 0},
+                {'refper': '2017-01-01', 'value': 0},
+                {'refper': '2017-02-01', 'value': 0},
+                {'refper': '2017-03-01', 'value': 0},
+                {'refper': '2017-04-01', 'value': 0},
+                {'refper': '2017-05-01', 'value': 0},
+                {'refper': '2017-06-01', 'value': 0},
+                {'refper': '2017-07-01', 'value': 0},
+                {'refper': '2017-08-01', 'value': 0},
+                {'refper': '2017-09-01', 'value': 0},
+                {'refper': '2017-10-01', 'value': 0},
+                {'refper': '2017-11-01', 'value': 0},
+                {'refper': '2017-12-01', 'value': 0}
+            ]);
+            const result = vector.samePeriodPreviousYearTransformation(fn);
+            assert.strictEqual(result.equals(expected), true);
+        });
     });
 
     describe('#periodTransformation', function() {

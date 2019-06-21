@@ -283,7 +283,7 @@ const Vector = function(data) {
             const previousYear = new Date(
                 refper.getFullYear() - 1,
                 refper.getMonth(),
-                daysInMonth(refper.getFullYear(), refper.getMonth()));
+                daysInMonth(refper.getFullYear() - 1, refper.getMonth()));
 
             let newValue = null;
             if (previousYear in set) {
