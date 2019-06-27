@@ -597,7 +597,7 @@ const VectorLib = function() {
 
         const allowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 
-        const chunks = expression.split('v');
+        const chunks = expression.split('v').slice(1);
         const ids = chunks.map((chunk) => {
             return takeWhile(chunk, (c) => allowed.includes(c));
         }).filter((id) => id.length > 0).map((id) => id.join(''));

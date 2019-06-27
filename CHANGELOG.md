@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.6.2] - 2019-06-27
+### Fixed
+- Fixed characters before first vector identifier in vector expression being 
+parsed as a vector ID.
+
 ## [2.6.1] - 2019-06-21
 ### Fixed
 - Fixed same period previous year transformations not correctly recognizing the 

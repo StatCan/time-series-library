@@ -1,6 +1,6 @@
 {
   "name": "time-series-library",
-  "version": "2.5.4",
+  "version": "2.6.2",
   "description": "A JavaScript library for vector arithmetic",
   "main": "time_series_library.js",
   "scripts": {

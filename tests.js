@@ -1128,6 +1128,13 @@ describe('VectorLib', function() {
             const ids = vlib.getVectorIds('v1 + v2 + v2 + v3');
             assert.deepStrictEqual(ids, ['1', '2', '3']);
         });
+
+        it('should not detect a single number as a vector id', function() {
+            assert.deepStrictEqual(vlib.getVectorIds('0'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('10'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('1.0'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('1v2'), ['2']);
+        });
     });
 
     describe('#generateDaily', function() {
