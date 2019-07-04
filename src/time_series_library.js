@@ -905,24 +905,17 @@ const VectorLib = function() {
         return split;
     };
 
-
     const readVector = function(vexp, pos) {
         let symbol = 'v';
-        pos++;
-
-        while (!isNaN(vexp[pos]) && pos < vexp.length) {
-            symbol += vexp[pos];
-            pos++;
-        }
-
-        return {'symbol': symbol, 'pos': pos - 1};
+        symbol += takeWhile(vexp.split('').slice(pos + 1), (char) => {
+            return !isNaN(char);
+        }).join();
+        return {'symbol': symbol, 'pos': pos + symbol.length - 1};
     };
-
 
     const readOperator = function(vexp, pos) {
         return {'symbol': vexp[pos], 'pos': pos};
     };
-
 
     const readScalar = function(vexp, pos) {
         const symbol = takeWhile(vexp.split('').slice(pos), (char, i) => {
@@ -931,11 +924,9 @@ const VectorLib = function() {
         return {'symbol': Number(symbol), 'pos': pos + symbol.length - 1};
     };
 
-
     const readBracket = function(vexp, pos) {
         return {'symbol': vexp[pos], 'pos': pos};
     };
-
 
     this.realDate = realDate;
 };
