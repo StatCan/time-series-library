@@ -137,10 +137,7 @@ const Vector = function(data) {
     this.range = function(startDate, endDate) {
         startDate = formatDateObject(startDate);
         endDate = formatDateObject(endDate);
-        const rangeFilter = function(point) {
-            return point.refper >= startDate && point.refper <= endDate;
-        };
-        return this.filter(rangeFilter);
+        return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
     };
 
     /**
