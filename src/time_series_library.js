@@ -925,17 +925,10 @@ const VectorLib = function() {
 
 
     const readScalar = function(vexp, pos) {
-        let symbol = '';
-        const start = pos;
-
-        while ((!isNaN(vexp[pos]) || vexp[pos] == '.'
-            || (vexp[pos] == '-' && pos == start))
-            && pos < vexp.length) {
-            symbol += vexp[pos];
-            pos++;
-        }
-
-        return {'symbol': Number(symbol), 'pos': pos - 1};
+        const symbol = takeWhile(vexp.split('').slice(pos), (char, i) => {
+            return (!isNaN(char) || char == '.'|| (char == '-' && i == 0));
+        }).join();
+        return {'symbol': Number(symbol), 'pos': pos + symbol.length - 1};
     };
 
 
@@ -950,7 +943,7 @@ const VectorLib = function() {
 function dropWhile(array, predicate) {
     let removeCount = 0;
     let i = array.length - 1;
-    while (i > 0 && predicate(array[i])) {
+    while (i > 0 && predicate(array[i], i)) {
         removeCount++;
         i--;
     }
@@ -959,11 +952,11 @@ function dropWhile(array, predicate) {
 
 function takeWhile(array, predicate) {
     const result = [];
-    for (const item of array) {
-        if (!predicate(item)) {
+    for (let i = 0; i < array.length; i++) {
+        if (!predicate(array[i], i)) {
             return result;
         } else {
-            result.push(item);
+            result.push(array[i]);
         }
     }
     return result;
