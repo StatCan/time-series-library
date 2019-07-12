@@ -791,7 +791,7 @@ describe('Vector', function() {
                 {'refper': '2019-09-01', 'value': 9},
                 {'refper': '2019-12-01', 'value': 12}
             ]);
-            const result = vector.quarter();
+            const result = vector.quarterly();
             assert.strictEqual(result.equals(expected), true);
         });
     });

@@ -1,68 +1,68 @@
-/**
- * Create a new vector representing time series data.
- * @param {Array.<Object>} data - Array of datapoints.
- */
-const Vector = function(data) {
-    this.vectorType = true;
-    this.data = data === undefined ? [] : formatData(data);
-
+class Vector {
     /**
-     * Length of a vector.
+     * Create a new vector representing time series data.
+     * @param {Array.<Object>} data - Array of datapoints.
      */
-    this.length = data === undefined ? 0 : data.length;
+    constructor(data) {
+        this.vectorType = true;
+        this.data = formatData(data || []);
+    }
+
+    get length() {
+        return this.data.length;
+    }
 
     /**
      * Gets the datapoint at a specific index.
      * @param {Number} index - Index, starting from 0.
      * @return {Object} - Datapoint.
      */
-    this.get = function(index) {
+    get(index) {
         return this.data[index];
-    };
+    }
 
     /**
      * Gets the reference period of the datapoint at a specific index.
      * @param {Number} index - Index, starting from 0.
      * @return {Date} - Reference period.
      */
-    this.refper = function(index) {
+    refper(index) {
         return this.data[index].refper;
-    };
+    }
 
     /**
      * Gets the reference period string of the datapoint at a specific index.
      * @param {Number} index - Index, starting from 0.
      * @return {string} - Reference period string in yyyy-mm-dd format.
      */
-    this.refperStr = function(index) {
+    refperStr(index) {
         return datestring(this.refper(index));
-    };
+    }
 
     /**
      * Gets the value of a datapoint at a specific index.
      * @param {Number} index - Index, starting from 0.
      * @return {Number} - Value.
      */
-    this.value = function(index) {
+    value(index) {
         return this.data[index].value;
-    };
+    }
 
     /**
      * Gets the list of all values in a vector.
      * @return {Array.<Number>} - Values.
      */
-    this.values = function() {
+    values() {
         return this.map((point) => point.value);
-    };
+    }
 
     /**
      * Appends a new datapoint to the end of a vector.
      * @param {Object} datapoint - New datapoint.
      */
-    this.push = function(datapoint) {
+    push(datapoint) {
         this.data.push(formatPoint(datapoint));
-        this.length++;
-    };
+    }
 
     /**
      * Checks if this vector is equal to another.
@@ -71,7 +71,7 @@ const Vector = function(data) {
      * this index. Equality of entire vector will be checked if undefined.
      * @return {boolean} - True if vectors are equal, otherwise false.
      */
-    this.equals = function(other, index) {
+    equals(other, index) {
         const pointEquals = function(a, b) {
             return a.refper.getTime() == b.refper.getTime()
                 && a.value == b.value;
@@ -81,52 +81,52 @@ const Vector = function(data) {
         return !this.some((point, i) => {
             return !pointEquals(point, other.get(i));
         });
-    };
+    }
 
     /**
      * Creates a deep copy of a vector.
      * @return {Vector} - Copy of vector.
      */
-    this.copy = function() {
+    copy() {
         return new Vector(
             this.data.map((point) => newPointValue(point, point.value)));
-    };
+    }
 
     /**
      * Maps all datapoints in this vector.
      * @param {function} mapper - Mapper function.
      * @return {Array.<any>} - Map result.
      */
-    this.map = function(...args) {
+    map(...args) {
         return this.data.map(...args);
-    };
+    }
 
     /**
      * Finds the first datapoint in this vector matching a predicate condition.
      * @param {function} predicate - Predicate function.
      * @return {object} - Datapoint. Returns null if none found.
      */
-    this.find = function(...args) {
+    find(...args) {
         return this.data.find(...args);
-    };
+    }
 
     /**
      * Returns true if there is a datapoint that matches a predicate condition.
      * @param {function} predicate - Predicate function.
      * @return {object} - True if condition matched, otherwise false.
      */
-    this.some = function(...args) {
+    some(...args) {
         return this.data.some(...args);
-    };
+    }
 
     /**
      * Finds all datapoints in this vector matching a predicate condition.
      * @param {function} predicate - Predicate function.
      * @return {Array.<object>} - Array of datapoints matching predicate.
      */
-    this.filter = function(...args) {
+    filter(...args) {
         return new Vector(this.data.filter(...args));
-    };
+    }
 
     /**
      * Constrains this vector within a specified range.
@@ -134,11 +134,11 @@ const Vector = function(data) {
      * @param {Date} endDate - End of range (inclusive).
      * @return {Vector} - Range of vector.
      */
-    this.range = function(startDate, endDate) {
+    range(startDate, endDate) {
         startDate = formatDateObject(startDate);
         endDate = formatDateObject(endDate);
         return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
-    };
+    }
 
     /**
      * Gets the vector containing up to the last N reference periods of this
@@ -146,29 +146,29 @@ const Vector = function(data) {
      * @param {Number} n - Last n reference periods.
      * @return {Vector} - Last n reference period vector.
      */
-    this.latestN = function(n) {
+    latestN(n) {
         if (n > this.length) throw new Error('N > length of vector.');
         return new Vector(this.data.slice(-n));
-    };
+    }
 
     /**
      * Checks if this vector is interoperable with another.
      * @param {Vector} other - Other vector.
      * @return {boolean} - True if vectors are interoperable, otherwise false.
      */
-    this.interoperable = function(other) {
+    interoperable(other) {
         if (this.length != other.length) return false;
         return !this.some((point, i) => {
             return point.refper.getTime() != other.refper(i).getTime();
         });
-    };
+    }
 
     /**
      * Gets the intersection of this vector with another.
      * @param {Vector} others - Other vectors.
      * @return {Vector} - Intersection result.
      */
-    this.intersection = function(others) {
+    intersection(others) {
         if (!Array.isArray(others)) others = [others];
 
         const refperCounts = {};
@@ -184,53 +184,48 @@ const Vector = function(data) {
         });
 
         return this.filter((p) => refperCounts[p.refper] == others.length + 1);
-    };
+    }
 
     /**
      * Gets the sum of all values in this vector.
      * @return {Number} - Sum.
      */
-    this.sum = function() {
-        return this.reduce(function(accumulator, curr) {
-            return accumulator + curr;
-        }, 0);
-    };
+    sum() {
+        return this.reduce((acc, cur) => acc + cur, 0);
+    }
 
     /**
      * Gets the average of the values in this vector.
      * @return {Number} - Average.
      */
-    this.average = function() {
-        if (this.length == 0) return null;
-        return this.sum() / this.length;
-    };
+    average() {
+        return this.length > 0 ? this.sum() / this.length : null;
+    }
 
     /**
      * Gets the max value in this vector.
      * @return {Number} - Maximum.
      */
-    this.max = function() {
-        if (this.length == 0) return null;
-        return Math.max.apply(null, this.values());
-    };
+    max() {
+        return this.length > 0 ? Math.max(...this.values()) : null;
+    }
 
     /**
      * Gets the min value in this vector.
      * @return {Number} - Minimum.
      */
-    this.min = function() {
-        if (this.length == 0) return null;
-        return Math.min.apply(null, this.values());
-    };
+    min() {
+        return this.length > 0 ? Math.min(...this.values()) : null;
+    }
 
     /**
      * Reduce the values of this vector using a reducer function.
      * @param {function(any, any)} reducer - Reducer function.
      * @return {any} Result of reduction.
      */
-    this.reduce = function(...args) {
+    reduce(...args) {
         return this.map((point) => point.value).reduce(...args);
-    };
+    }
 
     /**
      * Performs an operation between this vector and another.
@@ -238,7 +233,7 @@ const Vector = function(data) {
      * @param {function(Number, Number)} operation - Operation function.
      * @return {Vector} - Result of operation.
      */
-    this.operate = function(other, operation) {
+    operate(other, operation) {
         const a = this.intersection(other);
         const b = other.intersection(this);
 
@@ -246,23 +241,23 @@ const Vector = function(data) {
             return newPointValue(pointA, operation(pointA.value, b.value(i)));
         });
         return new Vector(data);
-    };
+    }
 
     /**
      * Performs a period to period delta transformation on this vector.
      * @param {function(Number, Number)} operation - Delta operation.
      * @return {Vector} - Transformed vector.
      */
-    this.periodDeltaTransformation = function(operation) {
+    periodDeltaTransformation(operation) {
         const data = this.data.map((point, i, data) => {
             const newValue = data[i-1] == undefined ?
                 null : operation(point.value, data[i-1].value);
             return newPointValue(point, newValue);
         });
         return new Vector(data);
-    };
+    }
 
-    this.samePeriodPreviousYearTransformation = function(operation) {
+    samePeriodPreviousYearTransformation(operation) {
         // Only works on frequecnies > monthly for now.
         // Create dictionary mapping dates to values.
         const set = {};
@@ -291,47 +286,45 @@ const Vector = function(data) {
             result.push(newPoint);
         }
         return result;
-    };
+    }
 
     /**
      * Performs a transformation on each value of this vector.
      * @param {function(Number)} operation - Operation.
      * @return {Vector} - Transformed vector.
      */
-    this.periodTransformation = function(operation) {
+    periodTransformation(operation) {
         const data = this.data.map((point) => {
             return newPointValue(point, operation(point.value));
         });
         return new Vector(data);
-    };
+    }
 
     /**
      * Get the period to period percentage change vector of this vector.
      * @return {Vector} - Transformed vector.
      */
-    this.periodToPeriodPercentageChange = function() {
+    periodToPeriodPercentageChange() {
         return this.periodDeltaTransformation(percentageChange);
-    };
+    }
 
     /**
      * Get the period to period difference vector of this vector.
      * @return {Vector} - Transformed vector.
      */
-    this.periodToPeriodDifference = function() {
-        return this.periodDeltaTransformation(function(curr, last) {
-            return curr - last;
-        });
-    };
+    periodToPeriodDifference() {
+        return this.periodDeltaTransformation((cur, last) => cur - last);
+    }
 
-    this.samePeriodPreviousYearPercentageChange = function() {
+    samePeriodPreviousYearPercentageChange() {
         return this.samePeriodPreviousYearTransformation(percentageChange);
-    };
+    }
 
-    this.samePeriodPreviousYearDifference = function() {
-        return this.samePeriodPreviousYearTransformation(function(curr, last) {
-            return curr - last;
+    samePeriodPreviousYearDifference() {
+        return this.samePeriodPreviousYearTransformation((cur, last) => {
+            return cur - last;
         });
-    };
+    }
 
     /**
      * Converts vector to a defined frequency.
@@ -340,20 +333,9 @@ const Vector = function(data) {
      * last that true if current is the defined frequency away from last.
      * @return {Vector} - Converted vector.
      */
-    this.convertToFrequency = function(mode, converter) {
+    convertToFrequency(mode, converter) {
         const split = frequencySplit(this, converter);
         return frequencyJoin(split, mode);
-    };
-
-    function convertToYearlyFrequency(vector, mode, years) {
-        const month = maxMonth(vector);
-        vector.data = dropWhile(vector.data, (point) => {
-            return point.refper.getMonth() != month;
-        });
-        vector.length = vector.data.length;
-        return vector.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + years;
-        });
     }
 
     /**
@@ -361,158 +343,91 @@ const Vector = function(data) {
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.quinquennial = function(mode) {
+    quinquennial(mode) {
         return convertToYearlyFrequency(this, mode, 5);
-    };
+    }
 
     /**
      * Converts vector to tri-annual frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.triAnnual = function(mode) {
+    triAnnual(mode) {
         return convertToYearlyFrequency(this, mode, 3);
-    };
+    }
 
     /**
      * Converts vector to bi-annual frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.biAnnual = function(mode) {
+    biAnnual(mode) {
         return convertToYearlyFrequency(this, mode, 2);
-    };
+    }
 
     /**
      * Converts vector to annual frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.annual = function(mode) {
+    annual(mode) {
         return convertToYearlyFrequency(this, mode, 1);
-    };
-    this.annualize = this.annual;
+    }
 
     /**
      * Converts vector to semi-annual frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.semiAnnual = function(mode) {
+    semiAnnual(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 6) % 12;
         });
-    };
+    }
 
     /**
      * Converts vector to quarterly frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.quarter = function(mode) {
+    quarterly(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 3) % 12;
         });
-    };
-    this.quarterly = this.quarter;
+    }
 
     /**
      * Converts vector to monthly frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.monthly = function(mode) {
+    monthly(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 1) % 12;
         });
-    };
+    }
 
     /**
      * Converts vector to bi-monthly frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.biMonthly = function(mode) {
+    biMonthly(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getMonth() == (last.getMonth() + 2) % 12;
         });
-    };
+    }
 
     /**
      * Converts vector to weekly frequency.
      * @param {string} mode - "last" (default), "sum", "average", "max", "min".
      * @return {Vector} - Converted vector.
      */
-    this.weekly = function(mode) {
+    weekly(mode) {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getDay() == last.getDay() &&
                 curr.getDate() != last.getDate(); // FIXME: Should not be needed
         });
-    };
-
-    function maxMonth(vector) {
-        return Math.max.apply(
-            null, vector.map((point) => point.refper.getMonth()));
-    }
-
-    function frequencyJoin(split, mode) {
-        const modes = {
-            'last': (vector) => vector.get(vector.length - 1),
-            'sum': (vector) => {
-                return newPointValue(
-                    vector.get(vector.length - 1), vector.sum());
-            },
-            'average': (vector) => {
-                return newPointValue(
-                    vector.get(vector.length - 1), vector.average());
-            },
-            'max': (vector) => {
-                return newPointValue(
-                    vector.get(vector.length - 1), vector.max());
-            },
-            'min': (vector) => {
-                return newPointValue(
-                    vector.get(vector.length - 1), vector.min());
-            }
-        };
-
-        return new Vector(split.map((chunk) => modes[mode || 'last'](chunk)));
-    }
-
-    function frequencySplit(vector, fn) {
-        let result = [];
-        const data = vector.data.reverse(); // Sort descending by time.
-
-        let curr = data[0];
-        let last = data[1];
-        if (curr === undefined || last == undefined) {
-            return [];
-        }
-
-        let next = [];
-
-        for (let p = 0; p < data.length; p++) {
-            last = data[p];
-            // fn(curr, last)
-            if (fn(curr.refper, last.refper)) {
-                // Start new chunk.
-                result.push(new Vector(next.reverse()));
-                next = [];
-                curr = data[p];
-            }
-            next.push(vector.get(p));
-        }
-        if (next.length > 0) {
-            result.push(new Vector(next.reverse()));
-        }
-
-        // Ensure chunk sizes match the maximum to filter out periods.
-        if (result.length > 0) {
-            const size = Math.max.apply(null, result.map((v) => v.length));
-            result = result.filter((chunk) => chunk.length == size);
-        }
-
-        return result.reverse();
     }
 
     /**
@@ -520,59 +435,34 @@ const Vector = function(data) {
      * @param {Number} decimals - Number of decimal places.
      * @return {Vector} - Rounded vector.
      */
-    this.round = function(decimals) {
+    round(decimals) {
         const data = this.data.map((point) => {
             return newPointValue(point, scalarRound(point.value, decimals));
         });
         return new Vector(data);
-    };
+    }
 
     /**
      * Gets rounded vector using Banker's rounding algorithm.
      * @param {Number} decimals - Number of decimal places.
      * @return {Vector} - Rounded vector.
      */
-    this.roundBankers = function(decimals) {
+    roundBankers(decimals) {
         const data = this.data.map((point) => {
             return newPointValue(
                 point, scalarRoundBankers(point.value, decimals));
         });
         return new Vector(data);
-    };
-
-    function scalarRound(value, decimals) {
-        decimals = decimals || 0;
-        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }
 
-    function scalarRoundBankers(value, decimals) {
-        decimals = decimals || 0;
-        const x = value * Math.pow(10, decimals);
-        const r = Math.round(x);
-        const br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
-        return br / Math.pow(10, decimals);
-    }
-
-    this.json = function() {
+    json() {
         return JSON.stringify(this.data.map((point) => {
             return safeMerge(
                 {'refper': datestring(point.refper), 'value': point.value},
                 point);
         }));
-    };
-
-    function formatData(data) {
-        for (let p = 0; p < data.length; p++) {
-            formatPoint(data[p]);
-        }
-        return data;
     }
-
-    function formatPoint(datapoint) {
-        datapoint.refper = formatDateObject(datapoint.refper);
-        return datapoint;
-    }
-};
+}
 
 const VectorLib = function() {
     const operators = {
@@ -931,6 +821,81 @@ const VectorLib = function() {
     this.realDate = realDate;
 };
 
+function convertToYearlyFrequency(vector, mode, years) {
+    const month = maxMonth(vector);
+    vector.data = dropWhile(vector.data, (point) => {
+        return point.refper.getMonth() != month;
+    });
+    return vector.convertToFrequency(mode, function(curr, last) {
+        return curr.getFullYear() == last.getFullYear() + years;
+    });
+}
+
+function maxMonth(vector) {
+    return Math.max.apply(
+        null, vector.map((point) => point.refper.getMonth()));
+}
+
+function frequencyJoin(split, mode) {
+    const modes = {
+        'last': (vector) => vector.get(vector.length - 1),
+        'sum': (vector) => {
+            return newPointValue(
+                vector.get(vector.length - 1), vector.sum());
+        },
+        'average': (vector) => {
+            return newPointValue(
+                vector.get(vector.length - 1), vector.average());
+        },
+        'max': (vector) => {
+            return newPointValue(
+                vector.get(vector.length - 1), vector.max());
+        },
+        'min': (vector) => {
+            return newPointValue(
+                vector.get(vector.length - 1), vector.min());
+        }
+    };
+
+    return new Vector(split.map((chunk) => modes[mode || 'last'](chunk)));
+}
+
+function frequencySplit(vector, fn) {
+    let result = [];
+    const data = vector.data.reverse(); // Sort descending by time.
+
+    let curr = data[0];
+    let last = data[1];
+    if (curr === undefined || last == undefined) {
+        return [];
+    }
+
+    let next = [];
+
+    for (let p = 0; p < data.length; p++) {
+        last = data[p];
+        // fn(curr, last)
+        if (fn(curr.refper, last.refper)) {
+            // Start new chunk.
+            result.push(new Vector(next.reverse()));
+            next = [];
+            curr = data[p];
+        }
+        next.push(vector.get(p));
+    }
+    if (next.length > 0) {
+        result.push(new Vector(next.reverse()));
+    }
+
+    // Ensure chunk sizes match the maximum to filter out periods.
+    if (result.length > 0) {
+        const size = Math.max.apply(null, result.map((v) => v.length));
+        result = result.filter((chunk) => chunk.length == size);
+    }
+
+    return result.reverse();
+}
+
 function dropWhile(array, predicate) {
     let removeCount = 0;
     let i = array.length - 1;
@@ -953,6 +918,19 @@ function takeWhile(array, predicate) {
     return result;
 }
 
+function scalarRound(value, decimals) {
+    decimals = decimals || 0;
+    return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
+function scalarRoundBankers(value, decimals) {
+    decimals = decimals || 0;
+    const x = value * Math.pow(10, decimals);
+    const r = Math.round(x);
+    const br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
+    return br / Math.pow(10, decimals);
+}
+
 // Merge but don't overwrite existing keys.
 function safeMerge(target, source) {
     for (const key in source) {
@@ -969,6 +947,18 @@ function newPointValue(point, newValue) {
 
 function realDate(year, month, day) {
     return new Date(year, month - 1, day);
+}
+
+function formatData(data) {
+    for (let p = 0; p < data.length; p++) {
+        formatPoint(data[p]);
+    }
+    return data;
+}
+
+function formatPoint(datapoint) {
+    datapoint.refper = formatDateObject(datapoint.refper);
+    return datapoint;
 }
 
 function formatDateObject(date) {
