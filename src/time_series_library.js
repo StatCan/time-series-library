@@ -1,3 +1,5 @@
+const Vector2 = require('./vector.ts');
+
 class Vector {
     /**
      * Create a new vector representing time series data.
@@ -983,6 +985,6 @@ function percentageChange(curr, last) {
 }
 
 module.exports = {
-    'Vector': Vector,
+    'Vector': Vector2,
     'VectorLib': VectorLib
 };
