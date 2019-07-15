@@ -9,7 +9,7 @@
     "uglify": "npx uglifyjs-folder dist --each --output dist",
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint . --fix",
-    "test": "./node_modules/.bin/mocha tests.ts",
+    "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register tests.ts",
     "prebuild": "npm run clean"
   },
   "repository": {
@@ -36,6 +36,9 @@
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3",
+    "typings": "^2.1.1",
     "uglifyjs-folder": "^1.5.1"
   }
 }
