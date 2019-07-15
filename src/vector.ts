@@ -4,13 +4,13 @@ import { format } from "url";
 
 interface Point {
     refper: Date;
-    value: number;
+    value: number | null;
     metadata?: any;
 }
 
 interface PointStr {
     refper: string;
-    value: number;
+    value: number | null;
     metadata?: any;
 }
 
@@ -49,7 +49,7 @@ class Vector {
         return datestring(this.refper(index));
     }
 
-    value(index: number): number {
+    value(index: number): number | null {
         return this.data[index].value;
     }
 
@@ -110,7 +110,7 @@ class Vector {
         return new Vector(this.data.slice(-n));
     }
 
-    interoperable(other: Vector) {
+    interoperable(other: Vector): boolean {
         if (this.length != other.length) return false;
         return !this.some((point, i) => {
             return point.refper.getTime() != other.refper(i).getTime();
@@ -138,6 +138,66 @@ class Vector {
         });
     }
 
+    sum(): number {
+        return this.reduce((acc, cur) => acc + cur, 0);
+    }
+
+    average(): number | null {
+        return this.length > 0 ? this.sum() / this.length : null;
+    }
+
+    max(): number {
+        return Math.max(...this.values());
+    }
+
+    min(): number {
+        return Math.min(...this.values());
+    }
+    
+    reduce(
+        fn: (acc: any, cur: any, i: number, arr: any[]) => any, 
+        init?: any): any  {
+
+        return this.map((p) => p.value).reduce(fn, init || this.value(0));
+    }
+
+    operate(other: Vector, op: (a: number, b: number) => number): Vector {
+
+        const a = this.intersection(other);
+        const b = this.intersection(other);
+        const data = a.data.map((pointA, i) => {
+            return Vector.pointOperate(pointA, b.get(i), op);
+        });
+        return new Vector(data);
+    }
+
+    periodDeltaTransformation(
+        op: (cur: number, last: number) => number): Vector {
+
+        const data = this.data.map((point, i, data) => {
+            if (data[i-1] === undefined) {
+                return Vector.newPointValue(point, null);
+            }
+
+            const last = data[i-1].value;
+            const cur = data[i-1].value;
+            if (last && cur) {
+                return Vector.newPointValue(point, op(cur, last));
+            }
+            return Vector.newPointValue(point, null);
+        });
+        return new Vector(data);
+    }
+
+    private static pointOperate(
+        p1: Point, p2: Point, op: (a: number, b: number) => number): Point {
+
+        if (p1.value === null || p2.value === null) {
+            return  Vector.newPointValue(p1, null);
+        }
+        return Vector.newPointValue(p1, op(p1.value, p2.value));
+    }
+
     private static isPointStr(point: Point | PointStr) {
         return typeof point.refper === 'string';
     }
@@ -150,7 +210,7 @@ class Vector {
         };
     }
 
-    private static newPointValue(point: Point, newValue: number): Point {
+    private static newPointValue(point: Point, newValue: number | null): Point {
         return {
             'refper': point.refper, 
             'value': newValue,

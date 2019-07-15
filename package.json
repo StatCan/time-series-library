@@ -36,9 +36,11 @@
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
+    "ts-mocha": "^6.0.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3",
     "typings": "^2.1.1",
     "uglifyjs-folder": "^1.5.1"
-  }
+  },
+  "dependencies": {}
 }

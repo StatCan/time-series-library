@@ -178,7 +178,7 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 0},
                 {'refper': '2018-01-03', 'value': 2},
             ]);
-            const result = vector.filter((p) => p.value % 2 == 0);
+            const result = vector.filter((p) => (p.value || 0) % 2 == 0);
             assert.ok(result.equals(expected));
         });
     });
@@ -333,6 +333,89 @@ describe('Vector', function() {
 
         it('should return an empty vector on an empty vector', () => {
             assert.ok(new Vector().intersection(v1).equals(new Vector()));
+        });
+    });
+
+    describe('#sum', function() {
+        it('should return the sum of a vector', function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2018-02-01', 'value': 3}
+            ]);
+            assert.strictEqual(vector.sum(), 6);
+
+            vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1}
+            ]);
+            assert.strictEqual(vector.sum(), 1);
+
+            vector = new Vector();
+            assert.strictEqual(vector.sum(), 0);
+        });
+    });
+
+    describe('#average', function() {
+        it('should return the average of a vector', function() {
+            let vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2018-02-01', 'value': 3}
+            ]);
+            assert.strictEqual(vector.average(), 2);
+
+            vector = new Vector();
+            assert.strictEqual(vector.average(), null);
+        });
+    });
+
+    describe('#reduce', function() {
+        it('should reduce a vector', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2018-02-01', 'value': 3}
+            ]);
+            const result = vector.reduce(function(accumulator, curr) {
+                return accumulator * curr;
+            });
+            assert.strictEqual(result, 6);
+        });
+    });
+
+    describe('#operate', function() {
+        it('should perform an operation on a vector', function() {
+            const vectorA = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+            const vectorB = new Vector([
+                {'refper': '2018-01-01', 'value': 3},
+                {'refper': '2018-02-01', 'value': 4}
+            ]);
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 4},
+                {'refper': '2018-02-01', 'value': 6}
+            ]);
+
+            const result = vectorA.operate(vectorB, (a, b) => a + b);
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
+    describe('#periodDeltaTransformation', function() {
+        it('should return a transformed vector using delta func', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2018-03-01', 'value': 3},
+            ]);
+            const result = vector.periodDeltaTransformation((curr, last) => {
+                return curr + last;
+            });
+            assert.strictEqual(result.value(0), null);
+            assert.strictEqual(result.value(1), 3);
+            assert.strictEqual(result.value(2), 5);
         });
     });
 });
