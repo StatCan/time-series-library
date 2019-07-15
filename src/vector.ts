@@ -86,4 +86,4 @@ function datestring(date: Date): string {
         + date.getDate().toString().padStart(2, '0');
 }
 
-module.exports = Vector;
+export default Vector;
