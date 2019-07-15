@@ -1,18 +1,24 @@
+import { start } from "repl";
+import { getEnabledCategories } from "trace_events";
+import { format } from "url";
+
 interface Point {
     refper: Date;
     value: number;
+    metadata?: any;
 }
 
 interface PointStr {
     refper: string;
     value: number;
+    metadata?: any;
 }
 
 class Vector {
     private _data: Point[]; 
 
-    constructor(data: Point[] | PointStr[]) {
-        if (data.length > 0) {
+    constructor(data?: Point[] | PointStr[]) {
+        if (data && data.length > 0) {
             if (Vector.isPointStr(data[0])) {
                 this._data = (data as PointStr[]).map(Vector.formatPoint);
             } else {
@@ -51,8 +57,8 @@ class Vector {
         return this.map((point: Point) => point.value);
     }
 
-    push(point: Point) {
-        this.data.push(point);
+    push(point: Point | PointStr) {
+        this.data.push(Vector.formatPoint(point));
     }
 
     equals(other: Vector, index?: number): boolean {
@@ -86,16 +92,70 @@ class Vector {
         return this.data.some(fn, th);
     }
 
+    filter(
+        fn: (val: Point, i: number, arr: Point[]) => boolean, 
+        th?: any): Vector {
+        
+        return new Vector(this.data.filter(fn, th));
+    }
+
+    range(startDate: Date | string, endDate: Date | string): Vector {
+        startDate = dateObject(startDate);
+        endDate = dateObject(endDate);
+        return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
+    }
+
+    latestN(n: number): Vector {
+        if (n > this.length) throw Error('N > length of vector.');
+        return new Vector(this.data.slice(-n));
+    }
+
+    interoperable(other: Vector) {
+        if (this.length != other.length) return false;
+        return !this.some((point, i) => {
+            return point.refper.getTime() != other.refper(i).getTime();
+        });
+    }
+
+    intersection(others: Vector[] | Vector): Vector {
+        if (!Array.isArray(others)) others = [others];
+
+        const refperCounts: {[date: number]: number} = {};
+
+        const thisRefpers = this.data.map((p) => p.refper);
+        const otherRefpers = others.reduce((acc: Date[], cur: Vector) => {
+            return [...acc, ...cur.map((p: Point) => p.refper)];
+        }, []);
+        const refpers = [...thisRefpers, ...otherRefpers];
+
+        refpers.map((refper) => {
+            if (Number(refper) in refperCounts) refperCounts[Number(refper)]++;
+            else refperCounts[Number(refper)] = 1;
+        });
+
+        return this.filter((p) => {
+            return refperCounts[Number(p.refper)] == others.length + 1;
+        });
+    }
+
     private static isPointStr(point: Point | PointStr) {
         return typeof point.refper === 'string';
     }
 
-    private static formatPoint(point: PointStr): Point {
-        return {'refper': dateObject(point.refper), 'value': point.value};
+    private static formatPoint(point: Point | PointStr): Point {
+        return {
+            'refper': dateObject(point.refper), 
+            'value': point.value,
+            'metadata': point.metadata
+        };
     }
 
     private static newPointValue(point: Point, newValue: number): Point {
-        return {'refper': point.refper, 'value': newValue};
+        return {
+            'refper': point.refper, 
+            'value': newValue,
+            'metadata': point.metadata
+        };
     }
 }
 
@@ -106,8 +166,9 @@ function datestring(date: Date): string {
         + date.getDate().toString().padStart(2, '0');
 }
 
-function dateObject(datestr: string): Date {
-    return new Date(`${datestr.split('T')[0]}T00:00:00`);
+function dateObject(date: string | Date): Date {
+    return date instanceof Date ? 
+        date : new Date(`${date.split('T')[0]}T00:00:00`);
 }
 
 export default Vector;
