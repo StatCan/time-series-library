@@ -158,13 +158,14 @@ class Vector {
         fn: (acc: any, cur: any, i: number, arr: any[]) => any, 
         init?: any): any  {
 
-        return this.map((p) => p.value).reduce(fn, init || this.value(0));
+        init = init === undefined ? this.value(0) : init;
+        return this.map((p) => p.value).reduce(fn, init);
     }
 
     operate(other: Vector, op: (a: number, b: number) => number): Vector {
 
         const a = this.intersection(other);
-        const b = this.intersection(other);
+        const b = other.intersection(this);
         const data = a.data.map((pointA, i) => {
             return Vector.pointOperate(pointA, b.get(i), op);
         });
@@ -180,7 +181,7 @@ class Vector {
             }
 
             const last = data[i-1].value;
-            const cur = data[i-1].value;
+            const cur = data[i].value;
             if (last && cur) {
                 return Vector.newPointValue(point, op(cur, last));
             }
