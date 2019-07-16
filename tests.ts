@@ -1031,4 +1031,17 @@ describe('Vector', function() {
             assert.strictEqual(result.value(1), 2);
         });
     });
+
+    describe('#json', function() {
+        it('should convert a vector to a JSON array', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]);
+            const result = vector.json();
+
+            const newVector = new Vector(JSON.parse(result));
+            assert.strictEqual(vector.equals(newVector), true);
+        });
+    });
 });

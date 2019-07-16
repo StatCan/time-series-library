@@ -323,6 +323,16 @@ class Vector {
         return new Vector(data);
     }
 
+    json() {
+        return JSON.stringify(this.data.map((point) => {
+            return {
+                'refper': datestring(point.refper),
+                'value': point.value,
+                'metadata': point.metadata
+            };
+        }));
+    }
+
     private static maxMonth(vector: Vector) { 
         return Math.max(...vector.map((point) => point.refper.getMonth()));
     }
