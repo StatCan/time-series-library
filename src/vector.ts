@@ -429,7 +429,7 @@ class Vector {
         };
     }
 
-    private static newPointValue(point: Point, newValue: number | null): Point {
+    public static newPointValue(point: Point, newValue: number | null): Point {
         return {
             'refper': point.refper, 
             'value': newValue,
