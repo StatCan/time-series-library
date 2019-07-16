@@ -163,7 +163,6 @@ class Vector {
     }
 
     operate(other: Vector, op: (a: number, b: number) => number): Vector {
-
         const a = this.intersection(other);
         const b = other.intersection(this);
         const data = a.data.map((pointA, i) => {
@@ -173,7 +172,7 @@ class Vector {
     }
 
     periodDeltaTransformation(
-        op: (cur: number, last: number) => number): Vector {
+        op: (cur: number, last: number) => number | null): Vector {
 
         const data = this.data.map((point, i, data) => {
             if (data[i-1] === undefined) {
@@ -190,8 +189,68 @@ class Vector {
         return new Vector(data);
     }
 
+    samePeriodPreviousYearTransformation(
+        op: (cur: number, last: number) => number | null): Vector {
+        // Only works on frequecnies > monthly for now.
+        // Create dictionary mapping dates to values.
+        const set: {[date: number]: Point} = {};
+        for (const d of this.data) {
+            const endOfMonth = new Date(
+                d.refper.getFullYear(),
+                d.refper.getMonth(),
+                daysInMonth(d.refper.getFullYear(), d.refper.getMonth()));
+            set[Number(endOfMonth)] = d;
+        }
+
+        const result = new Vector();
+        for (const point of this.data) {
+            const refper = point.refper;
+            const previousYear = new Date(
+                refper.getFullYear() - 1,
+                refper.getMonth(),
+                daysInMonth(refper.getFullYear() - 1, refper.getMonth()));
+
+            if (Number(previousYear) in set) {
+                result.push(
+                    Vector.pointOperate(point, set[Number(previousYear)], op))
+            } else {
+                result.push(Vector.newPointValue(point, null))
+            }
+        }
+        return result;
+    }
+
+    periodTransformation(op: (value: number) => number): Vector {
+        const data = this.data.map((point) => {
+            if (point.value) {
+                return Vector.newPointValue(point, op(point.value));
+            }
+            return Vector.newPointValue(point, null);
+        });
+        return new Vector(data);
+    }
+
+    periodToPeriodPercentageChange(): Vector {
+        return this.periodDeltaTransformation(percentageChange);
+    }
+
+    periodToPeriodDifference(): Vector {
+        return this.periodDeltaTransformation((cur, last) => cur - last);
+    }
+
+    samePeriodPreviousYearPercentageChange(): Vector {
+        return this.samePeriodPreviousYearTransformation(percentageChange);
+    }
+
+    samePeriodPreviousYearDifference(): Vector {
+        return this.samePeriodPreviousYearTransformation((cur, last) => {
+            return cur - last;
+        });
+    }
+
     private static pointOperate(
-        p1: Point, p2: Point, op: (a: number, b: number) => number): Point {
+        p1: Point, p2: Point, 
+        op: (a: number, b: number) => number | null): Point {
 
         if (p1.value === null || p2.value === null) {
             return  Vector.newPointValue(p1, null);
@@ -221,6 +280,10 @@ class Vector {
 }
 
 
+function percentageChange(curr: number, last: number): number | null {
+    return last == 0 ? null : ((curr - last) / Math.abs(last)) * 100;
+}
+
 function datestring(date: Date): string {
     return date.getFullYear() + '-'
         + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
@@ -230,6 +293,10 @@ function datestring(date: Date): string {
 function dateObject(date: string | Date): Date {
     return date instanceof Date ? 
         date : new Date(`${date.split('T')[0]}T00:00:00`);
+}
+
+function daysInMonth(year: number, month: number): number {
+    return new Date(year, month + 1, 0).getDate();
 }
 
 export default Vector;
