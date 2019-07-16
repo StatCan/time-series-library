@@ -248,6 +248,159 @@ class Vector {
         });
     }
 
+    convertToFrequency(
+        mode: string, converter: (cur: Date, last: Date) => boolean): Vector {
+        const split = Vector.frequencySplit(this, converter);
+        return Vector.frequencyJoin(split, mode);
+    }
+
+    quinquennial(mode: string='last'): Vector {
+        return Vector.convertToYearlyFrequency(this, mode, 5);
+    }
+
+    triAnnual(mode: string='last'): Vector {
+        return Vector.convertToYearlyFrequency(this, mode, 3);
+    }
+
+    biAnnual(mode: string='last'): Vector {
+        return Vector.convertToYearlyFrequency(this, mode, 2);
+    }
+
+    annual(mode: string='last'): Vector {
+        return Vector.convertToYearlyFrequency(this, mode, 1);
+    }
+
+    semiAnnual(mode: string='last'): Vector {
+        return this.convertToFrequency(mode, (curr, last) => {
+            return curr.getMonth() === (last.getMonth() + 6) % 12;
+        });
+    }
+
+    quarterly(mode: string='last'): Vector {
+        return this.convertToFrequency(mode, (curr, last) => {
+            return curr.getMonth() === (last.getMonth() + 3) % 12;
+        });
+    }
+
+    monthly(mode: string='last'): Vector {
+        return this.convertToFrequency(mode, (curr, last) => {
+            return curr.getMonth() == (last.getMonth() + 1) % 12;
+        });
+    }
+
+    biMonthly(mode: string='last'): Vector {
+        return this.convertToFrequency(mode, (curr, last) => {
+            return curr.getMonth() == (last.getMonth() + 2) % 12;
+        });
+    }
+
+    weekly(mode: string='last'): Vector {
+        return this.convertToFrequency(mode, function(curr, last) {
+            return curr.getDay() == last.getDay() &&
+                curr.getDate() != last.getDate(); // FIXME: Should not be needed
+        });
+    }
+
+    round(decimals?: number): Vector {
+        const data = this.data.map((point) => {
+            if (point.value) {
+                return Vector.newPointValue(
+                    point, scalarRound(point.value, decimals));
+            }
+            return Vector.newPointValue(point, null);
+        });
+        return new Vector(data);
+    }
+
+    roundBankers(decimals?: number): Vector {
+        const data = this.data.map((point) => {
+            if (point.value) {
+                return Vector.newPointValue(
+                    point, scalarRoundBankers(point.value, decimals));
+            }
+            return Vector.newPointValue(point, null);
+        });
+        return new Vector(data);
+    }
+
+    private static maxMonth(vector: Vector) { 
+        return Math.max(...vector.map((point) => point.refper.getMonth()));
+    }
+
+    private static convertToYearlyFrequency(
+        vector: Vector, mode: string, years: number): Vector {
+
+        const month = Vector.maxMonth(vector);
+        vector = new Vector(dropWhile(vector.data, (point) => {
+            return point.refper.getMonth() != month;
+        }));
+        return vector.convertToFrequency(mode, function(curr, last) {
+            return curr.getFullYear() == last.getFullYear() + years;
+        });
+    }
+
+    private static frequencySplit(
+        vector: Vector, fn: (cur: Date, last: Date) => boolean): Vector[] {
+
+        let result = [];
+        const data = vector.data.reverse(); // Sort descending by time.
+    
+        let curr = data[0];
+        let last = data[1];
+        if (curr === undefined || last == undefined) {
+            return [];
+        }
+    
+        let next = [];
+    
+        for (let p = 0; p < data.length; p++) {
+            last = data[p];
+            // fn(curr, last)
+            if (fn(curr.refper, last.refper)) {
+                // Start new chunk.
+                result.push(new Vector(next.reverse()));
+                next = [];
+                curr = data[p];
+            }
+            next.push(vector.get(p));
+        }
+        if (next.length > 0) {
+            result.push(new Vector(next.reverse()));
+        }
+    
+        // Ensure chunk sizes match the maximum to filter out periods.
+        if (result.length > 0) {
+            const size = Math.max.apply(null, result.map((v) => v.length));
+            result = result.filter((chunk) => chunk.length == size);
+        }
+    
+        return result.reverse();
+    }
+
+    private static frequencyJoin(split: Vector[], mode?: string): Vector {
+        const modes: {[mode: string]: (vector: Vector) => Point} = {
+            'last': (vector: Vector) => vector.get(vector.length - 1),
+            'sum': (vector: Vector) => {
+                return Vector.newPointValue(
+                    vector.get(vector.length - 1), vector.sum());
+            },
+            'average': (vector: Vector) => {
+                return Vector.newPointValue(
+                    vector.get(vector.length - 1), vector.average());
+            },
+            'max': (vector: Vector) => {
+                return Vector.newPointValue(
+                    vector.get(vector.length - 1), vector.max());
+            },
+            'min': (vector: Vector) => {
+                return Vector.newPointValue(
+                    vector.get(vector.length - 1), vector.min());
+            }
+        };
+    
+        return new Vector(split.map((chunk) => modes[mode || 'last'](chunk)));
+    }
+
     private static pointOperate(
         p1: Point, p2: Point, 
         op: (a: number, b: number) => number | null): Point {
@@ -297,6 +450,43 @@ function dateObject(date: string | Date): Date {
 
 function daysInMonth(year: number, month: number): number {
     return new Date(year, month + 1, 0).getDate();
+}
+
+function dropWhile(
+    array: any[], predicate: (item: any, i?: number) => boolean): any[] {
+
+    let removeCount = 0;
+    let i = array.length - 1;
+    while (i > 0 && predicate(array[i], i)) {
+        removeCount++;
+        i--;
+    }
+    return array.slice(0, array.length - removeCount);
+}
+
+function takeWhile(
+    array: any[], predicate: (item: any, i?: number) => boolean): any[] {
+
+    const result = [];
+    for (let i = 0; i < array.length; i++) {
+        if (!predicate(array[i], i)) {
+            return result;
+        } else {
+            result.push(array[i]);
+        }
+    }
+    return result;
+}
+
+function scalarRound(value: number, decimals: number=0): number {
+    return Number(Math.round(Number(`${value}e${decimals}`)) + `e-${decimals}`);
+}
+
+function scalarRoundBankers(value: number, decimals: number=0): number {
+    const x = value * Math.pow(10, decimals);
+    const r = Math.round(x);
+    const br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
+    return br / Math.pow(10, decimals);
 }
 
 export default Vector;
