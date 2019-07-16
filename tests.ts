@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-import Vector from './src/vector';
+import {Vector, VectorLib} from './src/time-series-library';
 
 describe('Vector', function() {
     describe('#get', function() {
@@ -1042,6 +1042,236 @@ describe('Vector', function() {
 
             const newVector = new Vector(JSON.parse(result));
             assert.strictEqual(vector.equals(newVector), true);
+        });
+    });
+});
+
+describe('VectorLib', function() {
+    const vlib = new VectorLib();
+
+    describe('#evaluate', function() {
+        const vectors = {
+            '1': new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2}
+            ]),
+            '2': new Vector([
+                {'refper': '2018-01-01', 'value': 3},
+                {'refper': '2018-02-01', 'value': 4}
+            ]),
+            '3': new Vector([
+                {'refper': '2018-01-01', 'value': 2},
+                {'refper': '2018-02-01', 'value': 2}
+            ]),
+            '4': new Vector([
+                {'refper': '2018-01-01', 'value': 1},
+                {'refper': '2018-02-01', 'value': 2},
+                {'refper': '2018-03-01', 'value': 3}
+            ]),
+            '5': new Vector([
+                {'refper': '2018-01-01', 'value': 4},
+                {'refper': '2018-02-01', 'value': 5},
+                {'refper': '2018-03-01', 'value': 6}
+            ]),
+            '6': new Vector([
+                {'refper': '2018-01-01', 'value': 7},
+                {'refper': '2018-02-01', 'value': 8},
+                {'refper': '2018-03-01', 'value': 9}
+            ])
+        };
+
+        const itVexp = function(vexp: string, expected: Vector) {
+            it(vexp + ' should equal ' + JSON.stringify(expected), function() {
+                const result = vlib.evaluate(vexp, vectors);
+                assert.strictEqual(result.equals(expected), true);
+            });
+        };
+
+        let expected = new Vector([
+            {'refper': '2018-01-01', 'value': 16},
+            {'refper': '2018-02-01', 'value': 24}
+        ]);
+        let vexp = '(v1 + v2) * (2*v3)';
+        itVexp(vexp, expected);
+
+        vexp = '(v1 - v2) * (2*v3)';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': -8},
+            {'refper': '2018-02-01', 'value': -8}
+        ]);
+        itVexp(vexp, expected);
+
+        vexp = 'v6 - v5 - v4';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': 2},
+            {'refper': '2018-02-01', 'value': 1},
+            {'refper': '2018-03-01', 'value': 0}
+        ]);
+        itVexp(vexp, expected);
+
+        vexp = '';
+    });
+
+    describe('#getVectorIds', function() {
+        it('should return the list of vector IDs in a string', function() {
+            const ids = vlib.getVectorIds('(v1 + v22) * (2*v3)');
+            assert.deepStrictEqual(ids, ['1', '22', '3']);
+        });
+
+        it('should detect uppercase and lowercase Vs', function() {
+            const ids = vlib.getVectorIds('(V1 + v2) * (2*V3)');
+            assert.deepStrictEqual(ids, ['1', '2', '3']);
+        });
+
+        it('should handle a single vector ID', function() {
+            assert.deepStrictEqual(vlib.getVectorIds('v10'), ['10']);
+        });
+
+        it('should not return duplicates', function() {
+            const ids = vlib.getVectorIds('v1 + v2 + v2 + v3');
+            assert.deepStrictEqual(ids, ['1', '2', '3']);
+        });
+
+        it('should not detect a single number as a vector id', function() {
+            assert.deepStrictEqual(vlib.getVectorIds('0'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('10'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('1.0'), []);
+            assert.deepStrictEqual(vlib.getVectorIds('1v2'), ['2']);
+        });
+    });
+
+    describe('#generateDaily', function() {
+        it('should generate a daily vector given a list of values', () => {
+            let values = [0, 1, 2];
+            let vector = vlib.generateDaily(values, '2018-12-30');
+            let expected = new Vector([
+                {'refper': '2018-12-30', 'value': 0},
+                {'refper': '2018-12-31', 'value': 1},
+                {'refper': '2019-01-01', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+
+            values = [];
+            vector = vlib.generateDaily(values, '2018-12-30');
+            expected = new Vector();
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateWeekly', function() {
+        it('should generate a weekly vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateWeekly(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-30', 'value': 0},
+                {'refper': '2019-01-06', 'value': 1},
+                {'refper': '2019-01-13', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateMonthly', function() {
+        it('should generate a monthly vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateMonthly(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-01-31', 'value': 1},
+                {'refper': '2019-02-28', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateBiMonthly', function() {
+        it('should generate a bi-monthly vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateBiMonthly(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-02-28', 'value': 1},
+                {'refper': '2019-04-30', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateQuarterly', function() {
+        it('should generate a quarterly vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateQuarterly(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-03-31', 'value': 1},
+                {'refper': '2019-06-30', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateSemiAnnual', function() {
+        it('should generate a semiannual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateSemiAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-06-30', 'value': 1},
+                {'refper': '2019-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateAnnual', function() {
+        it('should generate a annual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2019-12-31', 'value': 1},
+                {'refper': '2020-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateBiAnnual', function() {
+        it('should generate a biannual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateBiAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2020-12-31', 'value': 1},
+                {'refper': '2022-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateTriAnnual', function() {
+        it('should generate a tri-annual vector given a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateTriAnnual(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2021-12-31', 'value': 1},
+                {'refper': '2024-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateQuinquennial', function() {
+        it('should generate quinquennial vector given a value list', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateQuinquennial(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2023-12-31', 'value': 1},
+                {'refper': '2028-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
         });
     });
 });

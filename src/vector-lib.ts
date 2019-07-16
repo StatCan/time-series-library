@@ -1,11 +1,155 @@
 import Vector from './vector';
+import Utils from './utils';
 
-class VectorLib {
+type nullableNumber = null | number;
+type datestring = string | Date;
 
+export default class VectorLib {
+    getVectorIds(expression: string) {
+        expression = expression.replace(/ /g, '').toLowerCase();
+
+        const allowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+
+        const chunks = expression.split('v').slice(1);
+        const ids = chunks.map((chunk) => {
+            return Utils.takeWhile(chunk.split(''), (c) => allowed.includes(c));
+        }).filter((id) => id.length > 0).map((id) => id.join(''));
+
+        const unique: string[] = [];
+        ids.map((id) => {
+            if (!unique.includes(id)) unique.push(id);
+        });
+        return unique;
+    }
+
+    generateDaily(values: nullableNumber[], startDate: datestring) {
+        startDate = Utils.dateObject(startDate);
+        return this.generateVector(values, startDate, nextDay);
+    }
+
+    generateWeekly(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        return this.generateVector(values, startDate, nextWeek);
+    }
+
+    generateMonthly(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextMonth);
+    };
+
+    generateBiMonthly(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextBiMonth);
+    }
+
+    generateQuarterly(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextQuarter);
+    }
+
+    generateSemiAnnual(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextSemiAnnum);
+    }
+
+    generateAnnual(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextAnnum);
+    }
+
+    generateBiAnnual(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextBiAnnum);
+    }
+
+    generateTriAnnual(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextTriAnnum);
+    }
+
+    generateQuinquennial(values: nullableNumber[], startDate: datestring): Vector {
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextQuinquennium);
+    }
+
+    generateVector(
+        values: nullableNumber[], 
+        startDate: Date, nextDateFn: 
+        (date: Date) => Date): Vector {
+
+        const vector = new Vector();
+        let currDate = startDate;
+        for (const value of values) {
+            vector.push({'refper': currDate, 'value': value});
+            currDate = nextDateFn(currDate);
+        }
+        return vector;
+    }
+
+    evaluate(expression: string, vectors: {[id: string]: Vector}): Vector {
+        expression = expression.replace(/ /g, '');
+
+        const infix = splitSymbols(expression);
+        const post = postfix(infix);
+
+        const stack = [];
+
+        for (let s = 0; s < post.length; s++) {
+            const symbol = post[s];
+
+            if (typeof symbol === 'string' && symbol[0] == 'v') {
+                stack.push(new ExpressionNode(vectors[symbol.substring(1)]));
+            } else if (!isNaN(Number(symbol))) {
+                stack.push(new ExpressionNode((symbol as number)));
+            } else {
+                const s1 = pop(stack);
+                const s2 = pop(stack);
+
+                const node = new ExpressionNode(operators[symbol]);
+                node.left = s1;
+                node.right = s2;
+
+                stack.push(node);
+            }
+        }
+
+        return pop(stack).result();
+    }
 }
+
+const operators: {[op: string]: (a: number, b: number) => number} = {
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => a / b
+}
+
+const operatorPriorities: {[op: string]: number} = {
+    '*': 2,
+    '/': 2,
+    '+': 1,
+    '-': 1,
+};
 
 type operation = (a: number, b: number ) => number;
 type nodeValue = number | Vector | operation;
+type exprSymbol = string | number;
 
 class ExpressionNode {
     private _value: nodeValue;
@@ -74,9 +218,9 @@ function vectorScalarOperate(vector: Vector, scalar: number, op: operation) {
     return new Vector(data);
 }
 
-function postfix(symbols: string[]): (string | undefined)[] {
+function postfix(symbols: exprSymbol[]): exprSymbol[] {
     const stack = ['('];
-    const post: (string | undefined)[] = [];
+    const post: exprSymbol[] = [];
     symbols.push(')');
 
     for (let s = 0; s < symbols.length; s++) {
@@ -84,37 +228,38 @@ function postfix(symbols: string[]): (string | undefined)[] {
 
         if (!isNaN(Number(symbol))) {
             post.push(symbol);
-        } else if (symbol[0] == 'v') {
+        } else if ((symbol as string)[0] == 'v') {
             post.push(symbol);
         } else if (symbol == '(') {
             stack.push('(');
         } else if (symbol == ')') {
             while (stack[stack.length - 1] != '(') {
-                post.push(stack.pop());
+                post.push(pop(stack));
             }
             stack.pop();
         } else {
-            while (priority(symbol) <= priority(stack[stack.length - 1])) {
-                post.push(stack.pop());
+            while (priority((symbol as string)) <= 
+                    priority(stack[stack.length - 1])) {
+                post.push(pop(stack));
             }
-            stack.push(symbol);
+            stack.push(pop(stack));
         }
     }
 
     return post;
 }
 
-function splitSymbols(vexp: string): string[] {
-    const split: string[] = [];
+function splitSymbols(vexp: string): exprSymbol[] {
+    const split: exprSymbol[] = [];
 
     for (let pos = 0; pos < vexp.length; pos++) {
         let next = null;
 
         if (vexp[pos] == 'v' || vexp[pos] == 'V') {
             next = readVector(vexp, pos);
-        } else if (!isNaN(vexp[pos])
-            || (vexp[pos] == '-' && isNaN(vexp[pos - 1])
-                && !isNaN(vexp[pos + 1]))) {
+        } else if (!isNaN(Number(vexp[pos]))
+            || (vexp[pos] == '-' && isNaN(Number(vexp[pos - 1]))
+                && !isNaN(Number(vexp[pos + 1])))) {
             next = readScalar(vexp, pos);
         } else if (vexp[pos] in operators) {
             next = readOperator(vexp, pos);
@@ -139,7 +284,7 @@ interface SymbolBuffer {
 
 function readVector(vexp: string, pos: number): SymbolBuffer {
     let symbol = 'v';
-    symbol += takeWhile(vexp.split('').slice(pos + 1), (char) => {
+    symbol += Utils.takeWhile(vexp.split('').slice(pos + 1), (char) => {
         return !isNaN(char);
     }).join();
     return {'symbol': symbol, 'pos': pos + symbol.length - 1};
@@ -150,7 +295,7 @@ function readOperator(vexp: string, pos: number): SymbolBuffer {
 };
 
 function readScalar(vexp: string, pos: number): SymbolBuffer {
-    const symbol = takeWhile(vexp.split('').slice(pos), (char, i) => {
+    const symbol = Utils.takeWhile(vexp.split('').slice(pos), (char, i) => {
         return (!isNaN(char) || char == '.'|| (char == '-' && i == 0));
     }).join();
     return {'symbol': Number(symbol), 'pos': pos + symbol.length - 1};
@@ -160,13 +305,70 @@ function readBracket(vexp: string, pos: number) {
     return {'symbol': vexp[pos], 'pos': pos};
 };
 
-const operatorPriorities: {[op: string]: number} = {
-    '*': 2,
-    '/': 2,
-    '+': 1,
-    '-': 1,
-};
-
 function priority(symbol: string): number {
     return symbol in operatorPriorities ? operatorPriorities[symbol] : 0;
 }
+
+function pop(array: any[]): any {
+    const item = array.pop();
+    if (item) {
+        return item;
+    } else {
+        throw Error('Cannot pop empty array.');
+    }
+}
+
+function nextDay(date: Date): Date {
+    return new Date(
+        date.getFullYear(), date.getMonth(), date.getDate() + 1);
+};
+
+function nextWeek(date: Date): Date {
+    return new Date(
+        date.getFullYear(), date.getMonth(), date.getDate() + 7);
+};
+
+function nextMonth(date: Date): Date {
+    return addMonths(date, 1);
+};
+
+function nextBiMonth(date: Date): Date {
+    return addMonths(date, 2);
+};
+
+function nextQuarter(date: Date): Date {
+    return addMonths(date, 3);
+};
+
+function nextSemiAnnum(date: Date): Date {
+    return addMonths(date, 6);
+};
+
+function nextAnnum(date: Date): Date {
+    return new Date(
+        date.getFullYear() + 1, date.getMonth(), date.getDate());
+};
+
+function nextBiAnnum(date: Date): Date {
+    return new Date(
+        date.getFullYear() + 2, date.getMonth(), date.getDate());
+};
+
+function nextTriAnnum(date: Date): Date {
+    return new Date(
+        date.getFullYear() + 3, date.getMonth(), date.getDate());
+};
+
+function nextQuinquennium(date: Date): Date {
+    return new Date(
+        date.getFullYear() + 5, date.getMonth(), date.getDate());
+};
+
+function addMonths(date: Date, months: number): Date {
+    const currYear = date.getFullYear();
+    const currMonth = date.getMonth();
+    const newYear = currYear + Math.floor((currMonth + months) / 12);
+    const newMonth = (currMonth + (months % 12)) % 12;
+    return new Date(newYear, newMonth, Utils.daysInMonth(newYear, newMonth));
+}
+

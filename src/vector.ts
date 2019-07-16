@@ -1,3 +1,5 @@
+import Utils from './utils';
+
 interface Point {
     refper: Date;
     value: number | null;
@@ -100,8 +102,8 @@ class Vector {
     }
 
     range(startDate: Date | string, endDate: Date | string): Vector {
-        startDate = dateObject(startDate);
-        endDate = dateObject(endDate);
+        startDate = Utils.dateObject(startDate);
+        endDate = Utils.dateObject(endDate);
         return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
     }
 
@@ -195,7 +197,7 @@ class Vector {
             const endOfMonth = new Date(
                 d.refper.getFullYear(),
                 d.refper.getMonth(),
-                daysInMonth(d.refper.getFullYear(), d.refper.getMonth()));
+                Utils.daysInMonth(d.refper.getFullYear(), d.refper.getMonth()));
             set[Number(endOfMonth)] = d;
         }
 
@@ -205,7 +207,7 @@ class Vector {
             const previousYear = new Date(
                 refper.getFullYear() - 1,
                 refper.getMonth(),
-                daysInMonth(refper.getFullYear() - 1, refper.getMonth()));
+                Utils.daysInMonth(refper.getFullYear() - 1, refper.getMonth()));
 
             if (Number(previousYear) in set) {
                 result.push(
@@ -338,7 +340,7 @@ class Vector {
         vector: Vector, mode: string, years: number): Vector {
 
         const month = Vector.maxMonth(vector);
-        vector = new Vector(dropWhile(vector.data, (point) => {
+        vector = new Vector(Utils.dropWhile(vector.data, (point) => {
             return point.refper.getMonth() != month;
         }));
         return vector.convertToFrequency(mode, function(curr, last) {
@@ -423,7 +425,7 @@ class Vector {
 
     private static formatPoint(point: Point | PointStr): Point {
         return {
-            'refper': dateObject(point.refper), 
+            'refper': Utils.dateObject(point.refper), 
             'value': point.value,
             'metadata': point.metadata
         };
@@ -447,41 +449,6 @@ function datestring(date: Date): string {
     return date.getFullYear() + '-'
         + (date.getMonth() + 1).toString().padStart(2, '0') + '-'
         + date.getDate().toString().padStart(2, '0');
-}
-
-function dateObject(date: string | Date): Date {
-    return date instanceof Date ? 
-        date : new Date(`${date.split('T')[0]}T00:00:00`);
-}
-
-function daysInMonth(year: number, month: number): number {
-    return new Date(year, month + 1, 0).getDate();
-}
-
-function dropWhile(
-    array: any[], predicate: (item: any, i?: number) => boolean): any[] {
-
-    let removeCount = 0;
-    let i = array.length - 1;
-    while (i > 0 && predicate(array[i], i)) {
-        removeCount++;
-        i--;
-    }
-    return array.slice(0, array.length - removeCount);
-}
-
-function takeWhile(
-    array: any[], predicate: (item: any, i?: number) => boolean): any[] {
-
-    const result = [];
-    for (let i = 0; i < array.length; i++) {
-        if (!predicate(array[i], i)) {
-            return result;
-        } else {
-            result.push(array[i]);
-        }
-    }
-    return result;
 }
 
 function scalarRound(value: number, decimals: number=0): number {
