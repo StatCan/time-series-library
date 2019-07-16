@@ -1,7 +1,3 @@
-import { start } from "repl";
-import { getEnabledCategories } from "trace_events";
-import { format } from "url";
-
 interface Point {
     refper: Date;
     value: number | null;
@@ -13,6 +9,10 @@ interface PointStr {
     value: number | null;
     metadata?: any;
 }
+
+type transformation = (a: number) => number;
+type operation = (a: number, b: number) => number;
+type nullableOperation = (a: number, b: number) => number | null;
 
 class Vector {
     private _data: Point[]; 
@@ -162,7 +162,7 @@ class Vector {
         return this.map((p) => p.value).reduce(fn, init);
     }
 
-    operate(other: Vector, op: (a: number, b: number) => number): Vector {
+    operate(other: Vector, op: operation): Vector {
         const a = this.intersection(other);
         const b = other.intersection(this);
         const data = a.data.map((pointA, i) => {
@@ -171,9 +171,7 @@ class Vector {
         return new Vector(data);
     }
 
-    periodDeltaTransformation(
-        op: (cur: number, last: number) => number | null): Vector {
-
+    periodDeltaTransformation(op: nullableOperation): Vector {
         const data = this.data.map((point, i, data) => {
             if (data[i-1] === undefined) {
                 return Vector.newPointValue(point, null);
@@ -189,8 +187,7 @@ class Vector {
         return new Vector(data);
     }
 
-    samePeriodPreviousYearTransformation(
-        op: (cur: number, last: number) => number | null): Vector {
+    samePeriodPreviousYearTransformation(op: nullableOperation): Vector {
         // Only works on frequecnies > monthly for now.
         // Create dictionary mapping dates to values.
         const set: {[date: number]: Point} = {};
@@ -220,7 +217,7 @@ class Vector {
         return result;
     }
 
-    periodTransformation(op: (value: number) => number): Vector {
+    periodTransformation(op: transformation): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
                 return Vector.newPointValue(point, op(point.value));
@@ -412,8 +409,7 @@ class Vector {
     }
 
     private static pointOperate(
-        p1: Point, p2: Point, 
-        op: (a: number, b: number) => number | null): Point {
+        p1: Point, p2: Point, op: nullableOperation): Point {
 
         if (p1.value === null || p2.value === null) {
             return  Vector.newPointValue(p1, null);
