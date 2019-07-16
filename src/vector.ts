@@ -323,7 +323,7 @@ class Vector {
         return new Vector(data);
     }
 
-    json() {
+    json(): string {
         return JSON.stringify(this.data.map((point) => {
             return {
                 'refper': datestring(point.refper),
