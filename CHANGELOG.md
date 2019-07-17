@@ -1,7 +1,10 @@
 # Changelog
 
-## [3.0.0] - 2019-07-17
+## [3.0.1] - 2019-07-17
+### Added
+- Added TypeScript docstrings.
 
+## [3.0.0] - 2019-07-17
 ### Changed
 - Library rewrite in TypeScript.
 - Extra data in points is now attached to the `metadata` property.
