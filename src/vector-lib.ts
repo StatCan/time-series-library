@@ -5,6 +5,11 @@ type nullableNumber = null | number;
 type datestring = string | Date;
 
 export default class VectorLib {
+    /**
+     * Get the set of vector IDs in a vector expression.
+     * @param expression Vector expression. e.g.: `"v1 * (v2 - v3)"`
+     * @return Vector IDs.
+     */
     getVectorIds(expression: string) {
         expression = expression.replace(/ /g, '').toLowerCase();
 
@@ -22,16 +27,37 @@ export default class VectorLib {
         return unique;
     }
 
+    /**
+     * Generate a @see Vector with a daily frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateDaily(values: nullableNumber[], startDate: datestring) {
         startDate = Utils.dateObject(startDate);
         return this.generateVector(values, startDate, nextDay);
     }
 
+    /**
+     * Generate a @see Vector with a weekly frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateWeekly(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         return this.generateVector(values, startDate, nextWeek);
     }
 
+    /**
+     * Generate a @see Vector with a monthly frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateMonthly(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -39,6 +65,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextMonth);
     };
 
+    /**
+     * Generate a @see Vector with a bi-monthly frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateBiMonthly(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -46,6 +79,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextBiMonth);
     }
 
+    /**
+     * Generate a @see Vector with a quarterly frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateQuarterly(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -53,6 +93,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextQuarter);
     }
 
+    /**
+     * Generate a @see Vector with a semi-annual frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateSemiAnnual(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -60,6 +107,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextSemiAnnum);
     }
 
+    /**
+     * Generate a @see Vector with an annual frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateAnnual(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -67,6 +121,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextAnnum);
     }
 
+    /**
+     * Generate a @see Vector with a bi-annual frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateBiAnnual(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -74,6 +135,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextBiAnnum);
     }
 
+    /**
+     * Generate a @see Vector with a tri-annual frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateTriAnnual(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -81,6 +149,13 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextTriAnnum);
     }
 
+    /**
+     * Generate a @see Vector with a quinquennial frequency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @return Generated vector.
+     */
     generateQuinquennial(values: nullableNumber[], startDate: datestring): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -88,10 +163,18 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextQuinquennium);
     }
 
+    /**
+     * Generate a @see Vector of a defined freqency using an
+     * initilization list.
+     * @param values Initialization list.
+     * @param startDate Start date of vector.
+     * @param nextDateFn Function to generate next refperence periods.
+     * @return Generated vector.
+     */
     generateVector(
         values: nullableNumber[], 
-        startDate: Date, nextDateFn: 
-        (date: Date) => Date): Vector {
+        startDate: Date, 
+        nextDateFn: (date: Date) => Date): Vector {
 
         const vector = new Vector();
         let currDate = startDate;
@@ -102,6 +185,12 @@ export default class VectorLib {
         return vector;
     }
 
+    /**
+     * Evaluate a vector expression.
+     * @param expression Vector expression.
+     * @param vectors Vectors.
+     * @return Result of expression.
+     */
     evaluate(expression: string, vectors: {[id: string]: Vector}): Vector {
         expression = expression.replace(/ /g, '');
 
