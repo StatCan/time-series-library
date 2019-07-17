@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.0] - 2019-07-17
+
+### Changed
+- Library rewrite in TypeScript.
+- Extra data in points is now attached to the `metadata` property.
+
 ## [2.6.2] - 2019-06-27
 ### Fixed
 - Fixed characters before first vector identifier in vector expression being 
