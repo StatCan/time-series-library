@@ -1,6 +1,6 @@
-# time-series-library ![](https://gitlab.k8s.cloud.statcan.ca/bailey.damour/vector-lib/badges/master/build.svg)
+# time-series-library
 
-A JavaScript library for arithmetic on Statistics Canada time series 
+A TypeScript/JavaScript library for arithmetic on Statistics Canada time series 
 vector data.
 
 This library can be used with Node.js or any of the following web browsers:
@@ -14,17 +14,22 @@ This library can be used with Node.js or any of the following web browsers:
 
 Using Node.js:
 ```javascript
-const Vector = require('./time_series_library.js').Vector;
-const VectorLib = require('./time_series_library.js').VectorLib;
+// common-js
+const TimeSeriesLibrary = require('time-series-library');
+const Vector = TimeSeriesLibrary.Vector;
+const VectorLib = TimeSeriesLibrary.VectorLib;
+
+// es6 module
+import {Vector, VectorLib} from 'time-series-library';
 ```
 
 Using a web browser:
 ```html
-<script src="./time_series_library.js"></script>
+<script src="./time-series-library.js"></script>
 
 <script>
-    var Vector = time_series_library.Vector;
-    var VectorLib = time_series_library.VectorLib;
+    const Vector = TimeSeriesLibrary.Vector;
+    const VectorLib = TimeSeriesLibrary.VectorLib;
 </script>
 ```
 
@@ -103,12 +108,10 @@ let vector = new Vector([
 The value of **refper** may be a **yyyy-mm-dd** formatted date string or a 
 **Date** object.
 
-Datapoints may also have additional fields to hold any related metadata. These 
-fields will be conserved when operating on vectors.
+Datapoints may also hold addional information in the `metadata property`:
 ```js
 let vector = let vector = new Vector([
-    {'refper': "2018-01-01", 'value': 1, 'myKey': 'my value'},
-    {'refper': "2018-02-01", 'value': 2, 'myKey': 'my value'},
+    {'refper': "2018-01-01", 'value': 1, 'metadata': {'key': 'value'}}
 ]); 
 ```
 

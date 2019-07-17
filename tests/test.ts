@@ -1,9 +1,6 @@
-const assert = require('assert');
+import * as assert from 'assert';
 
-const VectorLib = require('./src/time_series_library.js').VectorLib;
-const Vector = require('./src/time_series_library.js').Vector;
-
-const vlib = new VectorLib();
+import {Vector, VectorLib} from '../src/time-series-library';
 
 describe('Vector', function() {
     describe('#get', function() {
@@ -30,13 +27,13 @@ describe('Vector', function() {
     });
 
     describe('#refperStr', function() {
-        'should return the reference period string at a given index', () => {
+        it('should return the reference period string at a given index', () => {
             const v = new Vector([
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2}
             ]);
             assert.strictEqual(v.refperStr(1), '2018-02-01');
-        };
+        });
     });
 
     describe('#value', function() {
@@ -117,7 +114,7 @@ describe('Vector', function() {
 
     describe('#copy', function() {
         const vector = new Vector([
-            {'refper': '2018-01-01', 'value': 1, 'extra': 0},
+            {'refper': '2018-01-01', 'value': 1, 'metadata': {'extra': 0}},
             {'refper': '2018-01-02', 'value': 2}
         ]);
 
@@ -128,7 +125,7 @@ describe('Vector', function() {
         });
 
         it('should preserve user defined datapoint attributes', function() {
-            assert.strictEqual(result.get(0).extra, 0);
+            assert.strictEqual(result.get(0).metadata.extra, 0);
         });
     });
 
@@ -157,7 +154,11 @@ describe('Vector', function() {
 
         it('should find the first datapoint matching a predicate.', function() {
             const result = vector.find((p) => p.value == 1);
-            assert.strictEqual(result.refper, vector.get(1).refper);
+            if (result) {
+                assert.strictEqual(result.refper, vector.get(1).refper);
+            } else {
+                assert.fail('find returned undefined');
+            };
         });
 
         it('should return undefined if no match is found', function() {
@@ -177,7 +178,7 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': 0},
                 {'refper': '2018-01-03', 'value': 2},
             ]);
-            const result = vector.filter((p) => p.value % 2 == 0);
+            const result = vector.filter((p) => (p.value || 0) % 2 == 0);
             assert.ok(result.equals(expected));
         });
     });
@@ -355,7 +356,7 @@ describe('Vector', function() {
     });
 
     describe('#average', function() {
-        it('should return the sum of a vector', function() {
+        it('should return the average of a vector', function() {
             let vector = new Vector([
                 {'refper': '2018-01-01', 'value': 1},
                 {'refper': '2018-02-01', 'value': 2},
@@ -430,7 +431,7 @@ describe('Vector', function() {
                 {'refper': '2019-09-30', 'value': 7},
                 {'refper': '2019-12-31', 'value': 8}
             ]);
-            const fn = (a, b) => a - b;
+            const fn = (a: number, b: number) => a - b;
             const expected = new Vector([
                 {'refper': '2018-03-31', 'value': null},
                 {'refper': '2018-06-30', 'value': null},
@@ -484,7 +485,7 @@ describe('Vector', function() {
                 {'refper': '2017-11-01', 'value': 0},
                 {'refper': '2017-12-01', 'value': 0}
             ]);
-            const fn = (a, b) => a - b;
+            const fn = (a: number, b: number) => a - b;
             const expected = new Vector([
                 {'refper': '2015-01-01', 'value': null},
                 {'refper': '2015-02-01', 'value': null},
@@ -1046,6 +1047,8 @@ describe('Vector', function() {
 });
 
 describe('VectorLib', function() {
+    const vlib = new VectorLib();
+
     describe('#evaluate', function() {
         const vectors = {
             '1': new Vector([
@@ -1077,7 +1080,7 @@ describe('VectorLib', function() {
             ])
         };
 
-        const itVexp = function(vexp, expected) {
+        const itVexp = function(vexp: string, expected: Vector) {
             it(vexp + ' should equal ' + JSON.stringify(expected), function() {
                 const result = vlib.evaluate(vexp, vectors);
                 assert.strictEqual(result.equals(expected), true);
