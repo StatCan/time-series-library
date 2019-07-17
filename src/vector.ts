@@ -1,11 +1,18 @@
 import Utils from './utils';
 
+/**
+ * Represents a datapoint for a specific reference period.
+ */
 interface Point {
     refper: Date;
     value: number | null;
     metadata?: any;
 }
 
+/**
+ * Represents a datapoint for a specific reference period.
+ * @remarks `refper` is expected to be in `yyyy-mm-dd` format.
+ */
 interface PointStr {
     refper: string;
     value: number | null;
@@ -16,9 +23,16 @@ type transformation = (a: number) => number;
 type operation = (a: number, b: number) => number;
 type nullableOperation = (a: number, b: number) => number | null;
 
+/**
+ * A collection of @see Point objects over time.
+ */
 class Vector {
     private _data: Point[]; 
 
+    /**
+     * Create a new @see Vector representing time series data.
+     * @param data - Array of datapoints.
+     */
     constructor(data?: Point[] | PointStr[]) {
         if (data && data.length > 0) {
             if (Vector.isPointStr(data[0])) {
@@ -31,38 +45,79 @@ class Vector {
         }   
     }
 
+    /**
+     * @returns Datapoints in vector.
+     */
     get data(): Point[] {
         return this._data;
     }
 
+    /**
+     * @return Length of vector.
+     */
     get length(): number {
         return this.data.length;
     }
 
+    /**
+     * Gets the datapoint at a specific index.
+     * @param index - Index, starting from 0.
+     * @return Datapoint.
+     */
     get(index: number): Point {
         return this.data[index];
     }
 
+    /**
+     * Gets the reference period of the datapoint at a specific index.
+     * @param index Index, starting from 0.
+     * @return Reference period.
+     */
     refper(index: number): Date {
         return this.data[index].refper;
     }
 
+    /**
+     * Gets the reference period string of the datapoint at a specific index.
+     * @param index Index, starting from 0.
+     * @return Reference period string in yyyy-mm-dd format.
+     */
     refperStr(index: number): string {
         return datestring(this.refper(index));
     }
 
+    /**
+     * Gets the value of a datapoint at a specific index.
+     * @param index Index, starting from 0.
+     * @return Value.
+     */
     value(index: number): number | null {
         return this.data[index].value;
     }
 
+    /**
+     * Gets an array of all values in a vector.
+     * @return Values.
+     */
     values(): number[] {
         return this.map((point: Point) => point.value);
     }
 
+    /**
+     * Appends a new datapoint to the end of a vector.
+     * @param datapoint New datapoint.
+     */
     push(point: Point | PointStr) {
         this.data.push(Vector.formatPoint(point));
     }
 
+    /**
+     * Checks if this vector is equal to another.
+     * @param other Other vector.
+     * @param  index Check equality of only a single datapoint at
+     * this index. Equality of entire vector will be checked if undefined.
+     * @return True if vectors are equal, otherwise false.
+     */
     equals(other: Vector, index?: number): boolean {
         const pointEquals = (a: Point, b: Point): boolean => {
             return a.refper.getTime() == b.refper.getTime()
@@ -73,16 +128,29 @@ class Vector {
         return !this.some((point, i) => !pointEquals(point, other.get(i)));
     }
 
+    /**
+     * @return Deep copy of a vector.
+     */
     copy(): Vector {
         this.data.map
         return new Vector(
             this.map((point) => Vector.newPointValue(point, point.value)));
     }
 
+    /**
+     * Maps all datapoints in this vector.
+     * @param fn Mapper function.
+     * @return Map result.
+     */
     map(fn: (val: Point, i: number, arr: Point[]) => any, th?: any): any[] {
         return this.data.map(fn, th);
     }
 
+    /**
+     * Finds the first datapoint in this vector matching a predicate condition.
+     * @param fn  Predicate function.
+     * @return Found datapoint. Returns null if none found.
+     */
     find(
         fn: (val: Point, i: number, arr: Point[]) => any, 
         th?: any): Point | undefined {
@@ -90,10 +158,20 @@ class Vector {
         return this.data.find(fn, th);
     }
 
+     /**
+     * Returns true if there is a datapoint that matches a predicate condition.
+     * @param fn Predicate function.
+     * @return True if condition matched, otherwise false.
+     */
     some(fn: (val: Point, i: number, arr: Point[]) => any, th?: any): boolean {
         return this.data.some(fn, th);
     }
 
+    /**
+     * Finds all datapoints in this vector matching a predicate condition.
+     * @param fn Predicate function.
+     * @return Filtered vector.
+     */
     filter(
         fn: (val: Point, i: number, arr: Point[]) => boolean, 
         th?: any): Vector {
@@ -101,17 +179,34 @@ class Vector {
         return new Vector(this.data.filter(fn, th));
     }
 
+    /**
+     * Constrains this vector within a specified range.
+     * @param startDate - Start of range (inclusive).
+     * @param endDate - End of range (inclusive).
+     * @return Range vector.
+     */
     range(startDate: Date | string, endDate: Date | string): Vector {
         startDate = Utils.dateObject(startDate);
         endDate = Utils.dateObject(endDate);
         return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
     }
 
+    /**
+     * Gets the vector containing up to the last N reference periods of this
+     * vector.
+     * @param n Last n reference periods.
+     * @return Last n reference period vector.
+     */
     latestN(n: number): Vector {
         if (n > this.length) throw Error('N > length of vector.');
         return new Vector(this.data.slice(-n));
     }
 
+    /**
+     * Checks if this vector is interoperable with another.
+     * @param other Other vector.
+     * @return True if vectors are interoperable, otherwise false.
+     */
     interoperable(other: Vector): boolean {
         if (this.length != other.length) return false;
         return !this.some((point, i) => {
@@ -119,6 +214,11 @@ class Vector {
         });
     }
 
+    /**
+     * Gets the intersection of this vector with another.
+     * @param others Other vectors.
+     * @return Intersection result.
+     */
     intersection(others: Vector[] | Vector): Vector {
         if (!Array.isArray(others)) others = [others];
 
@@ -140,22 +240,40 @@ class Vector {
         });
     }
 
+    /**
+     * @return Sum of all values in a vector.
+     */
     sum(): number {
         return this.reduce((acc, cur) => acc + cur, 0);
     }
 
+    /**
+     * @return Average of all non-null values in a vector.
+     */
     average(): number | null {
         return this.length > 0 ? this.sum() / this.length : null;
     }
 
+    /**
+     * @return Maximum of all values in a vector.
+     */
     max(): number {
         return Math.max(...this.values());
     }
 
+    /**
+     * @return Minimum of all values in a vector.
+     */
     min(): number {
         return Math.min(...this.values());
     }
     
+    /**
+     * Reduce the values of this vector using a reducer function.
+     * @param fn Reducer function.
+     * @param init Initial value (defaults to first value in the vector).
+     * @return Result of reduction.
+     */
     reduce(
         fn: (acc: any, cur: any, i: number, arr: any[]) => any, 
         init?: any): any  {
@@ -164,6 +282,12 @@ class Vector {
         return this.map((p) => p.value).reduce(fn, init);
     }
 
+    /**
+     * Performs an operation between this vector and another.
+     * @param other Other vector.
+     * @param op Operation function.
+     * @return Result of operation.
+     */
     operate(other: Vector, op: operation): Vector {
         const a = this.intersection(other);
         const b = other.intersection(this);
@@ -173,6 +297,11 @@ class Vector {
         return new Vector(data);
     }
 
+    /**
+     * Performs a period to period delta transformation on this vector.
+     * @param op Delta operation.
+     * @return Transformed vector.
+     */
     periodDeltaTransformation(op: nullableOperation): Vector {
         const data = this.data.map((point, i, data) => {
             if (data[i-1] === undefined) {
@@ -189,6 +318,11 @@ class Vector {
         return new Vector(data);
     }
 
+    /**
+     * Performs a same period previous year delta transformation on this vector.
+     * @param op Delta operation.
+     * @return Transformed vector.
+     */
     samePeriodPreviousYearTransformation(op: nullableOperation): Vector {
         // Only works on frequecnies > monthly for now.
         // Create dictionary mapping dates to values.
@@ -219,6 +353,11 @@ class Vector {
         return result;
     }
 
+    /**
+     * Performs a transformation on each datapoint in a vector.
+     * @param op Transformation operation.
+     * @return Transformed vector.
+     */
     periodTransformation(op: transformation): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
@@ -229,70 +368,137 @@ class Vector {
         return new Vector(data);
     }
 
+    /**
+     * Get the period to period percentage change vector of this vector.
+     * @return Transformed vector.
+     */
     periodToPeriodPercentageChange(): Vector {
         return this.periodDeltaTransformation(percentageChange);
     }
 
+    /**
+     * Get the period to period difference vector of this vector.
+     * @return Transformed vector.
+     */
     periodToPeriodDifference(): Vector {
         return this.periodDeltaTransformation((cur, last) => cur - last);
     }
 
+    /**
+     * Get the same period previous year percentage change vector of this
+     * vector.
+     * @return Transformed vector.
+     */
     samePeriodPreviousYearPercentageChange(): Vector {
         return this.samePeriodPreviousYearTransformation(percentageChange);
     }
 
+    /**
+     * Get the same period previous year difference vector of this vector.
+     * @return Transformed vector.
+     */
     samePeriodPreviousYearDifference(): Vector {
         return this.samePeriodPreviousYearTransformation((cur, last) => {
             return cur - last;
         });
     }
 
+    /**
+     * Convert vector to a lower frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @param converter Converter function.
+     */
     convertToFrequency(
         mode: string, converter: (cur: Date, last: Date) => boolean): Vector {
         const split = Vector.frequencySplit(this, converter);
         return Vector.frequencyJoin(split, mode);
     }
 
+    /**
+     * Converts vector to quinquennial frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     quinquennial(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 5);
     }
 
+    /**
+     * Converts vector to tri-annual frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     triAnnual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 3);
     }
 
+    /**
+     * Converts vector to bi-annual frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     biAnnual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 2);
     }
 
+    /**
+     * Converts vector to annual frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     annual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 1);
     }
 
+    /**
+     * Converts vector to semi-annual frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     semiAnnual(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() === (last.getMonth() + 6) % 12;
         });
     }
 
+    /**
+     * Converts vector to quarterly frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     quarterly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() === (last.getMonth() + 3) % 12;
         });
     }
 
+    /**
+     * Converts vector to monthly frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     monthly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() == (last.getMonth() + 1) % 12;
         });
     }
 
+    /**
+     * Converts vector to bi-monthly frequency.
+     * @param "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     biMonthly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() == (last.getMonth() + 2) % 12;
         });
     }
 
+    /**
+     * Converts vector to weekly frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
     weekly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getDay() == last.getDay() &&
@@ -300,6 +506,11 @@ class Vector {
         });
     }
 
+    /**
+     * Gets rounded vector.
+     * @param decimals Number of decimal places (default=0).
+     * @return Rounded vector.
+     */
     round(decimals?: number): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
@@ -311,6 +522,11 @@ class Vector {
         return new Vector(data);
     }
 
+    /**
+     * Gets rounded vector using Banker's rounding algorithm.
+     * @param decimals Number of decimal places (default=0).
+     * @return Rounded vector.
+     */
     roundBankers(decimals?: number): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
@@ -322,6 +538,9 @@ class Vector {
         return new Vector(data);
     }
 
+    /**
+     * @return Vector in JSON format.
+     */
     json(): string {
         return JSON.stringify(this.data.map((point) => {
             return {
