@@ -1,20 +1,23 @@
 {
   "name": "time-series-library",
-  "version": "2.6.2",
+  "version": "3.0.0",
   "description": "A JavaScript library for vector arithmetic",
-  "main": "time_series_library.js",
+  "main": "module/time-series-library.js",
+  "types": "module/time-series-library.d.ts",
   "scripts": {
     "clean": "rm -rf dist/*",
-    "build": "./node_modules/.bin/eslint . && npm run test && npx rollup -c && npm run uglify",
+    "build": "npm run lint && npm run test && npm run tsc && npx rollup -c && npm run uglify",
+    "tsc": "npx tsc -p ./src",
     "uglify": "npx uglifyjs-folder dist --each --output dist",
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint . --fix",
-    "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register tests.ts",
-    "prebuild": "npm run clean"
+    "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register ./tests/test.ts",
+    "prebuild": "npm run clean",
+    "prepublish": "npm run tsc"
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.k8s.cloud.statcan.ca/bailey.damour/vector-lib.git"
+    "url": "https://github.com/StatCan/time-series-library.git"
   },
   "author": "Bailey D'Amour",
   "license": "MIT",
@@ -27,9 +30,11 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/mocha": "^5.2.7",
-    "eslint": "^5.7.0",
-    "eslint-config-google": "^0.11.0",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "eslint": "^5.16.0",
     "mocha": "^5.2.0",
     "replace-in-file": "^3.4.3",
     "rollup": "^0.66.6",
