@@ -219,7 +219,7 @@ function vectorScalarOperate(vector: Vector, scalar: number, op: operation) {
 }
 
 function postfix(symbols: exprSymbol[]): exprSymbol[] {
-    const stack = ['('];
+    const stack: exprSymbol[] = ['('];
     const post: exprSymbol[] = [];
     symbols.push(')');
 
@@ -238,11 +238,11 @@ function postfix(symbols: exprSymbol[]): exprSymbol[] {
             }
             stack.pop();
         } else {
-            while (priority((symbol as string)) <= 
-                    priority(stack[stack.length - 1])) {
+            while (priority(<string>symbol) 
+                    <= priority(<string>stack[stack.length - 1])) {
                 post.push(pop(stack));
             }
-            stack.push(pop(stack));
+            stack.push(symbol);
         }
     }
 
