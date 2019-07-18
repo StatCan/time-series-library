@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.2] - 2019-07-18
+### Fixed
+- Fixed reading of vector expression symbols for symbols longer than one 
+character.
+
 ## [3.0.1] - 2019-07-17
 ### Added
 - Added TypeScript docstrings.
