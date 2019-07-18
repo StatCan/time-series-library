@@ -375,7 +375,7 @@ function readVector(vexp: string, pos: number): SymbolBuffer {
     let symbol = 'v';
     symbol += Utils.takeWhile(vexp.split('').slice(pos + 1), (char) => {
         return !isNaN(char);
-    }).join();
+    }).join('');
     return {'symbol': symbol, 'pos': pos + symbol.length - 1};
 };
 
@@ -386,7 +386,7 @@ function readOperator(vexp: string, pos: number): SymbolBuffer {
 function readScalar(vexp: string, pos: number): SymbolBuffer {
     const symbol = Utils.takeWhile(vexp.split('').slice(pos), (char, i) => {
         return (!isNaN(char) || char == '.'|| (char == '-' && i == 0));
-    }).join();
+    }).join('');
     return {'symbol': Number(symbol), 'pos': pos + symbol.length - 1};
 };
 

@@ -1077,6 +1077,11 @@ describe('VectorLib', function() {
                 {'refper': '2018-01-01', 'value': 7},
                 {'refper': '2018-02-01', 'value': 8},
                 {'refper': '2018-03-01', 'value': 9}
+            ]),
+            '10': new Vector([
+                {'refper': '2018-01-01', 'value': 10},
+                {'refper': '2018-02-01', 'value': 11},
+                {'refper': '2018-03-01', 'value': 12}
             ])
         };
 
@@ -1107,6 +1112,10 @@ describe('VectorLib', function() {
             {'refper': '2018-02-01', 'value': 1},
             {'refper': '2018-03-01', 'value': 0}
         ]);
+        itVexp(vexp, expected);
+
+        vexp = 'v10';
+        expected = vectors['10'];
         itVexp(vexp, expected);
 
         vexp = '';
