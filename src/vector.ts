@@ -423,6 +423,16 @@ class Vector {
         return Vector.convertToYearlyFrequency(this, mode, 5);
     }
 
+
+    /**
+     * Converts vector to quadrennial frequency.
+     * @param mode "last" (default), "sum", "average", "max", "min".
+     * @return Converted vector.
+     */
+    quadrennial(mode: string='last'): Vector {
+        return Vector.convertToYearlyFrequency(this, mode, 4);
+    }
+
     /**
      * Converts vector to tri-annual frequency.
      * @param mode "last" (default), "sum", "average", "max", "min".

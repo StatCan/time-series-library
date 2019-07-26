@@ -149,6 +149,15 @@ export default class VectorLib {
         return this.generateVector(values, startDate, nextTriAnnum);
     }
 
+    generateQuadrennial(
+        values: nullableNumber[], startDate: datestring): Vector {
+
+        startDate = Utils.dateObject(startDate);
+        startDate.setDate(
+            Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
+        return this.generateVector(values, startDate, nextQuadrennium);
+    }
+
     /**
      * Generate a @see Vector with a quinquennial frequency using an
      * initilization list.
@@ -156,7 +165,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateQuinquennial(values: nullableNumber[], startDate: datestring): Vector {
+    generateQuinquennial(
+        values: nullableNumber[], startDate: datestring): Vector {
+
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -447,6 +458,11 @@ function nextTriAnnum(date: Date): Date {
     return new Date(
         date.getFullYear() + 3, date.getMonth(), date.getDate());
 };
+
+function nextQuadrennium(date: Date): Date {
+    return new Date(
+        date.getFullYear() + 4, date.getMonth(), date.getDate());
+}
 
 function nextQuinquennium(date: Date): Date {
     return new Date(
