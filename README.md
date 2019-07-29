@@ -71,6 +71,7 @@ Using a web browser:
 [annual(mode)](#Vector.annual)  
 [biAnnual(mode)](#Vector.biAnnual)  
 [triAnnnual(mode)](#Vector.triAnnual)  
+[quadrennial(mode)](#Vector.quadrennial)  
 [quinquennial(mode)](#Vector.quinquennial)  
 [round(decimals)](#Vector.round)  
 [roundBankers(decimals)](#Vector.roundBankers)  
@@ -87,6 +88,7 @@ Using a web browser:
 [generateAnnual(values, startDate)](#VectorLib.generateAnnual)  
 [generateBiAnnual(values, startDate)](#VectorLib.generateBiAnnual)  
 [generateTriAnnual(values, startDate)](#VectorLib.generateTriAnnual)  
+[generateQuadrennial(values, startDate)](#VectorLib.GenerateQuadrennial)  
 [generateQuinquennial(values, startDate)](#VectorLib.generateQuinquennial)  
 
 ## Vector
@@ -1153,6 +1155,45 @@ Result:
 ]
 ```
 
+<a name="Vector.quadrennial"></a>
+### quadrennial(mode)
+
+Converts the frequency of a vector to quadrennial (every 4 years).
+
+The parameter **mode** is optional and can be one of the following strings:
+- `"last"`: Takes the last reference period of each quadrennium (Default).
+- `"sum"`: Takes the sum of each quadrennium.
+- `"average"`: Takes the average of each quadrennium.
+- `"max"`: Takes the maximum value of each quadrennium.
+- `"min"`: Takes the minimum value of each quadrennium.
+
+Example:
+```javascript
+let vector = new Vector([
+    {'refper': "2018-12-01", 'value': 0},
+    {'refper': "2019-12-01", 'value': 1},
+    {'refper': "2020-12-01", 'value': 2},
+    {'refper': "2021-12-01", 'value': 3},
+    {'refper': "2022-12-01", 'value': 4},
+    {'refper': "2023-12-01", 'value': 5},
+    {'refper': "2024-12-01", 'value': 6},
+    {'refper': "2025-12-01", 'value': 7},
+    {'refper': "2026-12-01", 'value': 8},
+    {'refper': "2027-12-01", 'value': 9}
+]);
+
+let result = vector.quadrennial();
+```
+
+Result:
+```javascript
+[
+    {'refper': '2022-01-31', 'value': 5},
+    {'refper': '2026-01-31', 'value': 9},
+    {'refper': '2030-01-31', 'value': 13}
+]
+```
+
 <a name="Vector.quinquennial"></a>
 ### quinquennial(mode)
 
@@ -1489,6 +1530,27 @@ Result:
     {'refper': "2020-01-31", 'value': 1},
     {'refper': "2023-01-31", 'value': 2},
     {'refper': "2026-01-31", 'value': 3}
+]
+```
+
+<a name="VectorLib.generateQuadrennial"></a>
+### generateQuadrennial(values, startDate)
+
+Generates a quadrennial vector from a list of values starting from a specific 
+reference period. The last day of each year will be used as the reference 
+periods.
+
+Example:
+```javascript
+let result = generateQuadrennial([1, 2, 3], '2019-01-31');
+```
+
+Result:
+```javascript
+[
+    {'refper': "2019-01-31", 'value': 1},
+    {'refper': "2023-01-31", 'value': 2},
+    {'refper': "2027-01-31", 'value': 3}
 ]
 ```
 

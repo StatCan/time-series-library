@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.0] - 2019-07-29
+### Added
+- Added quadrennial() and generateQuadrennial() functions.
+
 ## [3.0.2] - 2019-07-18
 ### Fixed
 - Fixed reading of vector expression symbols for symbols longer than one 
