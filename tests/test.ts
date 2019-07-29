@@ -976,6 +976,33 @@ describe('Vector', function() {
         });
     });
 
+    describe('#quadrennial', function() {
+        it('should convert vector to a quadrennial frequency', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-31', 'value': 1},
+                {'refper': '2019-01-31', 'value': 2},
+                {'refper': '2020-01-31', 'value': 3},
+                {'refper': '2021-01-31', 'value': 4},
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2023-01-31', 'value': 6},
+                {'refper': '2024-01-31', 'value': 7},
+                {'refper': '2025-01-31', 'value': 8},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2027-01-31', 'value': 10},
+                {'refper': '2028-01-31', 'value': 11},
+                {'refper': '2029-01-31', 'value': 12},
+                {'refper': '2030-01-31', 'value': 13},
+            ]);
+            const expected = new Vector([
+                {'refper': '2022-01-31', 'value': 5},
+                {'refper': '2026-01-31', 'value': 9},
+                {'refper': '2030-01-31', 'value': 13}
+            ]);
+            const result = vector.quadrennial();
+            assert.strictEqual(result.equals(expected), true);
+        });
+    });
+
     describe('#quinquennial', function() {
         it('should convert vector to a quinquennial frequency', function() {
             const vector = new Vector([
@@ -1266,6 +1293,19 @@ describe('VectorLib', function() {
                 {'refper': '2018-12-31', 'value': 0},
                 {'refper': '2021-12-31', 'value': 1},
                 {'refper': '2024-12-31', 'value': 2}
+            ]);
+            assert.strictEqual(vector.equals(expected), true);
+        });
+    });
+
+    describe('#generateQuadrennial', function() {
+        it('should generate a quadrennial vector from a list of values', () => {
+            const values = [0, 1, 2];
+            const vector = vlib.generateQuadrennial(values, '2018-12-30');
+            const expected = new Vector([
+                {'refper': '2018-12-31', 'value': 0},
+                {'refper': '2022-12-31', 'value': 1},
+                {'refper': '2026-12-31', 'value': 2}
             ]);
             assert.strictEqual(vector.equals(expected), true);
         });
