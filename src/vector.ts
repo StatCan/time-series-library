@@ -226,7 +226,8 @@ class Vector {
 
         const thisRefpers = this.data.map((p) => p.refper);
         const otherRefpers = others.reduce((acc: Date[], cur: Vector) => {
-            return [...acc, ...cur.map((p: Point) => p.refper)];
+            acc.push(...cur.map((p: Point) => p.refper));
+            return acc;
         }, []);
         const refpers = [...thisRefpers, ...otherRefpers];
 
