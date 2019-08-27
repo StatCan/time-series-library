@@ -1,5 +1,5 @@
 export default class Utils {
-    static dropWhile(
+    public static dropWhile(
         array: any[], predicate: (item: any, i?: number) => boolean): any[] {
     
         let removeCount = 0;
@@ -11,7 +11,7 @@ export default class Utils {
         return array.slice(0, array.length - removeCount);
     }
     
-    static takeWhile(
+    public static takeWhile(
         array: any[], predicate: (item: any, i?: number) => boolean): any[] {
     
         const result = [];
@@ -25,11 +25,11 @@ export default class Utils {
         return result;
     }
 
-    static daysInMonth(year: number, month: number): number {
+    public static daysInMonth(year: number, month: number): number {
         return new Date(year, month + 1, 0).getDate();
     }
 
-    static dateObject(date: string | Date): Date {
+    public static dateObject(date: string | Date): Date {
         return date instanceof Date ? 
             date : new Date(`${date.split('T')[0]}T00:00:00`);
     }

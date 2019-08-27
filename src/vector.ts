@@ -33,7 +33,7 @@ class Vector {
      * Create a new @see Vector representing time series data.
      * @param data - Array of datapoints.
      */
-    constructor(data?: Point[] | PointStr[]) {
+    public constructor(data?: Point[] | PointStr[]) {
         if (data && data.length > 0) {
             if (Vector.isPointStr(data[0])) {
                 this._data = (data as PointStr[]).map(Vector.formatPoint);
@@ -48,14 +48,14 @@ class Vector {
     /**
      * @returns Datapoints in vector.
      */
-    get data(): Point[] {
+    public get data(): Point[] {
         return this._data;
     }
 
     /**
      * @return Length of vector.
      */
-    get length(): number {
+    public get length(): number {
         return this.data.length;
     }
 
@@ -64,7 +64,7 @@ class Vector {
      * @param index - Index, starting from 0.
      * @return Datapoint.
      */
-    get(index: number): Point {
+    public get(index: number): Point {
         return this.data[index];
     }
 
@@ -73,7 +73,7 @@ class Vector {
      * @param index Index, starting from 0.
      * @return Reference period.
      */
-    refper(index: number): Date {
+    public refper(index: number): Date {
         return this.data[index].refper;
     }
 
@@ -82,7 +82,7 @@ class Vector {
      * @param index Index, starting from 0.
      * @return Reference period string in yyyy-mm-dd format.
      */
-    refperStr(index: number): string {
+    public refperStr(index: number): string {
         return datestring(this.refper(index));
     }
 
@@ -91,7 +91,7 @@ class Vector {
      * @param index Index, starting from 0.
      * @return Value.
      */
-    value(index: number): number | null {
+    public value(index: number): number | null {
         return this.data[index].value;
     }
 
@@ -99,7 +99,7 @@ class Vector {
      * Gets an array of all values in a vector.
      * @return Values.
      */
-    values(): number[] {
+    public values(): number[] {
         return this.map((point: Point) => point.value);
     }
 
@@ -107,7 +107,7 @@ class Vector {
      * Appends a new datapoint to the end of a vector.
      * @param datapoint New datapoint.
      */
-    push(point: Point | PointStr) {
+    public push(point: Point | PointStr) {
         this.data.push(Vector.formatPoint(point));
     }
 
@@ -118,7 +118,7 @@ class Vector {
      * this index. Equality of entire vector will be checked if undefined.
      * @return True if vectors are equal, otherwise false.
      */
-    equals(other: Vector, index?: number): boolean {
+    public equals(other: Vector, index?: number): boolean {
         const pointEquals = (a: Point, b: Point): boolean => {
             return a.refper.getTime() == b.refper.getTime()
                 && a.value == b.value;
@@ -131,8 +131,7 @@ class Vector {
     /**
      * @return Deep copy of a vector.
      */
-    copy(): Vector {
-        this.data.map
+    public copy(): Vector {
         return new Vector(
             this.map((point) => Vector.newPointValue(point, point.value)));
     }
@@ -142,7 +141,9 @@ class Vector {
      * @param fn Mapper function.
      * @return Map result.
      */
-    map(fn: (val: Point, i: number, arr: Point[]) => any, th?: any): any[] {
+    public map(
+        fn: (val: Point, i: number, arr: Point[]) => any, th?: any
+    ): any[] {
         return this.data.map(fn, th);
     }
 
@@ -151,19 +152,21 @@ class Vector {
      * @param fn  Predicate function.
      * @return Found datapoint. Returns null if none found.
      */
-    find(
+    public find(
         fn: (val: Point, i: number, arr: Point[]) => any, 
         th?: any): Point | undefined {
 
         return this.data.find(fn, th);
     }
 
-     /**
+    /**
      * Returns true if there is a datapoint that matches a predicate condition.
      * @param fn Predicate function.
      * @return True if condition matched, otherwise false.
      */
-    some(fn: (val: Point, i: number, arr: Point[]) => any, th?: any): boolean {
+    public some(
+        fn: (val: Point, i: number, arr: Point[]) => any, th?: any
+    ): boolean {
         return this.data.some(fn, th);
     }
 
@@ -172,9 +175,9 @@ class Vector {
      * @param fn Predicate function.
      * @return Filtered vector.
      */
-    filter(
-        fn: (val: Point, i: number, arr: Point[]) => boolean, 
-        th?: any): Vector {
+    public filter(
+        fn: (val: Point, i: number, arr: Point[]) => boolean, th?: any
+    ): Vector {
         
         return new Vector(this.data.filter(fn, th));
     }
@@ -185,7 +188,7 @@ class Vector {
      * @param endDate - End of range (inclusive).
      * @return Range vector.
      */
-    range(startDate: Date | string, endDate: Date | string): Vector {
+    public range(startDate: Date | string, endDate: Date | string): Vector {
         startDate = Utils.dateObject(startDate);
         endDate = Utils.dateObject(endDate);
         return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
@@ -197,7 +200,7 @@ class Vector {
      * @param n Last n reference periods.
      * @return Last n reference period vector.
      */
-    latestN(n: number): Vector {
+    public latestN(n: number): Vector {
         if (n > this.length) throw Error('N > length of vector.');
         return new Vector(this.data.slice(-n));
     }
@@ -207,7 +210,7 @@ class Vector {
      * @param other Other vector.
      * @return True if vectors are interoperable, otherwise false.
      */
-    interoperable(other: Vector): boolean {
+    public interoperable(other: Vector): boolean {
         if (this.length != other.length) return false;
         return !this.some((point, i) => {
             return point.refper.getTime() != other.refper(i).getTime();
@@ -219,7 +222,7 @@ class Vector {
      * @param others Other vectors.
      * @return Intersection result.
      */
-    intersection(others: Vector[] | Vector): Vector {
+    public intersection(others: Vector[] | Vector): Vector {
         if (!Array.isArray(others)) others = [others];
 
         const refperCounts: {[date: number]: number} = {};
@@ -244,28 +247,28 @@ class Vector {
     /**
      * @return Sum of all values in a vector.
      */
-    sum(): number {
+    public sum(): number {
         return this.reduce((acc, cur) => acc + cur, 0);
     }
 
     /**
      * @return Average of all non-null values in a vector.
      */
-    average(): number | null {
+    public average(): number | null {
         return this.length > 0 ? this.sum() / this.length : null;
     }
 
     /**
      * @return Maximum of all values in a vector.
      */
-    max(): number {
+    public max(): number {
         return Math.max(...this.values());
     }
 
     /**
      * @return Minimum of all values in a vector.
      */
-    min(): number {
+    public min(): number {
         return Math.min(...this.values());
     }
     
@@ -275,9 +278,9 @@ class Vector {
      * @param init Initial value (defaults to first value in the vector).
      * @return Result of reduction.
      */
-    reduce(
-        fn: (acc: any, cur: any, i: number, arr: any[]) => any, 
-        init?: any): any  {
+    public reduce(
+        fn: (acc: any, cur: any, i: number, arr: any[]) => any, init?: any
+    ): any  {
 
         init = init === undefined ? this.value(0) : init;
         return this.map((p) => p.value).reduce(fn, init);
@@ -289,7 +292,7 @@ class Vector {
      * @param op Operation function.
      * @return Result of operation.
      */
-    operate(other: Vector, op: operation): Vector {
+    public operate(other: Vector, op: operation): Vector {
         const a = this.intersection(other);
         const b = other.intersection(this);
         const data = a.data.map((pointA, i) => {
@@ -303,7 +306,7 @@ class Vector {
      * @param op Delta operation.
      * @return Transformed vector.
      */
-    periodDeltaTransformation(op: nullableOperation): Vector {
+    public periodDeltaTransformation(op: nullableOperation): Vector {
         const data = this.data.map((point, i, data) => {
             if (data[i-1] === undefined) {
                 return Vector.newPointValue(point, null);
@@ -324,7 +327,7 @@ class Vector {
      * @param op Delta operation.
      * @return Transformed vector.
      */
-    samePeriodPreviousYearTransformation(op: nullableOperation): Vector {
+    public samePeriodPreviousYearTransformation(op: nullableOperation): Vector {
         // Only works on frequecnies > monthly for now.
         // Create dictionary mapping dates to values.
         const set: {[date: number]: Point} = {};
@@ -346,9 +349,9 @@ class Vector {
 
             if (Number(previousYear) in set) {
                 result.push(
-                    Vector.pointOperate(point, set[Number(previousYear)], op))
+                    Vector.pointOperate(point, set[Number(previousYear)], op));
             } else {
-                result.push(Vector.newPointValue(point, null))
+                result.push(Vector.newPointValue(point, null));
             }
         }
         return result;
@@ -359,7 +362,7 @@ class Vector {
      * @param op Transformation operation.
      * @return Transformed vector.
      */
-    periodTransformation(op: transformation): Vector {
+    public periodTransformation(op: transformation): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
                 return Vector.newPointValue(point, op(point.value));
@@ -373,7 +376,7 @@ class Vector {
      * Get the period to period percentage change vector of this vector.
      * @return Transformed vector.
      */
-    periodToPeriodPercentageChange(): Vector {
+    public periodToPeriodPercentageChange(): Vector {
         return this.periodDeltaTransformation(percentageChange);
     }
 
@@ -381,7 +384,7 @@ class Vector {
      * Get the period to period difference vector of this vector.
      * @return Transformed vector.
      */
-    periodToPeriodDifference(): Vector {
+    public periodToPeriodDifference(): Vector {
         return this.periodDeltaTransformation((cur, last) => cur - last);
     }
 
@@ -390,7 +393,7 @@ class Vector {
      * vector.
      * @return Transformed vector.
      */
-    samePeriodPreviousYearPercentageChange(): Vector {
+    public samePeriodPreviousYearPercentageChange(): Vector {
         return this.samePeriodPreviousYearTransformation(percentageChange);
     }
 
@@ -398,7 +401,7 @@ class Vector {
      * Get the same period previous year difference vector of this vector.
      * @return Transformed vector.
      */
-    samePeriodPreviousYearDifference(): Vector {
+    public samePeriodPreviousYearDifference(): Vector {
         return this.samePeriodPreviousYearTransformation((cur, last) => {
             return cur - last;
         });
@@ -409,7 +412,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @param converter Converter function.
      */
-    convertToFrequency(
+    public convertToFrequency(
         mode: string, converter: (cur: Date, last: Date) => boolean): Vector {
         const split = Vector.frequencySplit(this, converter);
         return Vector.frequencyJoin(split, mode);
@@ -420,7 +423,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    quinquennial(mode: string='last'): Vector {
+    public quinquennial(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 5);
     }
 
@@ -430,7 +433,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    quadrennial(mode: string='last'): Vector {
+    public quadrennial(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 4);
     }
 
@@ -439,7 +442,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    triAnnual(mode: string='last'): Vector {
+    public triAnnual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 3);
     }
 
@@ -448,7 +451,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    biAnnual(mode: string='last'): Vector {
+    public biAnnual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 2);
     }
 
@@ -457,7 +460,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    annual(mode: string='last'): Vector {
+    public annual(mode: string='last'): Vector {
         return Vector.convertToYearlyFrequency(this, mode, 1);
     }
 
@@ -466,7 +469,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    semiAnnual(mode: string='last'): Vector {
+    public semiAnnual(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() === (last.getMonth() + 6) % 12;
         });
@@ -477,7 +480,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    quarterly(mode: string='last'): Vector {
+    public quarterly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() === (last.getMonth() + 3) % 12;
         });
@@ -488,7 +491,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    monthly(mode: string='last'): Vector {
+    public monthly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() == (last.getMonth() + 1) % 12;
         });
@@ -499,7 +502,7 @@ class Vector {
      * @param "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    biMonthly(mode: string='last'): Vector {
+    public biMonthly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, (curr, last) => {
             return curr.getMonth() == (last.getMonth() + 2) % 12;
         });
@@ -510,7 +513,7 @@ class Vector {
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @return Converted vector.
      */
-    weekly(mode: string='last'): Vector {
+    public weekly(mode: string='last'): Vector {
         return this.convertToFrequency(mode, function(curr, last) {
             return curr.getDay() == last.getDay() &&
                 curr.getDate() != last.getDate(); // FIXME: Should not be needed
@@ -522,7 +525,7 @@ class Vector {
      * @param decimals Number of decimal places (default=0).
      * @return Rounded vector.
      */
-    round(decimals?: number): Vector {
+    public round(decimals?: number): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
                 return Vector.newPointValue(
@@ -538,7 +541,7 @@ class Vector {
      * @param decimals Number of decimal places (default=0).
      * @return Rounded vector.
      */
-    roundBankers(decimals?: number): Vector {
+    public roundBankers(decimals?: number): Vector {
         const data = this.data.map((point) => {
             if (point.value) {
                 return Vector.newPointValue(
@@ -552,7 +555,7 @@ class Vector {
     /**
      * @return Vector in JSON format.
      */
-    json(): string {
+    public json(): string {
         return JSON.stringify(this.data.map((point) => {
             return {
                 'refper': datestring(point.refper),

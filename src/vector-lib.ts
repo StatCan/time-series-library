@@ -10,7 +10,7 @@ export default class VectorLib {
      * @param expression Vector expression. e.g.: `"v1 * (v2 - v3)"`
      * @return Vector IDs.
      */
-    getVectorIds(expression: string) {
+    public getVectorIds(expression: string) {
         expression = expression.replace(/ /g, '').toLowerCase();
 
         const allowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
@@ -34,7 +34,7 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateDaily(values: nullableNumber[], startDate: datestring) {
+    public generateDaily(values: nullableNumber[], startDate: datestring) {
         startDate = Utils.dateObject(startDate);
         return this.generateVector(values, startDate, nextDay);
     }
@@ -46,7 +46,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateWeekly(values: nullableNumber[], startDate: datestring): Vector {
+    public generateWeekly(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         return this.generateVector(values, startDate, nextWeek);
     }
@@ -58,7 +60,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateMonthly(values: nullableNumber[], startDate: datestring): Vector {
+    public generateMonthly(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -72,7 +76,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateBiMonthly(values: nullableNumber[], startDate: datestring): Vector {
+    public generateBiMonthly(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -86,7 +92,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateQuarterly(values: nullableNumber[], startDate: datestring): Vector {
+    public generateQuarterly(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -100,7 +108,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateSemiAnnual(values: nullableNumber[], startDate: datestring): Vector {
+    public generateSemiAnnual(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -114,7 +124,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateAnnual(values: nullableNumber[], startDate: datestring): Vector {
+    public generateAnnual(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -128,7 +140,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateBiAnnual(values: nullableNumber[], startDate: datestring): Vector {
+    public generateBiAnnual(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
@@ -142,15 +156,18 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateTriAnnual(values: nullableNumber[], startDate: datestring): Vector {
+    public generateTriAnnual(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
             Utils.daysInMonth(startDate.getFullYear(), startDate.getMonth()));
         return this.generateVector(values, startDate, nextTriAnnum);
     }
 
-    generateQuadrennial(
-        values: nullableNumber[], startDate: datestring): Vector {
+    public generateQuadrennial(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
 
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -165,8 +182,9 @@ export default class VectorLib {
      * @param startDate Start date of vector.
      * @return Generated vector.
      */
-    generateQuinquennial(
-        values: nullableNumber[], startDate: datestring): Vector {
+    public generateQuinquennial(
+        values: nullableNumber[], startDate: datestring
+    ): Vector {
 
         startDate = Utils.dateObject(startDate);
         startDate.setDate(
@@ -182,10 +200,11 @@ export default class VectorLib {
      * @param nextDateFn Function to generate next refperence periods.
      * @return Generated vector.
      */
-    generateVector(
+    public generateVector(
         values: nullableNumber[], 
         startDate: Date, 
-        nextDateFn: (date: Date) => Date): Vector {
+        nextDateFn: (date: Date) => Date
+    ): Vector {
 
         const vector = new Vector();
         let currDate = startDate;
@@ -202,7 +221,9 @@ export default class VectorLib {
      * @param vectors Vectors.
      * @return Result of expression.
      */
-    evaluate(expression: string, vectors: {[id: string]: Vector}): Vector {
+    public evaluate(
+        expression: string, vectors: {[id: string]: Vector}
+    ): Vector {
         expression = expression.replace(/ /g, '');
 
         const infix = splitSymbols(expression);
@@ -238,7 +259,7 @@ const operators: {[op: string]: (a: number, b: number) => number} = {
     '-': (a, b) => a - b,
     '*': (a, b) => a * b,
     '/': (a, b) => a / b
-}
+};
 
 const operatorPriorities: {[op: string]: number} = {
     '*': 2,
@@ -256,31 +277,31 @@ class ExpressionNode {
     private _left: ExpressionNode | null;
     private _right: ExpressionNode | null;
 
-    constructor(value: nodeValue) {
+    public constructor(value: nodeValue) {
         this._value = value;
         this._left = null;
         this._right = null;
     }
 
-    get value(): nodeValue {
+    public get value(): nodeValue {
         return this._value;
     }
 
-    get left(): ExpressionNode | null {
+    public get left(): ExpressionNode | null {
         return this._left;
     }
-    set left(value: ExpressionNode | null) {
+    public set left(value: ExpressionNode | null) {
         this._left = value;
     }
 
-    get right(): ExpressionNode | null {
+    public get right(): ExpressionNode | null {
         return this._right;
     }
-    set right(value: ExpressionNode | null) {
+    public set right(value: ExpressionNode | null) {
         this._right = value;
     }
 
-    result(): nodeValue {
+    public result(): nodeValue {
         if (this.value instanceof Vector || typeof this.value === 'number') {
             return this.value;
         } 
@@ -291,13 +312,12 @@ class ExpressionNode {
     }
 }
 
-
 function operate(a: nodeValue, b: nodeValue, op: operation): nodeValue {
     if (a instanceof Vector && b instanceof Vector) {
         return a.operate(b, op);
     }
     if (a instanceof Vector && typeof b === 'number') {
-        return vectorScalarOperate(a, b, op)
+        return vectorScalarOperate(a, b, op);
     }
     if (typeof a === 'number' && b instanceof Vector) {
         return vectorScalarOperate(b, a, op);

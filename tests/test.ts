@@ -162,7 +162,7 @@ describe('Vector', function() {
         });
 
         it('should return undefined if no match is found', function() {
-            const result = vector.find((p) => false);
+            const result = vector.find((p) => p.value == -1);
             assert.strictEqual(result, undefined);
         });
     });
