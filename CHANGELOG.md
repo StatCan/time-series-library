@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.0] - 2019-09-13
+### Added
+- Created namespace containing vector Point interfaces.
+
 ## [3.1.0] - 2019-07-29
 ### Added
 - Added quadrennial() and generateQuadrennial() functions.

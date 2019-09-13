@@ -1,44 +1,47 @@
 import Utils from './utils';
 
-/**
- * Represents a datapoint for a specific reference period.
- */
-interface Point {
-    refper: Date;
-    value: number | null;
-    metadata?: any;
-}
-
-/**
- * Represents a datapoint for a specific reference period.
- * @remarks `refper` is expected to be in `yyyy-mm-dd` format.
- */
-interface PointStr {
-    refper: string;
-    value: number | null;
-    metadata?: any;
-}
-
 type transformation = (a: number) => number;
 type operation = (a: number, b: number) => number;
 type nullableOperation = (a: number, b: number) => number | null;
+
+namespace Vector {
+    /**
+     * Represents a datapoint for a specific reference period.
+     * @remarks `refper` is expected to be in `yyyy-mm-dd` format.
+     */
+    export interface PointStr {
+        refper: string;
+        value: number | null;
+        metadata?: any;
+    }
+
+    /**
+     * Represents a datapoint for a specific reference period.
+     */
+    export interface Point {
+        refper: Date;
+        value: number | null;
+        metadata?: any;
+    }
+}
 
 /**
  * A collection of @see Point objects over time.
  */
 class Vector {
-    private _data: Point[]; 
+    private _data: Vector.Point[]; 
 
     /**
      * Create a new @see Vector representing time series data.
      * @param data - Array of datapoints.
      */
-    public constructor(data?: Point[] | PointStr[]) {
+    public constructor(data?: Vector.Point[] | Vector.PointStr[]) {
         if (data && data.length > 0) {
             if (Vector.isPointStr(data[0])) {
-                this._data = (data as PointStr[]).map(Vector.formatPoint);
+                this._data = (data as Vector.PointStr[])
+                    .map(Vector.formatPoint);
             } else {
-                this._data = data as Point[];
+                this._data = data as Vector.Point[];
             }
         } else {
             this._data = [];
@@ -48,7 +51,7 @@ class Vector {
     /**
      * @returns Datapoints in vector.
      */
-    public get data(): Point[] {
+    public get data(): Vector.Point[] {
         return this._data;
     }
 
@@ -64,7 +67,7 @@ class Vector {
      * @param index - Index, starting from 0.
      * @return Datapoint.
      */
-    public get(index: number): Point {
+    public get(index: number): Vector.Point {
         return this.data[index];
     }
 
@@ -100,14 +103,14 @@ class Vector {
      * @return Values.
      */
     public values(): number[] {
-        return this.map((point: Point) => point.value);
+        return this.map((point: Vector.Point) => point.value);
     }
 
     /**
      * Appends a new datapoint to the end of a vector.
      * @param datapoint New datapoint.
      */
-    public push(point: Point | PointStr) {
+    public push(point: Vector.Point | Vector.PointStr) {
         this.data.push(Vector.formatPoint(point));
     }
 
@@ -119,7 +122,7 @@ class Vector {
      * @return True if vectors are equal, otherwise false.
      */
     public equals(other: Vector, index?: number): boolean {
-        const pointEquals = (a: Point, b: Point): boolean => {
+        const pointEquals = (a: Vector.Point, b: Vector.Point): boolean => {
             return a.refper.getTime() == b.refper.getTime()
                 && a.value == b.value;
         };
@@ -142,7 +145,7 @@ class Vector {
      * @return Map result.
      */
     public map(
-        fn: (val: Point, i: number, arr: Point[]) => any, th?: any
+        fn: (val: Vector.Point, i: number, arr: Vector.Point[]) => any, th?: any
     ): any[] {
         return this.data.map(fn, th);
     }
@@ -153,8 +156,8 @@ class Vector {
      * @return Found datapoint. Returns null if none found.
      */
     public find(
-        fn: (val: Point, i: number, arr: Point[]) => any, 
-        th?: any): Point | undefined {
+        fn: (val: Vector.Point, i: number, arr: Vector.Point[]) => any, th?: any
+    ): Vector.Point | undefined {
 
         return this.data.find(fn, th);
     }
@@ -165,7 +168,7 @@ class Vector {
      * @return True if condition matched, otherwise false.
      */
     public some(
-        fn: (val: Point, i: number, arr: Point[]) => any, th?: any
+        fn: (val: Vector.Point, i: number, arr: Vector.Point[]) => any, th?: any
     ): boolean {
         return this.data.some(fn, th);
     }
@@ -176,7 +179,8 @@ class Vector {
      * @return Filtered vector.
      */
     public filter(
-        fn: (val: Point, i: number, arr: Point[]) => boolean, th?: any
+        fn: (val: Vector.Point, i: number, arr: Vector.Point[]) => boolean, 
+        th?: any
     ): Vector {
         
         return new Vector(this.data.filter(fn, th));
@@ -229,7 +233,7 @@ class Vector {
 
         const thisRefpers = this.data.map((p) => p.refper);
         const otherRefpers = others.reduce((acc: Date[], cur: Vector) => {
-            acc.push(...cur.map((p: Point) => p.refper));
+            acc.push(...cur.map((p: Vector.Point) => p.refper));
             return acc;
         }, []);
         const refpers = [...thisRefpers, ...otherRefpers];
@@ -330,7 +334,7 @@ class Vector {
     public samePeriodPreviousYearTransformation(op: nullableOperation): Vector {
         // Only works on frequecnies > monthly for now.
         // Create dictionary mapping dates to values.
-        const set: {[date: number]: Point} = {};
+        const set: {[date: number]: Vector.Point} = {};
         for (const d of this.data) {
             const endOfMonth = new Date(
                 d.refper.getFullYear(),
@@ -620,7 +624,7 @@ class Vector {
     }
 
     private static frequencyJoin(split: Vector[], mode?: string): Vector {
-        const modes: {[mode: string]: (vector: Vector) => Point} = {
+        const modes: {[mode: string]: (vector: Vector) => Vector.Point} = {
             'last': (vector: Vector) => vector.get(vector.length - 1),
             'sum': (vector: Vector) => {
                 return Vector.newPointValue(
@@ -644,7 +648,8 @@ class Vector {
     }
 
     private static pointOperate(
-        p1: Point, p2: Point, op: nullableOperation): Point {
+        p1: Vector.Point, p2: Vector.Point, op: nullableOperation
+    ): Vector.Point {
 
         if (p1.value === null || p2.value === null) {
             return  Vector.newPointValue(p1, null);
@@ -652,11 +657,13 @@ class Vector {
         return Vector.newPointValue(p1, op(p1.value, p2.value));
     }
 
-    private static isPointStr(point: Point | PointStr) {
+    private static isPointStr(point: Vector.Point | Vector.PointStr) {
         return typeof point.refper === 'string';
     }
 
-    private static formatPoint(point: Point | PointStr): Point {
+    private static formatPoint(
+        point: Vector.Point | Vector.PointStr
+    ): Vector.Point {
         return {
             'refper': Utils.dateObject(point.refper), 
             'value': point.value,
@@ -664,7 +671,9 @@ class Vector {
         };
     }
 
-    public static newPointValue(point: Point, newValue: number | null): Point {
+    public static newPointValue(
+        point: Vector.Point, newValue: number | null
+    ): Vector.Point {
         return {
             'refper': point.refper, 
             'value': newValue,
