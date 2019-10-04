@@ -1062,6 +1062,15 @@ describe('Vector', function() {
             assert.strictEqual(result.value(0), 2);
             assert.strictEqual(result.value(1), 2);
         });
+
+        it('should round 0 to 0', function() {
+            const vector = new Vector([{'refper': '2018-01-01', 'value': 0}]);
+            const expected = new Vector([{'refper': '2018-01-01', 'value': 0}]);
+            const result1 = vector.round();
+            const result2 = vector.round(1);
+            assert.ok(result1.equals(expected));
+            assert.ok(result2.equals(expected));
+        });
     });
 
     describe('#roundBannkers', function() {
@@ -1074,6 +1083,15 @@ describe('Vector', function() {
             const result = vector.roundBankers();
             assert.strictEqual(result.value(0), 2);
             assert.strictEqual(result.value(1), 2);
+        });
+
+        it('should round 0 to 0', function() {
+            const vector = new Vector([{'refper': '2018-01-01', 'value': 0}]);
+            const expected = new Vector([{'refper': '2018-01-01', 'value': 0}]);
+            const result1 = vector.roundBankers();
+            const result2 = vector.roundBankers(1);
+            assert.ok(result1.equals(expected));
+            assert.ok(result2.equals(expected));
         });
     });
 

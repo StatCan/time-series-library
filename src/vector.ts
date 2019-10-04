@@ -531,7 +531,7 @@ class Vector {
      */
     public round(decimals?: number): Vector {
         const data = this.data.map((point) => {
-            if (point.value) {
+            if (point.value !== null) {
                 return Vector.newPointValue(
                     point, scalarRound(point.value, decimals));
             }
@@ -547,7 +547,7 @@ class Vector {
      */
     public roundBankers(decimals?: number): Vector {
         const data = this.data.map((point) => {
-            if (point.value) {
+            if (point.value !== null) {
                 return Vector.newPointValue(
                     point, scalarRoundBankers(point.value, decimals));
             }
@@ -694,10 +694,12 @@ function datestring(date: Date): string {
 }
 
 function scalarRound(value: number, decimals: number=0): number {
+    if (value === 0) return 0;
     return Number(Math.round(Number(`${value}e${decimals}`)) + `e-${decimals}`);
 }
 
 function scalarRoundBankers(value: number, decimals: number=0): number {
+    if (value === 0) return 0;
     const x = value * Math.pow(10, decimals);
     const r = Math.round(x);
     const br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r - 1) : r;
