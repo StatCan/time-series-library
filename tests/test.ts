@@ -568,9 +568,27 @@ describe('Vector', function() {
             ]);
 
             const result = vector.periodToPeriodDifference();
-            assert.strictEqual(result.value(0), null);
-            assert.strictEqual(result.value(1), 4);
-            assert.strictEqual(result.value(2), -2);
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': null},
+                {'refper': '2018-01-02', 'value': 4},
+                {'refper': '2018-01-03', 'value': -2}
+            ]);
+            assert.ok(result.equals(expected));
+        });
+
+        it('should differentiate between zero and null', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 2},
+                {'refper': '2018-01-02', 'value': 0},
+                {'refper': '2018-01-03', 'value': 4}
+            ]);
+            const result = vector.periodToPeriodDifference();
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': null},
+                {'refper': '2018-01-02', 'value': -2},
+                {'refper': '2018-01-03', 'value': 4}
+            ]);
+            assert.ok(result.equals(expected));
         });
     });
 

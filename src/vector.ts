@@ -318,7 +318,7 @@ class Vector {
 
             const last = data[i-1].value;
             const cur = data[i].value;
-            if (last && cur) {
+            if (last != null && cur != null) {
                 return Vector.newPointValue(point, op(cur, last));
             }
             return Vector.newPointValue(point, null);
