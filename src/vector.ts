@@ -368,7 +368,7 @@ class Vector {
      */
     public periodTransformation(op: transformation): Vector {
         const data = this.data.map((point) => {
-            if (point.value) {
+            if (point.value !== null) {
                 return Vector.newPointValue(point, op(point.value));
             }
             return Vector.newPointValue(point, null);

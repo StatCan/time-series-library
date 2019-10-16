@@ -557,6 +557,21 @@ describe('Vector', function() {
             assert.strictEqual(result.value(1), 200.0);
             assert.strictEqual(result.value(2), -50.0);
         });
+
+        it('should should handlea zero vector', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 0},
+                {'refper': '2018-01-03', 'value': 0}
+            ]);
+            const result = vector.periodToPeriodDifference();
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': null},
+                {'refper': '2018-01-02', 'value': 0},
+                {'refper': '2018-01-03', 'value': 0}
+            ]);
+            assert.ok(result.equals(expected));
+        });
     });
 
     describe('#periodToPeriodDifference', function() {
@@ -587,6 +602,21 @@ describe('Vector', function() {
                 {'refper': '2018-01-01', 'value': null},
                 {'refper': '2018-01-02', 'value': -2},
                 {'refper': '2018-01-03', 'value': 4}
+            ]);
+            assert.ok(result.equals(expected));
+        });
+
+        it('should should handlea zero vector', function() {
+            const vector = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 0},
+                {'refper': '2018-01-03', 'value': 0}
+            ]);
+            const result = vector.periodToPeriodDifference();
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': null},
+                {'refper': '2018-01-02', 'value': 0},
+                {'refper': '2018-01-03', 'value': 0}
             ]);
             assert.ok(result.equals(expected));
         });
