@@ -4,6 +4,95 @@ import Utils from './utils';
 type nullableNumber = null | number;
 type datestring = string | Date;
 
+enum State {
+    scalar = 'scalar',
+    decimal = 'decimal',
+    vector = 'vector',
+    operator = 'operator',
+    bracket = 'bracket'
+}
+
+function isNumber(char: string): boolean {
+    return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(char);
+}
+
+function isBracket(char: string): boolean {
+    return ['(', ')'].includes(char);
+}
+
+function isVectorIdentifier(char: string): boolean {
+    return ['v', 'V'].includes(char);
+}
+
+function isOperator(char: string): boolean {
+    return ['+', '-', '/', '*'].includes(char);
+}
+
+function isDecimal(char: string): boolean {
+    return char === '.';
+}
+
+type TransitionMap = {[key in State]: ((char: string) => boolean) | null}
+
+class StateMachine {
+    public static transitions: {[key in State]: TransitionMap} = {
+        [State.scalar]: {
+            [State.scalar]: isNumber, 
+            [State.decimal]: isDecimal,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+        },
+        [State.decimal]: {
+            [State.scalar]: null,
+            [State.decimal]: isNumber,
+            [State.bracket]: isBracket,
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+        },
+        [State.bracket]: {
+            [State.scalar]: isNumber, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+        },
+        [State.operator]: {
+            [State.scalar]: isNumber, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: null,
+            [State.vector]: isVectorIdentifier,
+        },
+        [State.vector]: {
+            [State.scalar]: null, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isNumber,
+        }
+    };
+
+    private _state: State;
+
+    public constructor() {
+        this._state = State.scalar;
+    }
+
+    public get state(): State {
+        return this._state;
+    }
+
+    public readExpression(expr: string): exprSymbol[] {
+        for (let c = 0; c < expr.length; c++) {
+
+        }
+
+
+        return [];
+    }
+}
+
 export default class VectorLib {
     /**
      * Get the set of vector IDs in a vector expression.
