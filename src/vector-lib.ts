@@ -224,8 +224,6 @@ export default class VectorLib {
     public evaluate(
         expression: string, vectors: {[id: string]: Vector}
     ): Vector {
-        expression = expression.replace(/ /g, '');
-
         const stateMachine = new StateMachine();
         const infix = stateMachine.readExpression(expression);
         const post = postfix(infix);
@@ -442,6 +440,25 @@ function addMonths(date: Date, months: number): Date {
     return new Date(newYear, newMonth, Utils.daysInMonth(newYear, newMonth));
 }
 
+function validateBrackets(expr: string): number {
+    const stack = [];
+    for (let c = 0; c < expr.length; c++) {
+        const char = expr[c];
+        if (char === '(' || char === ')') {
+            if (char === '(') {
+                stack.push(char);
+            } else {
+                if (stack.length === 0) {
+                    return c + 1;
+                } else {
+                    stack.pop();
+                }
+            }
+        } 
+    }
+    return stack.length === 0 ? 0 : expr.length;
+}
+
 enum State {
     start = 'start',
     scalar = 'scalar',
@@ -556,6 +573,11 @@ class StateMachine {
     }
 
     public readExpression(expr: string): exprSymbol[] {
+        const bracketErr = validateBrackets(expr);
+        if (bracketErr > 0) {
+            throw Error(`Invalid bracket at position ${bracketErr}`);
+        }
+
         const tokens: exprSymbol[] = [];
 
         const convertToken = (token: exprSymbol): exprSymbol => {
@@ -564,13 +586,13 @@ class StateMachine {
         };
 
         for (let c = 0; c < expr.length; c++) {
-            let nextState = this._nextState(expr[c], c);
+            if (expr[c] == ' ') continue;
 
+            let nextState = this._nextState(expr[c], c);
             if (nextState != this._state || this._state == State.bracket) {
                 tokens.push('');
                 this._state = nextState;
             }
-
             tokens[tokens.length - 1] += expr[c];
         }
 
@@ -587,7 +609,7 @@ class StateMachine {
             return fn !== null && fn(char);
         });
         if (!nextState) {
-            throw Error(`Error parsing character at position ${pos}`);
+            throw Error(`Error parsing character at position ${pos + 1}`);
         }
         return nextState as State;
     }
