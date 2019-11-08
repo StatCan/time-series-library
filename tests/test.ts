@@ -1207,6 +1207,13 @@ describe('VectorLib', function() {
         ]);
         itVexp(vexp, expected);
 
+        vexp = 'v1 * (v2 * (v3 + v1))';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': 9},
+            {'refper': '2018-02-01', 'value': 32}
+        ]);
+        itVexp(vexp, expected);
+
         vexp = 'v10';
         expected = vectors['10'];
         itVexp(vexp, expected);

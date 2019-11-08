@@ -566,7 +566,7 @@ class StateMachine {
         for (let c = 0; c < expr.length; c++) {
             let nextState = this._nextState(expr[c], c);
 
-            if (nextState != this._state) {
+            if (nextState != this._state || this._state == State.bracket) {
                 tokens.push('');
                 this._state = nextState;
             }
