@@ -224,9 +224,8 @@ export default class VectorLib {
     public evaluate(
         expression: string, vectors: {[id: string]: Vector}
     ): Vector {
-        expression = expression.replace(/ /g, '');
-
-        const infix = splitSymbols(expression);
+        const stateMachine = new StateMachine();
+        const infix = stateMachine.readExpression(expression);
         const post = postfix(infix);
 
         const stack = [];
@@ -369,62 +368,6 @@ function postfix(symbols: exprSymbol[]): exprSymbol[] {
     return post;
 }
 
-function splitSymbols(vexp: string): exprSymbol[] {
-    const split: exprSymbol[] = [];
-
-    for (let pos = 0; pos < vexp.length; pos++) {
-        let next = null;
-
-        if (vexp[pos] == 'v' || vexp[pos] == 'V') {
-            next = readVector(vexp, pos);
-        } else if (!isNaN(Number(vexp[pos]))
-            || (vexp[pos] == '-' && isNaN(Number(vexp[pos - 1]))
-                && !isNaN(Number(vexp[pos + 1])))) {
-            next = readScalar(vexp, pos);
-        } else if (vexp[pos] in operators) {
-            next = readOperator(vexp, pos);
-        } else if (vexp[pos] == '(' || vexp[pos] == ')') {
-            next = readBracket(vexp, pos);
-        } else {
-            throw new Error(
-                'Unrecognized symbol at position ' + pos + '.');
-        }
-
-        split.push(next.symbol);
-        pos = next.pos;
-    }
-
-    return split;
-}
-
-interface SymbolBuffer {
-    symbol: string | number;
-    pos: number;
-}
-
-function readVector(vexp: string, pos: number): SymbolBuffer {
-    let symbol = 'v';
-    symbol += Utils.takeWhile(vexp.split('').slice(pos + 1), (char) => {
-        return !isNaN(char);
-    }).join('');
-    return {'symbol': symbol, 'pos': pos + symbol.length - 1};
-};
-
-function readOperator(vexp: string, pos: number): SymbolBuffer {
-    return {'symbol': vexp[pos], 'pos': pos};
-};
-
-function readScalar(vexp: string, pos: number): SymbolBuffer {
-    const symbol = Utils.takeWhile(vexp.split('').slice(pos), (char, i) => {
-        return (!isNaN(char) || char == '.'|| (char == '-' && i == 0));
-    }).join('');
-    return {'symbol': Number(symbol), 'pos': pos + symbol.length - 1};
-};
-
-function readBracket(vexp: string, pos: number) {
-    return {'symbol': vexp[pos], 'pos': pos};
-};
-
 function priority(symbol: string): number {
     return symbol in operatorPriorities ? operatorPriorities[symbol] : 0;
 }
@@ -495,5 +438,180 @@ function addMonths(date: Date, months: number): Date {
     const newYear = currYear + Math.floor((currMonth + months) / 12);
     const newMonth = (currMonth + (months % 12)) % 12;
     return new Date(newYear, newMonth, Utils.daysInMonth(newYear, newMonth));
+}
+
+function validateBrackets(expr: string): number {
+    const stack = [];
+    for (let c = 0; c < expr.length; c++) {
+        const char = expr[c];
+        if (char === '(' || char === ')') {
+            if (char === '(') {
+                stack.push(char);
+            } else {
+                if (stack.length === 0) {
+                    return c + 1;
+                } else {
+                    stack.pop();
+                }
+            }
+        } 
+    }
+    return stack.length === 0 ? 0 : expr.length;
+}
+
+enum State {
+    start = 'start',
+    scalar = 'scalar',
+    decimal = 'decimal',
+    vector = 'vector',
+    operator = 'operator',
+    bracket = 'bracket',
+    end = 'end'
+}
+
+function isNumber(char: string): boolean {
+    return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(char);
+}
+
+function isBracket(char: string): boolean {
+    return ['(', ')'].includes(char);
+}
+
+function isVectorIdentifier(char: string): boolean {
+    return ['v', 'V'].includes(char);
+}
+
+function isOperator(char: string): boolean {
+    return ['+', '-', '/', '*'].includes(char);
+}
+
+function isDecimal(char: string): boolean {
+    return char === '.';
+}
+
+function isEmptyString(char: string): boolean {
+    return char == '';
+}
+
+type TransitionMap = {[key in State]: ((char: string) => boolean) | null}
+
+class StateMachine {
+    public static transitions: {[key in State]: TransitionMap} = {
+        [State.start]: {
+            [State.start]: null,
+            [State.scalar]: isNumber,
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: null,
+            [State.vector]: isVectorIdentifier,
+            [State.end]: null
+        },
+        [State.scalar]: {
+            [State.start]: null,
+            [State.scalar]: isNumber, 
+            [State.decimal]: isDecimal,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+            [State.end]: isEmptyString
+        },
+        [State.decimal]: {
+            [State.start]: null,
+            [State.scalar]: null,
+            [State.decimal]: isNumber,
+            [State.bracket]: isBracket,
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+            [State.end]: isEmptyString
+        },
+        [State.bracket]: {
+            [State.start]: null,
+            [State.scalar]: isNumber, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isVectorIdentifier,
+            [State.end]: isEmptyString
+        },
+        [State.operator]: {
+            [State.start]: null,
+            [State.scalar]: isNumber, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: null,
+            [State.vector]: isVectorIdentifier,
+            [State.end]: isEmptyString
+        },
+        [State.vector]: {
+            [State.start]: null,
+            [State.scalar]: null, 
+            [State.decimal]: null,
+            [State.bracket]: isBracket, 
+            [State.operator]: isOperator,
+            [State.vector]: isNumber,
+            [State.end]: isEmptyString,
+        },
+        [State.end]: {
+            [State.start]: null,
+            [State.scalar]: null, 
+            [State.decimal]: null,
+            [State.bracket]: null, 
+            [State.operator]: null,
+            [State.vector]: null,
+            [State.end]: null,
+        }
+    };
+
+    private _state: State;
+
+    public constructor() {
+        this._state = State.start;
+    }
+
+    public get state(): State {
+        return this._state;
+    }
+
+    public readExpression(expr: string): exprSymbol[] {
+        const bracketErr = validateBrackets(expr);
+        if (bracketErr > 0) {
+            throw Error(`Invalid bracket at position ${bracketErr}`);
+        }
+
+        const tokens: exprSymbol[] = [];
+
+        const convertToken = (token: exprSymbol): exprSymbol => {
+            if (token != '' && !isNaN(Number(token))) return Number(token);
+            return token;
+        };
+
+        for (let c = 0; c < expr.length; c++) {
+            if (expr[c] == ' ') continue;
+
+            let nextState = this._nextState(expr[c], c);
+            if (nextState != this._state || this._state == State.bracket) {
+                tokens.push('');
+                this._state = nextState;
+            }
+            tokens[tokens.length - 1] += expr[c];
+        }
+
+        // Should transition to end state if expression is valid.
+        this._state = this._nextState('', expr.length - 1);
+
+        return tokens.map(convertToken);
+    }
+
+    private _nextState(char: string, pos: number): State {
+        const transitions = StateMachine.transitions[this._state];
+        const nextState = Object.keys(transitions).find((state) => {
+            const fn = transitions[state as State];
+            return fn !== null && fn(char);
+        });
+        if (!nextState) {
+            throw Error(`Error parsing character at position ${pos + 1}`);
+        }
+        return nextState as State;
+    }
 }
 
