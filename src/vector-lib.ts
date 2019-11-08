@@ -4,6 +4,11 @@ import Utils from './utils';
 type nullableNumber = null | number;
 type datestring = string | Date;
 
+interface ExpressionError {
+    type: string;
+    position: number;
+}
+
 export default class VectorLib {
     /**
      * Get the set of vector IDs in a vector expression.
@@ -215,6 +220,11 @@ export default class VectorLib {
         return vector;
     }
 
+    public validate(expression: string): ExpressionError | undefined {
+        const stateMachine = new StateMachine();
+        return stateMachine.readExpression(expression).error;
+    }
+
     /**
      * Evaluate a vector expression.
      * @param expression Vector expression.
@@ -225,7 +235,20 @@ export default class VectorLib {
         expression: string, vectors: {[id: string]: Vector}
     ): Vector {
         const stateMachine = new StateMachine();
-        const infix = stateMachine.readExpression(expression);
+        const result = stateMachine.readExpression(expression);
+        if (result.error) {
+            const err = result.error;
+            const messages: {[key: string]: string} = {
+                'token': `Error parsing character at position ${err.position}`,
+                'bracket': `Invalid bracket at position ${err.position}`
+            };
+            const message = messages[err.type] 
+                || `Unknown error at position ${err.position}`;
+            if (err.type) throw Error(message);   
+        }
+
+        if (!result.tokens) throw Error('No tokens returned by parser');
+        const infix = result.tokens;
         const post = postfix(infix);
 
         const stack = [];
@@ -269,7 +292,7 @@ const operatorPriorities: {[op: string]: number} = {
 
 type operation = (a: number, b: number ) => number;
 type nodeValue = number | Vector | operation;
-type exprSymbol = string | number;
+type ExpressionSymbol = string | number;
 
 class ExpressionNode {
     private _value: nodeValue;
@@ -337,9 +360,9 @@ function vectorScalarOperate(vector: Vector, scalar: number, op: operation) {
     return new Vector(data);
 }
 
-function postfix(symbols: exprSymbol[]): exprSymbol[] {
-    const stack: exprSymbol[] = ['('];
-    const post: exprSymbol[] = [];
+function postfix(symbols: ExpressionSymbol[]): ExpressionSymbol[] {
+    const stack: ExpressionSymbol[] = ['('];
+    const post: ExpressionSymbol[] = [];
     symbols.push(')');
 
     for (let s = 0; s < symbols.length; s++) {
@@ -495,6 +518,16 @@ function isEmptyString(char: string): boolean {
 
 type TransitionMap = {[key in State]: ((char: string) => boolean) | null}
 
+interface StateTransition {
+    state?: State;
+    error?: ExpressionError;
+}
+
+interface ExpressionResult {
+    tokens?: ExpressionSymbol[];
+    error?: ExpressionError;
+}
+
 class StateMachine {
     public static transitions: {[key in State]: TransitionMap} = {
         [State.start]: {
@@ -572,15 +605,15 @@ class StateMachine {
         return this._state;
     }
 
-    public readExpression(expr: string): exprSymbol[] {
+    public readExpression(expr: string): ExpressionResult {
         const bracketErr = validateBrackets(expr);
         if (bracketErr > 0) {
-            throw Error(`Invalid bracket at position ${bracketErr}`);
-        }
+            return {'error': {'type': 'bracket', 'position': bracketErr}};
+        } 
 
-        const tokens: exprSymbol[] = [];
+        const tokens: ExpressionSymbol[] = [];
 
-        const convertToken = (token: exprSymbol): exprSymbol => {
+        const convertToken = (token: ExpressionSymbol): ExpressionSymbol => {
             if (token != '' && !isNaN(Number(token))) return Number(token);
             return token;
         };
@@ -588,30 +621,42 @@ class StateMachine {
         for (let c = 0; c < expr.length; c++) {
             if (expr[c] == ' ') continue;
 
-            let nextState = this._nextState(expr[c], c);
-            if (nextState != this._state || this._state == State.bracket) {
+            let nextTransition = this._nextState(expr[c], c);
+            if (nextTransition.error) {
+                return {'error': nextTransition.error};
+            }
+            if (!nextTransition.state) {
+                throw Error('Unknown error in expression');
+            }
+
+            if (nextTransition != this._state || this._state == State.bracket) {
                 tokens.push('');
-                this._state = nextState;
+                this._state = nextTransition.state;
             }
             tokens[tokens.length - 1] += expr[c];
         }
 
         // Should transition to end state if expression is valid.
-        this._state = this._nextState('', expr.length - 1);
+        const endTransition = this._nextState('', expr.length - 1);
+        if (endTransition.error) {
+            return {'error': endTransition.error};
+        }
+        if (endTransition.state !== State.end) {
+            throw Error('Unknown error in expression');
+        }
 
-        return tokens.map(convertToken);
+        return {'tokens': tokens.map(convertToken)};
     }
 
-    private _nextState(char: string, pos: number): State {
+    private _nextState(char: string, pos: number): StateTransition {
         const transitions = StateMachine.transitions[this._state];
         const nextState = Object.keys(transitions).find((state) => {
             const fn = transitions[state as State];
             return fn !== null && fn(char);
         });
-        if (!nextState) {
-            throw Error(`Error parsing character at position ${pos + 1}`);
-        }
-        return nextState as State;
+
+        const err = !nextState ? {type: 'token', position: pos + 1} : undefined;
+        return {'state': nextState as State, 'error': err};
     }
 }
 

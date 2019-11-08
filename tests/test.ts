@@ -1185,71 +1185,85 @@ describe('VectorLib', function() {
             });
         };
 
-        let expected = new Vector([
-            {'refper': '2018-01-01', 'value': 16},
-            {'refper': '2018-02-01', 'value': 24}
-        ]);
-        let vexp = '(v1 + v2) * (2*v3)';
-        itVexp(vexp, expected);
+        it('(v1 + v2) * (2*v3)', () => {
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 16},
+                {'refper': '2018-02-01', 'value': 24}
+            ]);
+            const vexp = '(v1 + v2) * (2*v3)';
+            itVexp(vexp, expected);
+        });
 
-        vexp = '(v1 - v2) * (2*v3)';
-        expected = new Vector([
-            {'refper': '2018-01-01', 'value': -8},
-            {'refper': '2018-02-01', 'value': -8}
-        ]);
-        itVexp(vexp, expected);
+        it('(v1 - v2) * (2*v3)', () => {
+            const vexp = '(v1 - v2) * (2*v3)';
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': -8},
+                {'refper': '2018-02-01', 'value': -8}
+            ]);
+            itVexp(vexp, expected);
+        });
 
-        vexp = 'v6 - v5 - v4';
-        expected = new Vector([
-            {'refper': '2018-01-01', 'value': 2},
-            {'refper': '2018-02-01', 'value': 1},
-            {'refper': '2018-03-01', 'value': 0}
-        ]);
-        itVexp(vexp, expected);
+        it('v6 - v5 - v4', () => {
+            const vexp = 'v6 - v5 - v4';
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 2},
+                {'refper': '2018-02-01', 'value': 1},
+                {'refper': '2018-03-01', 'value': 0}
+            ]);
+            itVexp(vexp, expected);
+        });
 
-        vexp = 'v1 * (v2 * (v3 + v1))';
-        expected = new Vector([
-            {'refper': '2018-01-01', 'value': 9},
-            {'refper': '2018-02-01', 'value': 32}
-        ]);
-        itVexp(vexp, expected);
+        it('v1 * (v2 * (v3 + v1))', () => {
+            const vexp = 'v1 * (v2 * (v3 + v1))';
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 9},
+                {'refper': '2018-02-01', 'value': 32}
+            ]);
+            itVexp(vexp, expected);
+        });
 
-        vexp = 'v10';
-        expected = vectors['10'];
-        itVexp(vexp, expected);
+        it('v10', () => {
+            const vexp = 'v10';
+            const expected = vectors['10'];
+            itVexp(vexp, expected);
+        });
 
-        vexp = '';
-
-        it('should report the location of errors', () => {
+        it('v1 $ v2', () => {
             try {
-                vexp = 'v1 $ v2';
+                const vexp = 'v1 $ v2';
                 vlib.evaluate(vexp, vectors);
                 assert.fail('Error was not caught');
             } catch (err) {
                 assert.strictEqual(
                     err.message, 'Error parsing character at position 4');
             }
+        });
 
+        it('v1 + + v2', () => {
             try {
-                vexp = 'v1 + + v2';
+                const vexp = 'v1 + + v2';
                 vlib.evaluate(vexp, vectors);
                 assert.fail('Error was not caught');
             } catch (err) {
                 assert.strictEqual(
                     err.message, 'Error parsing character at position 6');
             }
+        });
 
+        it('v1 v2 +', () => {
             try {
-                vexp = 'v1 v2 +';
+                const vexp = 'v1 v2 +';
                 vlib.evaluate(vexp, vectors);
                 assert.fail('Error was not caught');
             } catch (err) {
                 assert.strictEqual(
                     err.message, 'Error parsing character at position 4');
             }
+        });
 
+        it('v1 + ((v2 * 2)', () => {
             try {
-                vexp = 'v1 + ((v2 * 2)';
+                const vexp = 'v1 + ((v2 * 2)';
                 vlib.evaluate(vexp, vectors);
                 assert.fail('Error was not caught');
             } catch (err) {
