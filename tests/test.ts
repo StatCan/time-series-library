@@ -2,6 +2,44 @@ import * as assert from 'assert';
 
 import {Vector, VectorLib} from '../src/time-series-library';
 
+const vlib = new VectorLib();
+
+// Vectors to use for testing.
+const vectors = {
+    '1': new Vector([
+        {'refper': '2018-01-01', 'value': 1},
+        {'refper': '2018-02-01', 'value': 2}
+    ]),
+    '2': new Vector([
+        {'refper': '2018-01-01', 'value': 3},
+        {'refper': '2018-02-01', 'value': 4}
+    ]),
+    '3': new Vector([
+        {'refper': '2018-01-01', 'value': 2},
+        {'refper': '2018-02-01', 'value': 2}
+    ]),
+    '4': new Vector([
+        {'refper': '2018-01-01', 'value': 1},
+        {'refper': '2018-02-01', 'value': 2},
+        {'refper': '2018-03-01', 'value': 3}
+    ]),
+    '5': new Vector([
+        {'refper': '2018-01-01', 'value': 4},
+        {'refper': '2018-02-01', 'value': 5},
+        {'refper': '2018-03-01', 'value': 6}
+    ]),
+    '6': new Vector([
+        {'refper': '2018-01-01', 'value': 7},
+        {'refper': '2018-02-01', 'value': 8},
+        {'refper': '2018-03-01', 'value': 9}
+    ]),
+    '10': new Vector([
+        {'refper': '2018-01-01', 'value': 10},
+        {'refper': '2018-02-01', 'value': 11},
+        {'refper': '2018-03-01', 'value': 12}
+    ])
+};
+
 describe('Vector', function() {
     describe('#get', function() {
         it('should return the datapoint at a given index', function() {
@@ -1140,195 +1178,145 @@ describe('Vector', function() {
 });
 
 describe('VectorLib', function() {
-    const vlib = new VectorLib();
-
-    // Vectors to use for testing.
-    const vectors = {
-        '1': new Vector([
-            {'refper': '2018-01-01', 'value': 1},
-            {'refper': '2018-02-01', 'value': 2}
-        ]),
-        '2': new Vector([
-            {'refper': '2018-01-01', 'value': 3},
-            {'refper': '2018-02-01', 'value': 4}
-        ]),
-        '3': new Vector([
-            {'refper': '2018-01-01', 'value': 2},
-            {'refper': '2018-02-01', 'value': 2}
-        ]),
-        '4': new Vector([
-            {'refper': '2018-01-01', 'value': 1},
-            {'refper': '2018-02-01', 'value': 2},
-            {'refper': '2018-03-01', 'value': 3}
-        ]),
-        '5': new Vector([
-            {'refper': '2018-01-01', 'value': 4},
-            {'refper': '2018-02-01', 'value': 5},
-            {'refper': '2018-03-01', 'value': 6}
-        ]),
-        '6': new Vector([
-            {'refper': '2018-01-01', 'value': 7},
-            {'refper': '2018-02-01', 'value': 8},
-            {'refper': '2018-03-01', 'value': 9}
-        ]),
-        '10': new Vector([
-            {'refper': '2018-01-01', 'value': 10},
-            {'refper': '2018-02-01', 'value': 11},
-            {'refper': '2018-03-01', 'value': 12}
-        ])
-    };
-
     describe('#validate', function() {
-        assert.deepStrictEqual(
-            vlib.validate(''),
-            {type: 'token', position: 0}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('+'),
-            {type: 'token', position: 1}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('v1'),
-            undefined
-        );
- 
-        assert.deepStrictEqual(
-            vlib.validate('(v1 + v2) * (2*v3)'),
-            undefined
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('+ v1'),
-            {type: 'token', position: 1}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('v1 +'),
-            {type: 'token', position: 4}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('v1 +-'),
-            {type: 'token', position: 5}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('0..5 * v1'),
-            {type: 'token', position: 3}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('((v1)'),
-            {type: 'bracket', position: 5}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('(v1))'),
-            {type: 'bracket', position: 5}
-        );
-
-        assert.deepStrictEqual(
-            vlib.validate('v1 ) + (v2)'),
-            {type: 'bracket', position: 4}
-        );
+        it('should validate vector expresions', function() {
+            assert.deepStrictEqual(
+                vlib.validate(''),
+                {type: 'token', position: 0}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('+'),
+                {type: 'token', position: 1}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('v1'),
+                undefined
+            );
+     
+            assert.deepStrictEqual(
+                vlib.validate('(v1 + v2) * (2*v3)'),
+                undefined
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('+ v1'),
+                {type: 'token', position: 1}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('v1 +'),
+                {type: 'token', position: 4}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('v1 +-'),
+                {type: 'token', position: 5}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('0..5 * v1'),
+                {type: 'token', position: 3}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('((v1)'),
+                {type: 'bracket', position: 5}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('(v1))'),
+                {type: 'bracket', position: 5}
+            );
+    
+            assert.deepStrictEqual(
+                vlib.validate('v1 ) + (v2)'),
+                {type: 'bracket', position: 4}
+            );
+        });
     });
 
     describe('#evaluate', function() {
-        const itVexp = function(vexp: string, expected: Vector) {
-            it(vexp + ' should equal ' + JSON.stringify(expected), function() {
+        const itVexp = (vexp: string, expected: Vector) => {
+            it(`${vexp} should equal ${JSON.stringify(expected)}`, () => {
                 const result = vlib.evaluate(vexp, vectors);
                 assert.strictEqual(result.equals(expected), true);
             });
         };
 
-        it('(v1 + v2) * (2*v3)', () => {
-            const expected = new Vector([
-                {'refper': '2018-01-01', 'value': 16},
-                {'refper': '2018-02-01', 'value': 24}
-            ]);
-            const vexp = '(v1 + v2) * (2*v3)';
-            itVexp(vexp, expected);
-        });
+        let vexp = '(v1 + v2) * (2*v3)';
+        let expected = new Vector([
+            {'refper': '2018-01-01', 'value': 16},
+            {'refper': '2018-02-01', 'value': 24}
+        ]);
+        itVexp(vexp, expected);
 
-        it('(v1 - v2) * (2*v3)', () => {
-            const vexp = '(v1 - v2) * (2*v3)';
-            const expected = new Vector([
-                {'refper': '2018-01-01', 'value': -8},
-                {'refper': '2018-02-01', 'value': -8}
-            ]);
-            itVexp(vexp, expected);
-        });
+        vexp = '(v1 - v2) * (2*v3)';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': -8},
+            {'refper': '2018-02-01', 'value': -8}
+        ]);
+        itVexp(vexp, expected);
 
-        it('v6 - v5 - v4', () => {
-            const vexp = 'v6 - v5 - v4';
-            const expected = new Vector([
-                {'refper': '2018-01-01', 'value': 2},
-                {'refper': '2018-02-01', 'value': 1},
-                {'refper': '2018-03-01', 'value': 0}
-            ]);
-            itVexp(vexp, expected);
-        });
+        vexp = 'v6 - v5 - v4';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': 2},
+            {'refper': '2018-02-01', 'value': 1},
+            {'refper': '2018-03-01', 'value': 0}
+        ]);
+        itVexp(vexp, expected);
 
-        it('v1 * (v2 * (v3 + v1))', () => {
-            const vexp = 'v1 * (v2 * (v3 + v1))';
-            const expected = new Vector([
-                {'refper': '2018-01-01', 'value': 9},
-                {'refper': '2018-02-01', 'value': 32}
-            ]);
-            itVexp(vexp, expected);
-        });
+        vexp = 'v1 * (v2 * (v3 + v1))';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': 9},
+            {'refper': '2018-02-01', 'value': 32}
+        ]);
+        itVexp(vexp, expected);
 
-        it('v10', () => {
-            const vexp = 'v10';
-            const expected = vectors['10'];
-            itVexp(vexp, expected);
-        });
+        vexp = 'v1';
+        expected = vectors['1'];
+        itVexp(vexp, expected);
 
-        it('v1 $ v2', () => {
-            try {
-                const vexp = 'v1 $ v2';
-                vlib.evaluate(vexp, vectors);
-                assert.fail('Error was not caught');
-            } catch (err) {
-                assert.strictEqual(
-                    err.message, 'Error parsing character at position 4');
-            }
-        });
+        vexp = 'v10';
+        expected = vectors['10'];
+        itVexp(vexp, expected);
 
-        it('v1 + + v2', () => {
-            try {
-                const vexp = 'v1 + + v2';
-                vlib.evaluate(vexp, vectors);
-                assert.fail('Error was not caught');
-            } catch (err) {
-                assert.strictEqual(
-                    err.message, 'Error parsing character at position 6');
-            }
-        });
+        try {
+            vexp = 'v1 $ v2';
+            vlib.evaluate(vexp, vectors);
+            assert.fail('Error was not caught');
+        } catch (err) {
+            assert.strictEqual(
+                err.message, 'Error parsing character at position 4');
+        }
 
-        it('v1 v2 +', () => {
-            try {
-                const vexp = 'v1 v2 +';
-                vlib.evaluate(vexp, vectors);
-                assert.fail('Error was not caught');
-            } catch (err) {
-                assert.strictEqual(
-                    err.message, 'Error parsing character at position 4');
-            }
-        });
+        try {
+            vexp = 'v1 + + v2';
+            vlib.evaluate(vexp, vectors);
+            assert.fail('Error was not caught');
+        } catch (err) {
+            assert.strictEqual(
+                err.message, 'Error parsing character at position 6');
+        }
 
-        it('v1 + ((v2 * 2)', () => {
-            try {
-                const vexp = 'v1 + ((v2 * 2)';
-                vlib.evaluate(vexp, vectors);
-                assert.fail('Error was not caught');
-            } catch (err) {
-                assert.strictEqual(
-                    err.message, 'Invalid bracket at position 14');
-            }
-        });
+        try {
+            vexp = 'v1 v2 +';
+            vlib.evaluate(vexp, vectors);
+            assert.fail('Error was not caught');
+        } catch (err) {
+            assert.strictEqual(
+                err.message, 'Error parsing character at position 4');
+        }
+
+        try {
+            vexp = 'v1 + ((v2 * 2)';
+            vlib.evaluate(vexp, vectors);
+            assert.fail('Error was not caught');
+        } catch (err) {
+            assert.strictEqual(
+                err.message, 'Invalid bracket at position 14');
+        }
     });
 
     describe('#getVectorIds', function() {

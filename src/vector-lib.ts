@@ -613,11 +613,6 @@ class StateMachine {
 
         const tokens: ExpressionSymbol[] = [];
 
-        const convertToken = (token: ExpressionSymbol): ExpressionSymbol => {
-            if (token != '' && !isNaN(Number(token))) return Number(token);
-            return token;
-        };
-
         for (let c = 0; c < expr.length; c++) {
             if (expr[c] == ' ') continue;
 
@@ -629,7 +624,8 @@ class StateMachine {
                 throw Error('Unknown error in expression');
             }
 
-            if (nextTransition != this._state || this._state == State.bracket) {
+            if (nextTransition.state != this._state 
+                || this._state == State.bracket) {
                 tokens.push('');
                 this._state = nextTransition.state;
             }
@@ -644,6 +640,11 @@ class StateMachine {
         if (endTransition.state !== State.end) {
             throw Error('Unknown error in expression');
         }
+
+        const convertToken = (token: ExpressionSymbol): ExpressionSymbol => {
+            if (token != '' && !isNaN(Number(token))) return Number(token);
+            return token;
+        };
 
         return {'tokens': tokens.map(convertToken)};
     }
