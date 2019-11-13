@@ -573,7 +573,7 @@ class StateMachine {
             [State.bracket]: isBracket, 
             [State.operator]: null,
             [State.vector]: isVectorIdentifier,
-            [State.end]: isEmptyString
+            [State.end]: null
         },
         [State.vector]: {
             [State.start]: null,

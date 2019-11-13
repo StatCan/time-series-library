@@ -1142,42 +1142,100 @@ describe('Vector', function() {
 describe('VectorLib', function() {
     const vlib = new VectorLib();
 
-    describe('#evaluate', function() {
-        const vectors = {
-            '1': new Vector([
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-02-01', 'value': 2}
-            ]),
-            '2': new Vector([
-                {'refper': '2018-01-01', 'value': 3},
-                {'refper': '2018-02-01', 'value': 4}
-            ]),
-            '3': new Vector([
-                {'refper': '2018-01-01', 'value': 2},
-                {'refper': '2018-02-01', 'value': 2}
-            ]),
-            '4': new Vector([
-                {'refper': '2018-01-01', 'value': 1},
-                {'refper': '2018-02-01', 'value': 2},
-                {'refper': '2018-03-01', 'value': 3}
-            ]),
-            '5': new Vector([
-                {'refper': '2018-01-01', 'value': 4},
-                {'refper': '2018-02-01', 'value': 5},
-                {'refper': '2018-03-01', 'value': 6}
-            ]),
-            '6': new Vector([
-                {'refper': '2018-01-01', 'value': 7},
-                {'refper': '2018-02-01', 'value': 8},
-                {'refper': '2018-03-01', 'value': 9}
-            ]),
-            '10': new Vector([
-                {'refper': '2018-01-01', 'value': 10},
-                {'refper': '2018-02-01', 'value': 11},
-                {'refper': '2018-03-01', 'value': 12}
-            ])
-        };
+    // Vectors to use for testing.
+    const vectors = {
+        '1': new Vector([
+            {'refper': '2018-01-01', 'value': 1},
+            {'refper': '2018-02-01', 'value': 2}
+        ]),
+        '2': new Vector([
+            {'refper': '2018-01-01', 'value': 3},
+            {'refper': '2018-02-01', 'value': 4}
+        ]),
+        '3': new Vector([
+            {'refper': '2018-01-01', 'value': 2},
+            {'refper': '2018-02-01', 'value': 2}
+        ]),
+        '4': new Vector([
+            {'refper': '2018-01-01', 'value': 1},
+            {'refper': '2018-02-01', 'value': 2},
+            {'refper': '2018-03-01', 'value': 3}
+        ]),
+        '5': new Vector([
+            {'refper': '2018-01-01', 'value': 4},
+            {'refper': '2018-02-01', 'value': 5},
+            {'refper': '2018-03-01', 'value': 6}
+        ]),
+        '6': new Vector([
+            {'refper': '2018-01-01', 'value': 7},
+            {'refper': '2018-02-01', 'value': 8},
+            {'refper': '2018-03-01', 'value': 9}
+        ]),
+        '10': new Vector([
+            {'refper': '2018-01-01', 'value': 10},
+            {'refper': '2018-02-01', 'value': 11},
+            {'refper': '2018-03-01', 'value': 12}
+        ])
+    };
 
+    describe('#validate', function() {
+        assert.deepStrictEqual(
+            vlib.validate(''),
+            {type: 'token', position: 0}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('+'),
+            {type: 'token', position: 1}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('v1'),
+            undefined
+        );
+ 
+        assert.deepStrictEqual(
+            vlib.validate('(v1 + v2) * (2*v3)'),
+            undefined
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('+ v1'),
+            {type: 'token', position: 1}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('v1 +'),
+            {type: 'token', position: 4}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('v1 +-'),
+            {type: 'token', position: 5}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('0..5 * v1'),
+            {type: 'token', position: 3}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('((v1)'),
+            {type: 'bracket', position: 5}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('(v1))'),
+            {type: 'bracket', position: 5}
+        );
+
+        assert.deepStrictEqual(
+            vlib.validate('v1 ) + (v2)'),
+            {type: 'bracket', position: 4}
+        );
+    });
+
+    describe('#evaluate', function() {
         const itVexp = function(vexp: string, expected: Vector) {
             it(vexp + ' should equal ' + JSON.stringify(expected), function() {
                 const result = vlib.evaluate(vexp, vectors);
