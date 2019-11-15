@@ -589,7 +589,7 @@ class Vector {
         vector: Vector, fn: (cur: Date, last: Date) => boolean): Vector[] {
 
         let result = [];
-        const data = vector.data.reverse(); // Sort descending by time.
+        const data = vector.data.slice().reverse(); // Sort descending by time.
     
         let curr = data[0];
         let last = data[1];
@@ -608,7 +608,7 @@ class Vector {
                 next = [];
                 curr = data[p];
             }
-            next.push(vector.get(p));
+            next.push(data[p]);
         }
         if (next.length > 0) {
             result.push(new Vector(next.reverse()));
