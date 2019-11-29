@@ -221,6 +221,7 @@ export default class VectorLib {
     }
 
     public validate(expression: string): ExpressionError | undefined {
+        expression = expression.toLowerCase();
         const stateMachine = new StateMachine();
         return stateMachine.readExpression(expression).error;
     }
@@ -234,6 +235,7 @@ export default class VectorLib {
     public evaluate(
         expression: string, vectors: {[id: string]: Vector}
     ): Vector {
+        expression = expression.toLowerCase();
         const stateMachine = new StateMachine();
         const result = stateMachine.readExpression(expression);
         if (result.error) {

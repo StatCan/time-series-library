@@ -1278,7 +1278,7 @@ describe('VectorLib', function() {
         expected = vectors['1'];
         itVexp(vexp, expected);
 
-        vexp = 'v10';
+        vexp = 'V10';
         expected = vectors['10'];
         itVexp(vexp, expected);
 
