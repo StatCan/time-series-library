@@ -494,31 +494,9 @@ enum State {
     end = 'end'
 }
 
-function isNumber(char: string): boolean {
-    return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(char);
+type TransitionMap = {
+    [key in State]: ((char: string, pos?: number) => boolean) | null
 }
-
-function isBracket(char: string): boolean {
-    return ['(', ')'].includes(char);
-}
-
-function isVectorIdentifier(char: string): boolean {
-    return ['v', 'V'].includes(char);
-}
-
-function isOperator(char: string): boolean {
-    return ['+', '-', '/', '*'].includes(char);
-}
-
-function isDecimal(char: string): boolean {
-    return char === '.';
-}
-
-function isEmptyString(char: string): boolean {
-    return char == '';
-}
-
-type TransitionMap = {[key in State]: ((char: string) => boolean) | null}
 
 interface StateTransition {
     state?: State;
@@ -531,76 +509,78 @@ interface ExpressionResult {
 }
 
 class StateMachine {
-    public static transitions: {[key in State]: TransitionMap} = {
-        [State.start]: {
-            [State.start]: null,
-            [State.scalar]: isNumber,
-            [State.decimal]: null,
-            [State.bracket]: isBracket, 
-            [State.operator]: null,
-            [State.vector]: isVectorIdentifier,
-            [State.end]: null
-        },
-        [State.scalar]: {
-            [State.start]: null,
-            [State.scalar]: isNumber, 
-            [State.decimal]: isDecimal,
-            [State.bracket]: isBracket, 
-            [State.operator]: isOperator,
-            [State.vector]: isVectorIdentifier,
-            [State.end]: isEmptyString
-        },
-        [State.decimal]: {
-            [State.start]: null,
-            [State.scalar]: null,
-            [State.decimal]: isNumber,
-            [State.bracket]: isBracket,
-            [State.operator]: isOperator,
-            [State.vector]: isVectorIdentifier,
-            [State.end]: isEmptyString
-        },
-        [State.bracket]: {
-            [State.start]: null,
-            [State.scalar]: isNumber, 
-            [State.decimal]: null,
-            [State.bracket]: isBracket, 
-            [State.operator]: isOperator,
-            [State.vector]: isVectorIdentifier,
-            [State.end]: isEmptyString
-        },
-        [State.operator]: {
-            [State.start]: null,
-            [State.scalar]: isNumber, 
-            [State.decimal]: null,
-            [State.bracket]: isBracket, 
-            [State.operator]: null,
-            [State.vector]: isVectorIdentifier,
-            [State.end]: null
-        },
-        [State.vector]: {
-            [State.start]: null,
-            [State.scalar]: null, 
-            [State.decimal]: null,
-            [State.bracket]: isBracket, 
-            [State.operator]: isOperator,
-            [State.vector]: isNumber,
-            [State.end]: isEmptyString,
-        },
-        [State.end]: {
-            [State.start]: null,
-            [State.scalar]: null, 
-            [State.decimal]: null,
-            [State.bracket]: null, 
-            [State.operator]: null,
-            [State.vector]: null,
-            [State.end]: null,
-        }
-    };
-
     private _state: State;
+    private _expr: string;
+    private _transitions: {[key in State]: TransitionMap};
 
     public constructor() {
         this._state = State.start;
+        this._expr = '';
+        this._transitions = {
+            [State.start]: {
+                [State.start]: null,
+                [State.scalar]: this._isNumber,
+                [State.decimal]: null,
+                [State.bracket]: this._isBracket, 
+                [State.operator]: null,
+                [State.vector]: this._isVectorIdentifier,
+                [State.end]: null
+            },
+            [State.scalar]: {
+                [State.start]: null,
+                [State.scalar]: this._isNumber, 
+                [State.decimal]: this._isDecimal,
+                [State.bracket]: this._isBracket, 
+                [State.operator]: this._isOperator,
+                [State.vector]: this._isVectorIdentifier,
+                [State.end]: this._isEmptyString
+            },
+            [State.decimal]: {
+                [State.start]: null,
+                [State.scalar]: null,
+                [State.decimal]: this._isNumber,
+                [State.bracket]: this._isBracket,
+                [State.operator]: this._isOperator,
+                [State.vector]: this._isVectorIdentifier,
+                [State.end]: this._isEmptyString
+            },
+            [State.bracket]: {
+                [State.start]: null,
+                [State.scalar]: this._isNumber, 
+                [State.decimal]: null,
+                [State.bracket]: this._isBracket, 
+                [State.operator]: this._isOperator,
+                [State.vector]: this._isVectorIdentifier,
+                [State.end]: this._isEmptyString
+            },
+            [State.operator]: {
+                [State.start]: null,
+                [State.scalar]: this._isNumber, 
+                [State.decimal]: null,
+                [State.bracket]: this._isBracket, 
+                [State.operator]: null,
+                [State.vector]: this._isVectorIdentifier,
+                [State.end]: null
+            },
+            [State.vector]: {
+                [State.start]: null,
+                [State.scalar]: null, 
+                [State.decimal]: null,
+                [State.bracket]: this._isBracket, 
+                [State.operator]: this._isOperator,
+                [State.vector]: this._isNumber,
+                [State.end]: this._isEmptyString,
+            },
+            [State.end]: {
+                [State.start]: null,
+                [State.scalar]: null, 
+                [State.decimal]: null,
+                [State.bracket]: null, 
+                [State.operator]: null,
+                [State.vector]: null,
+                [State.end]: null,
+            }
+        };
     }
 
     public get state(): State {
@@ -608,6 +588,9 @@ class StateMachine {
     }
 
     public readExpression(expr: string): ExpressionResult {
+        this._state = State.start;
+        this._expr = expr;
+
         const bracketErr = validateBrackets(expr);
         if (bracketErr > 0) {
             return {'error': {'type': 'bracket', 'position': bracketErr}};
@@ -652,14 +635,51 @@ class StateMachine {
     }
 
     private _nextState(char: string, pos: number): StateTransition {
-        const transitions = StateMachine.transitions[this._state];
+        const transitions = this._transitions[this._state];
         const nextState = Object.keys(transitions).find((state) => {
             const fn = transitions[state as State];
-            return fn !== null && fn(char);
+            if (fn === null) return false;
+            const fnBind = fn.bind(this);
+            return fnBind(char, pos);
         });
 
         const err = !nextState ? {type: 'token', position: pos + 1} : undefined;
         return {'state': nextState as State, 'error': err};
     }
-}
 
+    private _isNumber(char: string, pos?: number): boolean {
+        const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        // Allow '-' to follow operator state or start state.
+        // '-' must be followed by a number and the current state cannot be
+        // be a number.
+        if (char === '-') {
+            if (![State.start, State.operator].includes(this._state)) {
+                return false;
+            }
+            return numbers.includes(this._expr[(pos || 0) + 1]);
+        }
+
+        return numbers.includes(char);
+    }
+    
+    private _isBracket(char: string): boolean {
+        return ['(', ')'].includes(char);
+    }
+    
+    private _isVectorIdentifier(char: string): boolean {
+        return ['v', 'V'].includes(char);
+    }
+    
+    private _isOperator(char: string): boolean {
+        return ['+', '-', '/', '*'].includes(char);
+    }
+    
+    private _isDecimal(char: string): boolean {
+        return char === '.';
+    }
+    
+    private _isEmptyString(char: string): boolean {
+        return char == '';
+    }
+}

@@ -1252,6 +1252,20 @@ describe('VectorLib', function() {
         ]);
         itVexp(vexp, expected);
 
+        vexp = '-1 * v1';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': -1},
+            {'refper': '2018-02-01', 'value': -2}
+        ]);
+        itVexp(vexp, expected);
+
+        vexp = 'v1 * -1';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': -1},
+            {'refper': '2018-02-01', 'value': -2}
+        ]);
+        itVexp(vexp, expected);
+
         vexp = '(v1 - v2) * (2*v3)';
         expected = new Vector([
             {'refper': '2018-01-01', 'value': -8},
@@ -1282,41 +1296,43 @@ describe('VectorLib', function() {
         expected = vectors['10'];
         itVexp(vexp, expected);
 
-        try {
-            vexp = 'v1 $ v2';
-            vlib.evaluate(vexp, vectors);
-            assert.fail('Error was not caught');
-        } catch (err) {
-            assert.strictEqual(
-                err.message, 'Error parsing character at position 4');
-        }
-
-        try {
-            vexp = 'v1 + + v2';
-            vlib.evaluate(vexp, vectors);
-            assert.fail('Error was not caught');
-        } catch (err) {
-            assert.strictEqual(
-                err.message, 'Error parsing character at position 6');
-        }
-
-        try {
-            vexp = 'v1 v2 +';
-            vlib.evaluate(vexp, vectors);
-            assert.fail('Error was not caught');
-        } catch (err) {
-            assert.strictEqual(
-                err.message, 'Error parsing character at position 4');
-        }
-
-        try {
-            vexp = 'v1 + ((v2 * 2)';
-            vlib.evaluate(vexp, vectors);
-            assert.fail('Error was not caught');
-        } catch (err) {
-            assert.strictEqual(
-                err.message, 'Invalid bracket at position 14');
-        }
+        it ('should detect syntax errors', () => {
+            try {
+                vexp = 'v1 $ v2';
+                vlib.evaluate(vexp, vectors);
+                assert.fail('Error was not caught');
+            } catch (err) {
+                assert.strictEqual(
+                    err.message, 'Error parsing character at position 4');
+            }
+    
+            try {
+                vexp = 'v1 + + v2';
+                vlib.evaluate(vexp, vectors);
+                assert.fail('Error was not caught');
+            } catch (err) {
+                assert.strictEqual(
+                    err.message, 'Error parsing character at position 6');
+            }
+    
+            try {
+                vexp = 'v1 v2 +';
+                vlib.evaluate(vexp, vectors);
+                assert.fail('Error was not caught');
+            } catch (err) {
+                assert.strictEqual(
+                    err.message, 'Error parsing character at position 4');
+            }
+    
+            try {
+                vexp = 'v1 + ((v2 * 2)';
+                vlib.evaluate(vexp, vectors);
+                assert.fail('Error was not caught');
+            } catch (err) {
+                assert.strictEqual(
+                    err.message, 'Invalid bracket at position 14');
+            }
+        });
     });
 
     describe('#getVectorIds', function() {
