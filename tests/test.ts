@@ -242,6 +242,36 @@ describe('Vector', function() {
             const result = vector.range('2020-01-01', '2020-12-31');
             assert.ok(result.equals(new Vector()));
         });
+
+        it('should handle null values for startDate and endDate', function() {
+            let result = vector.range(null, null);
+            let expected = vector;
+            assert.ok(result.equals(expected));
+
+            result = vector.range('2018-01-02', null);
+            expected = new Vector([
+                {'refper': '2018-01-02', 'value': 1},
+                {'refper': '2018-01-03', 'value': 2},
+                {'refper': '2018-01-04', 'value': 3}
+            ]);
+            assert.ok(result.equals(expected));
+            
+            result = vector.range(null, '2018-01-02');
+            expected = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1}
+            ]);
+            assert.ok(result.equals(expected));
+        });
+
+        it('should use only an end date if one parameter is given', function() {
+            const result = vector.range('2018-01-02');
+            const expected = new Vector([
+                {'refper': '2018-01-01', 'value': 0},
+                {'refper': '2018-01-02', 'value': 1}
+            ]);
+            assert.ok(result.equals(expected));
+        });
     });
 
     describe('#latestN', function() {

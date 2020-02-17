@@ -1,4 +1,5 @@
 import Utils from './utils';
+import { start } from 'repl';
 
 type transformation = (a: number) => number;
 type operation = (a: number, b: number) => number;
@@ -192,10 +193,20 @@ class Vector {
      * @param endDate - End of range (inclusive).
      * @return Range vector.
      */
-    public range(startDate: Date | string, endDate: Date | string): Vector {
-        startDate = Utils.dateObject(startDate);
-        endDate = Utils.dateObject(endDate);
-        return this.filter((p) => p.refper >= startDate && p.refper <= endDate);
+    public range(
+        startDate: Date | string | null,
+        endDate?: Date | string | null
+    ): Vector {
+        if (endDate === undefined) {
+            endDate = startDate;
+            startDate = null;
+        }
+        startDate = startDate ? Utils.dateObject(startDate) : null;
+        endDate = endDate ? Utils.dateObject(endDate) : null;
+        return this.filter((p) => {
+            return (!startDate || p.refper >= startDate) &&
+                (!endDate || p.refper <= endDate);
+        });
     }
 
     /**
