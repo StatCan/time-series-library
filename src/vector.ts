@@ -423,6 +423,23 @@ class Vector {
     }
 
     /**
+     * Transforms a sub-annual rate into an annual rate using the formula 
+     *      ((1 + R)periods - 1) * 100 
+     *          where R = ((S[t] - S[t-1]) / S[t-1]), 
+     *          and periods is the number of periods in the year
+     *              2 (semi-annual)
+     *              4 (quarterly)
+     *              6 (bimonthly)
+     *              12 (monthly)
+     *              26 (Biweekly)
+     *              52 (Weekly)
+     *              365 (Daily)
+     */
+    public annualCompoundRate() {
+        throw Error('Not implemented');
+    }
+
+    /**
      * Convert vector to a lower frequency.
      * @param mode "last" (default), "sum", "average", "max", "min".
      * @param converter Converter function.
