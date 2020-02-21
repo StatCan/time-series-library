@@ -423,20 +423,26 @@ class Vector {
     }
 
     /**
-     * Transforms a sub-annual rate into an annual rate using the formula 
+     * Transforms a sub-annual rate into an annual rate using the
+     * formula:
      *      ((1 + R)periods - 1) * 100 
      *          where R = ((S[t] - S[t-1]) / S[t-1]), 
-     *          and periods is the number of periods in the year
-     *              2 (semi-annual)
-     *              4 (quarterly)
-     *              6 (bimonthly)
-     *              12 (monthly)
-     *              26 (Biweekly)
-     *              52 (Weekly)
-     *              365 (Daily)
+     *          and periods is the number of periods in the chunk
      */
-    public annualCompoundRate() {
-        throw Error('Not implemented');
+    public compoundRate(converter: (cur: Date, last: Date) => boolean): Vector {
+        const split = Vector.frequencySplit(this, converter);
+        // Add previous periods
+        const periods = split.map((chunk, i) => {
+            const prev = split[i - 1]?.get(split[i - 1].length - 1);
+            const frame = new Vector(prev ? [prev, ...chunk.data] : chunk.data);
+            const compound = frame.periodDeltaTransformation((curr, last) => {
+                return (1 + ((curr - last) / last) * chunk.length - 1) * 100;
+            });
+            return new Vector(prev ? compound.data.slice(1) : compound.data);
+        });
+        const ret = new Vector();
+        periods.forEach((p) => p.data.forEach((d) => ret.push(d)));
+        return ret;
     }
 
     /**
