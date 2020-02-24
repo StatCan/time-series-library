@@ -1,5 +1,4 @@
 import Utils from './utils';
-import { start } from 'repl';
 
 type transformation = (a: number) => number;
 type operation = (a: number, b: number) => number;
@@ -422,6 +421,10 @@ class Vector {
         });
     }
 
+    public annualizedCompundRate(): Vector {
+        return this.compoundRate(converters.annual);
+    }
+
     /**
      * Transforms a sub-annual rate into an annual rate using the
      * formula:
@@ -462,7 +465,8 @@ class Vector {
      * @return Converted vector.
      */
     public quinquennial(mode: string='last'): Vector {
-        return Vector.convertToYearlyFrequency(this, mode, 5);
+        const vector = Vector.balanceYears(this);
+        return vector.convertToFrequency(mode, converters.quinquennial);
     }
 
 
@@ -472,7 +476,8 @@ class Vector {
      * @return Converted vector.
      */
     public quadrennial(mode: string='last'): Vector {
-        return Vector.convertToYearlyFrequency(this, mode, 4);
+        const vector = Vector.balanceYears(this);
+        return vector.convertToFrequency(mode, converters.quadrennial);
     }
 
     /**
@@ -481,7 +486,8 @@ class Vector {
      * @return Converted vector.
      */
     public triAnnual(mode: string='last'): Vector {
-        return Vector.convertToYearlyFrequency(this, mode, 3);
+        const vector = Vector.balanceYears(this);
+        return vector.convertToFrequency(mode, converters.triAnnual);
     }
 
     /**
@@ -490,7 +496,8 @@ class Vector {
      * @return Converted vector.
      */
     public biAnnual(mode: string='last'): Vector {
-        return Vector.convertToYearlyFrequency(this, mode, 2);
+        const vector = Vector.balanceYears(this);
+        return vector.convertToFrequency(mode, converters.biAnnual);
     }
 
     /**
@@ -499,7 +506,8 @@ class Vector {
      * @return Converted vector.
      */
     public annual(mode: string='last'): Vector {
-        return Vector.convertToYearlyFrequency(this, mode, 1);
+        const vector = Vector.balanceYears(this);
+        return vector.convertToFrequency(mode, converters.biAnnual);
     }
 
     /**
@@ -508,9 +516,7 @@ class Vector {
      * @return Converted vector.
      */
     public semiAnnual(mode: string='last'): Vector {
-        return this.convertToFrequency(mode, (curr, last) => {
-            return curr.getMonth() === (last.getMonth() + 6) % 12;
-        });
+        return this.convertToFrequency(mode, converters.semiAnnual);
     }
 
     /**
@@ -519,9 +525,7 @@ class Vector {
      * @return Converted vector.
      */
     public quarterly(mode: string='last'): Vector {
-        return this.convertToFrequency(mode, (curr, last) => {
-            return curr.getMonth() === (last.getMonth() + 3) % 12;
-        });
+        return this.convertToFrequency(mode, converters.quarterly);
     }
 
     /**
@@ -530,9 +534,7 @@ class Vector {
      * @return Converted vector.
      */
     public monthly(mode: string='last'): Vector {
-        return this.convertToFrequency(mode, (curr, last) => {
-            return curr.getMonth() == (last.getMonth() + 1) % 12;
-        });
+        return this.convertToFrequency(mode, converters.monthly);
     }
 
     /**
@@ -541,9 +543,7 @@ class Vector {
      * @return Converted vector.
      */
     public biMonthly(mode: string='last'): Vector {
-        return this.convertToFrequency(mode, (curr, last) => {
-            return curr.getMonth() == (last.getMonth() + 2) % 12;
-        });
+        return this.convertToFrequency(mode, converters.biMonthly);
     }
 
     /**
@@ -552,10 +552,7 @@ class Vector {
      * @return Converted vector.
      */
     public weekly(mode: string='last'): Vector {
-        return this.convertToFrequency(mode, function(curr, last) {
-            return curr.getDay() == last.getDay() &&
-                curr.getDate() != last.getDate(); // FIXME: Should not be needed
-        });
+        return this.convertToFrequency(mode, converters.weekly);
     }
 
     /**
@@ -607,16 +604,11 @@ class Vector {
         return Math.max(...vector.map((point) => point.refper.getMonth()));
     }
 
-    private static convertToYearlyFrequency(
-        vector: Vector, mode: string, years: number): Vector {
-
+    private static balanceYears(vector: Vector): Vector {
         const month = Vector.maxMonth(vector);
-        vector = new Vector(Utils.dropWhile(vector.data, (point) => {
+        return new Vector(Utils.dropWhile(vector.data, (point) => {
             return point.refper.getMonth() != month;
         }));
-        return vector.convertToFrequency(mode, function(curr, last) {
-            return curr.getFullYear() == last.getFullYear() + years;
-        });
     }
 
     private static frequencySplit(
@@ -716,6 +708,56 @@ class Vector {
     }
 }
 
+enum Frequency {
+    daily = 'daily',
+    weekly = 'weekly',
+    biMonthly = 'biMonthly',
+    monthly = 'monthly',
+    quarterly = 'quarterly',
+    semiAnnual = 'semiAnnual',
+    annual = 'annual',
+    biAnnual = 'biAnnual',
+    triAnnual = 'triAnnual',
+    quadrennial = 'quadrennial',
+    quinquennial = 'quinquennial'
+}
+
+const converters: {[freq in Frequency]: (cur: Date, last: Date) => boolean} = {
+    'daily': (curr: Date, last: Date) => {
+        return curr.getDate() != last.getDate();
+    },
+    'weekly': (curr: Date, last: Date) => {
+        return curr.getDay() == last.getDay() &&
+            curr.getDate() != last.getDate();
+    },
+    'biMonthly': (curr: Date, last: Date) => {
+        return curr.getMonth() == (last.getMonth() + 2) % 12;
+    },
+    'monthly': (curr: Date, last: Date) => {
+        return curr.getMonth() == (last.getMonth() + 1) % 12;
+    },
+    'quarterly': (curr: Date, last: Date) => {
+        return curr.getMonth() === (last.getMonth() + 3) % 12;
+    },
+    'semiAnnual': (curr: Date, last: Date) => {
+        return curr.getMonth() === (last.getMonth() + 6) % 12;     
+    },
+    'annual': (curr: Date, last: Date) => {
+        return curr.getFullYear() == last.getFullYear() + 1;       
+    },
+    'biAnnual': (curr: Date, last: Date) => {
+        return curr.getFullYear() == last.getFullYear() + 2;
+    },
+    'triAnnual': (curr: Date, last: Date) => {
+        return curr.getFullYear() == last.getFullYear() + 3;
+    },
+    'quadrennial': (curr: Date, last: Date) => {
+        return curr.getFullYear() == last.getFullYear() + 4;
+    },
+    'quinquennial': (curr: Date, last: Date) => {
+        return curr.getFullYear() == last.getFullYear() + 5;
+    }
+};
 
 function percentageChange(curr: number, last: number): number | null {
     return last == 0 ? null : ((curr - last) / Math.abs(last)) * 100;
