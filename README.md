@@ -3,34 +3,12 @@
 A TypeScript/JavaScript library for arithmetic on Statistics Canada time series 
 vector data.
 
-This library can be used with Node.js or any of the following web browsers:
-- Chrome
-- Firefox
-- Internet Explorer 11
-- Opera
-- Safari
 
 # Installation
 
-Using Node.js:
 ```javascript
-// common-js
-const TimeSeriesLibrary = require('time-series-library');
-const Vector = TimeSeriesLibrary.Vector;
-const VectorLib = TimeSeriesLibrary.VectorLib;
-
 // es6 module
 import {Vector, VectorLib} from 'time-series-library';
-```
-
-Using a web browser:
-```html
-<script src="./time-series-library.js"></script>
-
-<script>
-    const Vector = TimeSeriesLibrary.Vector;
-    const VectorLib = TimeSeriesLibrary.VectorLib;
-</script>
 ```
 
 # Usage
