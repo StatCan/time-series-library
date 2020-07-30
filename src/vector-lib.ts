@@ -596,7 +596,7 @@ class StateMachine {
             return {'error': {'type': 'bracket', 'position': bracketErr}};
         } 
 
-        const tokens: ExpressionSymbol[] = [];
+        let tokens: string[] = [];
 
         for (let c = 0; c < expr.length; c++) {
             if (expr[c] == ' ') continue;
@@ -625,6 +625,23 @@ class StateMachine {
         if (endTransition.state !== State.end) {
             throw Error('Unknown error in expression');
         }
+
+        // Merge decimals together
+        const joinedDecimals = [];
+        for (let i = 0; i < tokens.length; i++) {
+            const isDecimal = (token: string): boolean => {
+                if (!token) return false;
+                return token[0] == '.' && this._isNumber(token.slice(1));
+            };
+            
+            if (this._isNumber(tokens[i]) && isDecimal(tokens[i+1])) {
+                joinedDecimals.push(tokens[i] + tokens[i+1]);
+                i += 1;
+            } else {
+                joinedDecimals.push(tokens[i]);
+            }
+        } 
+        tokens = joinedDecimals;
 
         const convertToken = (token: ExpressionSymbol): ExpressionSymbol => {
             if (token != '' && !isNaN(Number(token))) return Number(token);

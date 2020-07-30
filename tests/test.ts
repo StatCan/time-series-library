@@ -1296,6 +1296,20 @@ describe('VectorLib', function() {
         ]);
         itVexp(vexp, expected);
 
+        vexp = 'v1 + 1.5';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': 2.5},
+            {'refper': '2018-02-01', 'value': 3.5}
+        ]);
+        itVexp(vexp, expected);
+
+        vexp = 'v1 - 1.5';
+        expected = new Vector([
+            {'refper': '2018-01-01', 'value': -0.5},
+            {'refper': '2018-02-01', 'value': 0.5}
+        ]);
+        itVexp(vexp, expected);
+
         vexp = '(v1 - v2) * (2*v3)';
         expected = new Vector([
             {'refper': '2018-01-01', 'value': -8},
