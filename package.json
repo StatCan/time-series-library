@@ -7,10 +7,14 @@
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "npm run lint && npm run test && npm run tsc && npx rollup -c",
+    "build2": "npm run lint2 && npm run test2 && npm run tsc && npx rollup -c",
     "tsc": "npx tsc -p ./src",
     "lint": "./node_modules/.bin/eslint ./ --ext .js,.ts,.tsx",
+    "lint2": "eslint ./ --ext .js,.ts,.tsx",
     "lint-fix": "./node_modules/.bin/eslint ./ --fix --ext .js,.ts,.tsx",
+    "lint-fix2": "eslint ./ --fix --ext .js,.ts,.tsx",
     "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register ./tests/test.ts",
+    "test2": "mocha -r ./node_modules/ts-node/register ./tests/test.ts",
     "prebuild": "npm run clean",
     "prepare": "npm run tsc"
   },
